@@ -1,0 +1,18 @@
+#!/bin/bash -e
+
+echo "Starting Swagger editor on port 9090..."
+docker run -d --rm \
+    -v $(pwd):/work \
+     -p 9090:8080  \
+     -e SWAGGER_FILE=/work/openapi-2.json \
+     --name destiny-editor \
+     swaggerapi/swagger-editor
+
+echo -n "Waiting for editor to start..."
+until [ "$(docker inspect -f {{.State.Running}} destiny-editor)"=="true" ]; do
+    sleep 0.1;
+    echo "."
+done
+
+echo
+echo "Visit localhost:9090 in your browser to use the Swagger Editor"

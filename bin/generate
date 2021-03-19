@@ -1,0 +1,21 @@
+#!/bin/bash -e
+
+# Target output language
+LANGUAGE="${1}"
+
+# No language specified - cancel run
+if [[ -z $LANGUAGE ]]; then 
+    echo "Error: no language given as argument."
+    echo "A full list of options can be found here: https://openapi-generator.tech/docs/generators/"
+    echo
+    echo 'Example: `./bin/generate go`'
+    exit 1
+else 
+    docker run --rm \
+    -v $(pwd):/work \
+    openapitools/openapi-generator-cli generate \
+        --skip-validate-spec \
+        -i /work/openapi-2.json \
+        -g "$LANGUAGE" \
+        -o "/work/out/$LANGUAGE"
+fi

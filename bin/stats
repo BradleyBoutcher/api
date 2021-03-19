@@ -1,0 +1,6 @@
+#!/bin/bash -e 
+
+docker run --rm \
+    -v $(pwd):/spec \
+    redocly/openapi-cli \
+        stats "openapi-2.json"
