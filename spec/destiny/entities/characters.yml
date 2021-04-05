@@ -1,0 +1,504 @@
+components:
+  schemas:
+    DestinyCharacterComponent:
+      type: object
+      properties:
+        membershipId:
+          type: integer
+          description: Every Destiny Profile has a membershipId. This is provided on the character as well for convenience.
+          format: int64
+        membershipType:
+          type: integer
+          description: membershipType tells you the platform on which the character plays. Examine the BungieMembershipType enumeration for possible values.
+          format: int32
+          x-enum-reference:
+            $ref: '../../shared.yml#/components/schemas/BungieMembershipType'
+        characterId:
+          type: integer
+          description: The unique identifier for the character.
+          format: int64
+        dateLastPlayed:
+          type: string
+          description: The last date that the user played Destiny.
+          format: date-time
+        minutesPlayedThisSession:
+          type: integer
+          description: If the user is currently playing, this is how long they've been playing.
+          format: int64
+        minutesPlayedTotal:
+          type: integer
+          description: If this value is 525,600, then they played Destiny for a year. Or they're a very dedicated Rent fan. Note that this includes idle time, not just time spent actually in activities shooting things.
+          format: int64
+        light:
+          type: integer
+          description: 'The user''s calculated "Light Level". Light level is an indicator of your power that mostly matters in the end game, once you''ve reached the maximum character level: it''s a level that''s dependent on the average Attack/Defense power of your items.'
+          format: int32
+        stats:
+          type: object
+          additionalProperties:
+            type: integer
+            format: int32
+          description: "
+            Your character's stats, such as Agility, Resilience, etc... *not* historical stats.
+            You'll have to call a different endpoint for those."
+        raceHash:
+          type: integer
+          description: Use this hash to look up the character's DestinyRaceDefinition.
+          format: uint32
+          x-mapped-definition:
+            $ref: '../definitions.yml#/components/schemas/DestinyRaceDefinition'
+        genderHash:
+          type: integer
+          description: Use this hash to look up the character's DestinyGenderDefinition.
+          format: uint32
+          x-mapped-definition:
+            $ref: '../definitions.yml#/components/schemas/DestinyGenderDefinition'
+        classHash:
+          type: integer
+          description: Use this hash to look up the character's DestinyClassDefinition.
+          format: uint32
+          x-mapped-definition:
+            $ref: '../definitions.yml#/components/schemas/DestinyClassDefinition'
+        raceType:
+          type: integer
+          description: "Mostly for historical purposes at this point, this is an enumeration for the character's race.
+            It'll be preferable in the general case to look up the related definition: but for some people this was too convenient to remove."
+          format: int32
+          x-enum-reference:
+            $ref: '../../destiny.yml#/components/schemas/DestinyRace'
+        classType:
+          type: integer
+          description: "Mostly for historical purposes at this point, this is an enumeration for the character's class.
+            It'll be preferable in the general case to look up the related definition: but for some people this was too convenient to remove."
+          format: int32
+          x-enum-reference:
+            $ref: '../../destiny.yml#/components/schemas/DestinyClass'
+        genderType:
+          type: integer
+          description: "Mostly for historical purposes at this point, this is an enumeration for the character's Gender.
+            It'll be preferable in the general case to look up the related definition: but for some people this was too convenient to remove. And yeah, it's an enumeration and not a boolean. Fight me."
+          format: int32
+          x-enum-reference:
+            $ref: '../../destiny.yml#/components/schemas/DestinyGender'
+        emblemPath:
+          type: string
+          description: A shortcut path to the user's currently equipped emblem image. If you're just showing summary info for a user, this is more convenient than examining their equipped emblem and looking up the definition.
+        emblemBackgroundPath:
+          type: string
+          description: A shortcut path to the user's currently equipped emblem background image. If you're just showing summary info for a user, this is more convenient than examining their equipped emblem and looking up the definition.
+        emblemHash:
+          type: integer
+          description: The hash of the currently equipped emblem for the user. Can be used to look up the DestinyInventoryItemDefinition.
+          format: uint32
+          x-mapped-definition:
+            $ref: '../definitions.yml#/components/schemas/DestinyInventoryItemDefinition'
+        emblemColor:
+          type: object
+          description: A shortcut for getting the background color of the user's currently equipped emblem without having to do a DestinyInventoryItemDefinition lookup.
+          allOf:
+            - $ref: '../misc.yml#/components/schemas/DestinyColor'
+        levelProgression:
+          type: object
+          description: 'The progression that indicates your character''s level. Not their light level, but their character level: you know, the thing you max out a couple hours in and then ignore for the sake of light level.'
+          allOf:
+            - $ref: '../../destiny.yml#/components/schemas/DestinyProgression'
+        baseCharacterLevel:
+          type: integer
+          description: The "base" level of your character, not accounting for any light level.
+          format: int32
+        percentToNextLevel:
+          type: number
+          description: A number between 0 and 100, indicating the whole and fractional % remaining to get to the next character level.
+          format: float
+        titleRecordHash:
+          type: integer
+          description: If this Character has a title assigned to it, this is the identifier of the DestinyRecordDefinition that has that title information.
+          format: uint32
+          x-mapped-definition:
+            $ref: '../definitions/records.yml#/components/schemas/DestinyRecordDefinition'
+      description: This component contains base properties of the character. You'll probably want to always request this component, but hey you do you.
+      x-destiny-component-type-dependency: Characters
+
+    DestinyCharacterProgressionComponent:
+      type: object
+      properties:
+        progressions:
+          type: object
+          additionalProperties:
+            $ref: '../../destiny.yml#/components/schemas/DestinyProgression'
+          description: "A Dictionary of all known progressions for the Character, keyed by the Progression's hash.
+            Not all progressions have user-facing data, but those who do will have that data contained in the DestinyProgressionDefinition."
+          x-mapped-definition:
+            $ref: '../definitions.yml#/components/schemas/DestinyProgressionDefinition'
+        factions:
+          type: object
+          additionalProperties:
+            $ref: '../progression.yml#/components/schemas/DestinyFactionProgression'
+          description: A dictionary of all known Factions, keyed by the Faction's hash. It contains data about this character's status with the faction.
+          x-mapped-definition:
+            $ref: '../definitions.yml#/components/schemas/DestinyFactionDefinition'
+        milestones:
+          type: object
+          additionalProperties:
+            $ref: '../milestones.yml#/components/schemas/DestinyMilestone'
+          description: Milestones are related to the simple progressions shown in the game, but return additional and hopefully helpful information for users about the specifics of the Milestone's status.
+          x-mapped-definition:
+            $ref: '../definitions/milestones.yml#/components/schemas/DestinyMilestoneDefinition'
+        quests:
+          type: array
+          description: "
+            If the user has any active quests, the quests' statuses will be returned here.
+            Note that quests have been largely supplanted by Milestones, but that doesn't mean that they won't make a comeback independent of milestones at some point.
+            (Fun fact: quests came back as I feared they would, but we never looped back to populate this... I'm going to put that in the backlog.)"
+          items:
+            $ref: '../quests.yml#/components/schemas/DestinyQuestStatus'
+        uninstancedItemObjectives:
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              $ref: '../quests.yml#/components/schemas/DestinyObjectiveProgress'
+          description: "
+            Sometimes, you have items in your inventory that don't have instances, but still have Objective information. This provides you that objective information for uninstanced items. 
+            This dictionary is keyed by the item's hash: which you can use to look up the name and description for the overall task(s) implied by the objective. The value is the list of objectives for this item, and their statuses."
+          x-mapped-definition:
+            $ref: '../definitions.yml#/components/schemas/DestinyInventoryItemDefinition'
+        checklists:
+          type: object
+          additionalProperties:
+            type: object
+            additionalProperties:
+              type: boolean
+          description: "
+            The set of checklists that can be examined for this specific character, keyed by the hash identifier of the Checklist (DestinyChecklistDefinition)
+            For each checklist returned, its value is itself a Dictionary keyed by the checklist's hash identifier with the value being a boolean indicating if it's been discovered yet."
+          x-mapped-definition:
+            $ref: '../definitions/checklists.yml#/components/schemas/DestinyChecklistDefinition'
+        seasonalArtifact:
+          type: object
+          description: Data related to your progress on the current season's artifact that can vary per character.
+          allOf:
+            - $ref: '../artifacts.yml#/components/schemas/DestinyArtifactCharacterScoped'
+      description: 'This component returns anything that could be considered "Progression" on a user: data where the user is gaining levels, reputation, completions, rewards, etc...'
+      x-destiny-component-type-dependency: CharacterProgressions
+
+    DestinyCharacterRenderComponent:
+      type: object
+      properties:
+        customDyes:
+          type: array
+          description: Custom dyes, calculated by iterating over the character's equipped items. Useful for pre-fetching all of the dye data needed from our server.
+          items:
+            $ref: '../../destiny.yml#/components/schemas/DyeReference'
+        customization:
+          type: object
+          description: This is actually something that Spasm.js *doesn't* do right now, and that we don't return assets for yet. This is the data about what character customization options you picked. You can combine this with DestinyCharacterCustomizationOptionDefinition to show some cool info, and hopefully someday to actually render a user's face in 3D. We'll see if we ever end up with time for that.
+          allOf:
+            - $ref: '../character.yml#/components/schemas/DestinyCharacterCustomization'
+        peerView:
+          type: object
+          description: "A minimal view of:
+            - Equipped items
+            - The rendering-related custom options on those equipped items
+            Combined, that should be enough to render all of the items on the equipped character."
+          allOf:
+            - $ref: '../character.yml#/components/schemas/DestinyCharacterPeerView'
+      description: "
+        Only really useful if you're attempting to render the character's current appearance in 3D, this returns a bare minimum of information, pre-aggregated, that you'll need to perform that rendering. Note that you need to combine this with other 3D assets and data from our servers.
+        Examine the Javascript returned by https://bungie.net/sharedbundle/spasm to see how we use this data, but be warned: the rabbit hole goes pretty deep."
+      x-destiny-component-type-dependency: CharacterRenderData
+
+    DestinyCharacterActivitiesComponent:
+      type: object
+      properties:
+        dateActivityStarted:
+          type: string
+          description: The last date that the user started playing an activity.
+          format: date-time
+        availableActivities:
+          type: array
+          description: The list of activities that the user can play.
+          items:
+            $ref: '../../destiny.yml#/components/schemas/DestinyActivity'
+        currentActivityHash:
+          type: integer
+          description: 'If the user is in an activity, this will be the hash of the Activity being played. Note that you must combine this info with currentActivityModeHash to get a real picture of what the user is doing right now. For instance, PVP "Activities" are just maps: it''s the ActivityMode that determines what type of PVP game they''re playing.'
+          format: uint32
+          x-mapped-definition:
+            $ref: '../definitions.yml#/components/schemas/DestinyActivityDefinition'
+        currentActivityModeHash:
+          type: integer
+          description: If the user is in an activity, this will be the hash of the activity mode being played. Combine with currentActivityHash to give a person a full picture of what they're doing right now.
+          format: uint32
+          x-mapped-definition:
+            $ref: '../definitions.yml#/components/schemas/DestinyActivityModeDefinition'
+        currentActivityModeType:
+          type: integer
+          description: And the current activity's most specific mode type, if it can be found.
+          format: int32
+          enum:
+            - 0
+            - 2
+            - 3
+            - 4
+            - 5
+            - 6
+            - 7
+            - 9
+            - 10
+            - 11
+            - 12
+            - 13
+            - 15
+            - 16
+            - 17
+            - 18
+            - 19
+            - 20
+            - 21
+            - 22
+            - 24
+            - 25
+            - 26
+            - 27
+            - 28
+            - 29
+            - 30
+            - 31
+            - 32
+            - 37
+            - 38
+            - 39
+            - 40
+            - 41
+            - 42
+            - 43
+            - 44
+            - 45
+            - 46
+            - 47
+            - 48
+            - 49
+            - 50
+            - 51
+            - 52
+            - 53
+            - 54
+            - 55
+            - 56
+            - 57
+            - 58
+            - 59
+            - 60
+            - 61
+            - 62
+            - 63
+            - 64
+            - 65
+            - 66
+            - 67
+            - 68
+            - 69
+            - 70
+            - 71
+            - 72
+            - 73
+            - 74
+            - 75
+            - 76
+            - 77
+            - 78
+            - 79
+            - 80
+            - 81
+            - 82
+            - 83
+            - 84
+          x-enum-values:
+            - numericValue: "0"
+              identifier: None
+            - numericValue: "2"
+              identifier: Story
+            - numericValue: "3"
+              identifier: Strike
+            - numericValue: "4"
+              identifier: Raid
+            - numericValue: "5"
+              identifier: AllPvP
+            - numericValue: "6"
+              identifier: Patrol
+            - numericValue: "7"
+              identifier: AllPvE
+            - numericValue: "9"
+              identifier: Reserved9
+            - numericValue: "10"
+              identifier: Control
+            - numericValue: "11"
+              identifier: Reserved11
+            - numericValue: "12"
+              identifier: Clash
+              description: Clash -> Destiny's name for Team Deathmatch. 4v4 combat, the team with the highest kills at the end of time wins.
+            - numericValue: "13"
+              identifier: Reserved13
+            - numericValue: "15"
+              identifier: CrimsonDoubles
+            - numericValue: "16"
+              identifier: Nightfall
+            - numericValue: "17"
+              identifier: HeroicNightfall
+            - numericValue: "18"
+              identifier: AllStrikes
+            - numericValue: "19"
+              identifier: IronBanner
+            - numericValue: "20"
+              identifier: Reserved20
+            - numericValue: "21"
+              identifier: Reserved21
+            - numericValue: "22"
+              identifier: Reserved22
+            - numericValue: "24"
+              identifier: Reserved24
+            - numericValue: "25"
+              identifier: AllMayhem
+            - numericValue: "26"
+              identifier: Reserved26
+            - numericValue: "27"
+              identifier: Reserved27
+            - numericValue: "28"
+              identifier: Reserved28
+            - numericValue: "29"
+              identifier: Reserved29
+            - numericValue: "30"
+              identifier: Reserved30
+            - numericValue: "31"
+              identifier: Supremacy
+            - numericValue: "32"
+              identifier: PrivateMatchesAll
+            - numericValue: "37"
+              identifier: Survival
+            - numericValue: "38"
+              identifier: Countdown
+            - numericValue: "39"
+              identifier: TrialsOfTheNine
+            - numericValue: "40"
+              identifier: Social
+            - numericValue: "41"
+              identifier: TrialsCountdown
+            - numericValue: "42"
+              identifier: TrialsSurvival
+            - numericValue: "43"
+              identifier: IronBannerControl
+            - numericValue: "44"
+              identifier: IronBannerClash
+            - numericValue: "45"
+              identifier: IronBannerSupremacy
+            - numericValue: "46"
+              identifier: ScoredNightfall
+            - numericValue: "47"
+              identifier: ScoredHeroicNightfall
+            - numericValue: "48"
+              identifier: Rumble
+            - numericValue: "49"
+              identifier: AllDoubles
+            - numericValue: "50"
+              identifier: Doubles
+            - numericValue: "51"
+              identifier: PrivateMatchesClash
+            - numericValue: "52"
+              identifier: PrivateMatchesControl
+            - numericValue: "53"
+              identifier: PrivateMatchesSupremacy
+            - numericValue: "54"
+              identifier: PrivateMatchesCountdown
+            - numericValue: "55"
+              identifier: PrivateMatchesSurvival
+            - numericValue: "56"
+              identifier: PrivateMatchesMayhem
+            - numericValue: "57"
+              identifier: PrivateMatchesRumble
+            - numericValue: "58"
+              identifier: HeroicAdventure
+            - numericValue: "59"
+              identifier: Showdown
+            - numericValue: "60"
+              identifier: Lockdown
+            - numericValue: "61"
+              identifier: Scorched
+            - numericValue: "62"
+              identifier: ScorchedTeam
+            - numericValue: "63"
+              identifier: Gambit
+            - numericValue: "64"
+              identifier: AllPvECompetitive
+            - numericValue: "65"
+              identifier: Breakthrough
+            - numericValue: "66"
+              identifier: BlackArmoryRun
+            - numericValue: "67"
+              identifier: Salvage
+            - numericValue: "68"
+              identifier: IronBannerSalvage
+            - numericValue: "69"
+              identifier: PvPCompetitive
+            - numericValue: "70"
+              identifier: PvPQuickplay
+            - numericValue: "71"
+              identifier: ClashQuickplay
+            - numericValue: "72"
+              identifier: ClashCompetitive
+            - numericValue: "73"
+              identifier: ControlQuickplay
+            - numericValue: "74"
+              identifier: ControlCompetitive
+            - numericValue: "75"
+              identifier: GambitPrime
+            - numericValue: "76"
+              identifier: Reckoning
+            - numericValue: "77"
+              identifier: Menagerie
+            - numericValue: "78"
+              identifier: VexOffensive
+            - numericValue: "79"
+              identifier: NightmareHunt
+            - numericValue: "80"
+              identifier: Elimination
+            - numericValue: "81"
+              identifier: Momentum
+            - numericValue: "82"
+              identifier: Dungeon
+            - numericValue: "83"
+              identifier: Sundial
+            - numericValue: "84"
+              identifier: TrialsOfOsiris
+        currentActivityModeHashes:
+          type: array
+          description: If the user is in an activity, this will be the hashes of the DestinyActivityModeDefinition being played. Combine with currentActivityHash to give a person a full picture of what they're doing right now.
+          items:
+            type: integer
+            format: uint32
+          x-mapped-definition:
+            $ref: '../definitions.yml#/components/schemas/DestinyActivityModeDefinition'
+        currentActivityModeTypes:
+          type: array
+          description: All Activity Modes that apply to the current activity being played, in enum form.
+          items:
+            type: integer
+            description: For historical reasons, this list will have both D1 and D2-relevant Activity Modes in it. Please don't take this to mean that some D1-only feature is coming back!
+            format: int32
+            x-enum-reference:
+              $ref: '../historicalstats/definitions.yml#/components/schemas/DestinyActivityModeType'
+        currentPlaylistActivityHash:
+          type: integer
+          description: If the user is in a playlist, this is the hash identifier for the playlist that they chose.
+          format: uint32
+          x-mapped-definition:
+            $ref: '../definitions.yml#/components/schemas/DestinyActivityDefinition'
+        lastCompletedStoryHash:
+          type: integer
+          description: This will have the activity hash of the last completed story/campaign mission, in case you care about that.
+          format: uint32
+          x-mapped-definition:
+            $ref: '../definitions.yml#/components/schemas/DestinyActivityDefinition'
+      description: This component holds activity data for a character. It will tell you about the character's current activity status, as well as activities that are available to the user.
+      x-destiny-component-type-dependency: CharacterActivities
+

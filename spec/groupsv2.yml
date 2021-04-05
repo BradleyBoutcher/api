@@ -1,0 +1,1122 @@
+components:
+  schemas:
+    GroupUserInfoCard:
+      type: object
+      properties:
+        LastSeenDisplayName:
+          type: string
+          description: This will be the display name the clan server last saw the user as. If the account is an active cross save override, this will be the display name to use. Otherwise, this will match the displayName property.
+        LastSeenDisplayNameType:
+          type: integer
+          description: The platform of the LastSeenDisplayName
+          format: int32
+          x-enum-reference:
+            $ref: 'shared.yml#/components/schemas/BungieMembershipType'
+        supplementalDisplayName:
+          type: string
+          description: 'A platform specific additional display name - ex: psn Real Name, bnet Unique Name, etc.'
+        iconPath:
+          type: string
+          description: URL the Icon if available.
+        crossSaveOverride:
+          type: integer
+          description: If there is a cross save override in effect, this value will tell you the type that is overridding this one.
+          format: int32
+          x-enum-reference:
+            $ref: 'shared.yml#/components/schemas/BungieMembershipType'
+        applicableMembershipTypes:
+          type: array
+          description: "
+            The list of Membership Types indicating the platforms on which this Membership can be used.
+            Not in Cross Save = its original membership type. Cross Save Primary = Any membership types it is overridding, and its original membership type Cross Save Overridden = Empty list"
+          items:
+            type: integer
+            description: The types of membership the Accounts system supports. This is the external facing enum used in place of the internal-only Bungie.SharedDefinitions.MembershipType.
+            format: int32
+            x-enum-reference:
+              $ref: 'shared.yml#/components/schemas/BungieMembershipType'
+        isPublic:
+          type: boolean
+          description: If True, this is a public user membership.
+        membershipType:
+          type: integer
+          description: Type of the membership. Not necessarily the native type.
+          format: int32
+          x-enum-reference:
+            $ref: 'shared.yml#/components/schemas/BungieMembershipType'
+        membershipId:
+          type: integer
+          description: Membership ID as they user is known in the Accounts service
+          format: int64
+        displayName:
+          type: string
+          description: Display Name the player has chosen for themselves. The display name is optional when the data type is used as input to a platform API.
+
+    GroupResponse:
+      type: object
+      properties:
+        detail:
+          $ref: '#/components/schemas/GroupV2'
+        founder:
+          $ref: '#/components/schemas/GroupMember'
+        alliedIds:
+          type: array
+          items:
+            type: integer
+            format: int64
+        parentGroup:
+          $ref: '#/components/schemas/GroupV2'
+        allianceStatus:
+          type: integer
+          format: int32
+          x-enum-reference:
+            $ref: '#/components/schemas/GroupAllianceStatus'
+        groupJoinInviteCount:
+          type: integer
+          format: int32
+        currentUserMembershipsInactiveForDestiny:
+          type: boolean
+          description: A convenience property that indicates if every membership you (the current user) have that is a part of this group are part of an account that is considered inactive - for example, overridden accounts in Cross Save.
+        currentUserMemberMap:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/GroupMember'
+          description: This property will be populated if the authenticated user is a member of the group. Note that because of account linking, a user can sometimes be part of a clan more than once. As such, this returns the highest member type available.
+        currentUserPotentialMemberMap:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/GroupPotentialMember'
+          description: This property will be populated if the authenticated user is an applicant or has an outstanding invitation to join. Note that because of account linking, a user can sometimes be part of a clan more than once.
+
+    GroupV2:
+      type: object
+      properties:
+        groupId:
+          type: integer
+          format: int64
+        name:
+          type: string
+        groupType:
+          type: integer
+          format: int32
+          x-enum-reference:
+            $ref: '#/components/schemas/GroupType'
+        membershipIdCreated:
+          type: integer
+          format: int64
+        creationDate:
+          type: string
+          format: date-time
+        modificationDate:
+          type: string
+          format: date-time
+        about:
+          type: string
+        tags:
+          type: array
+          items:
+            type: string
+        memberCount:
+          type: integer
+          format: int32
+        isPublic:
+          type: boolean
+        isPublicTopicAdminOnly:
+          type: boolean
+        motto:
+          type: string
+        allowChat:
+          type: boolean
+        isDefaultPostPublic:
+          type: boolean
+        chatSecurity:
+          type: integer
+          format: int32
+          x-enum-reference:
+            $ref: '#/components/schemas/ChatSecuritySetting'
+        locale:
+          type: string
+        avatarImageIndex:
+          type: integer
+          format: int32
+        homepage:
+          type: integer
+          format: int32
+          x-enum-reference:
+            $ref: '#/components/schemas/GroupHomepage'
+        membershipOption:
+          type: integer
+          format: int32
+          x-enum-reference:
+            $ref: '#/components/schemas/MembershipOption'
+        defaultPublicity:
+          type: integer
+          format: int32
+          x-enum-reference:
+            $ref: '#/components/schemas/GroupPostPublicity'
+        theme:
+          type: string
+        bannerPath:
+          type: string
+        avatarPath:
+          type: string
+        conversationId:
+          type: integer
+          format: int64
+        enableInvitationMessagingForAdmins:
+          type: boolean
+        banExpireDate:
+          type: string
+          format: date-time
+        features:
+          $ref: '#/components/schemas/GroupFeatures'
+        clanInfo:
+          $ref: '#/components/schemas/GroupV2ClanInfoAndInvestment'
+
+    GroupType:
+      type: integer
+      format: int32
+      enum:
+        - 0
+        - 1
+      x-enum-values:
+        - numericValue: "0"
+          identifier: General
+        - numericValue: "1"
+          identifier: Clan
+
+    ChatSecuritySetting:
+      type: integer
+      format: int32
+      enum:
+        - 0
+        - 1
+      x-enum-values:
+        - numericValue: "0"
+          identifier: Group
+        - numericValue: "1"
+          identifier: Admins
+
+    GroupHomepage:
+      type: integer
+      format: int32
+      enum:
+        - 0
+        - 1
+        - 2
+      x-enum-values:
+        - numericValue: "0"
+          identifier: Wall
+        - numericValue: "1"
+          identifier: Forum
+        - numericValue: "2"
+          identifier: AllianceForum
+
+    MembershipOption:
+      type: integer
+      format: int32
+      enum:
+        - 0
+        - 1
+        - 2
+      x-enum-values:
+        - numericValue: "0"
+          identifier: Reviewed
+        - numericValue: "1"
+          identifier: Open
+        - numericValue: "2"
+          identifier: Closed
+
+    GroupPostPublicity:
+      type: integer
+      format: int32
+      enum:
+        - 0
+        - 1
+        - 2
+      x-enum-values:
+        - numericValue: "0"
+          identifier: Public
+        - numericValue: "1"
+          identifier: Alliance
+        - numericValue: "2"
+          identifier: Private
+
+    GroupFeatures:
+      type: object
+      properties:
+        maximumMembers:
+          type: integer
+          format: int32
+        maximumMembershipsOfGroupType:
+          type: integer
+          description: Maximum number of groups of this type a typical membership may join. For example, a user may join about 50 General groups with their Bungie.net account. They may join one clan per Destiny membership.
+          format: int32
+        capabilities:
+          type: integer
+          format: int32
+          x-enum-reference:
+            $ref: '#/components/schemas/Capabilities'
+        membershipTypes:
+          type: array
+          items:
+            type: integer
+            description: The types of membership the Accounts system supports. This is the external facing enum used in place of the internal-only Bungie.SharedDefinitions.MembershipType.
+            format: int32
+            x-enum-reference:
+              $ref: 'shared.yml#/components/schemas/BungieMembershipType'
+        invitePermissionOverride:
+          type: boolean
+          description: "Minimum Member Level allowed to invite new members to group
+            Always Allowed: Founder, Acting Founder
+            True means admins have this power, false means they don't
+            Default is false for clans, true for groups."
+        updateCulturePermissionOverride:
+          type: boolean
+          description: "Minimum Member Level allowed to update group culture
+            Always Allowed: Founder, Acting Founder
+            True means admins have this power, false means they don't
+            Default is false for clans, true for groups."
+        hostGuidedGamePermissionOverride:
+          type: integer
+          description: "Minimum Member Level allowed to host guided games
+            Always Allowed: Founder, Acting Founder, Admin
+            Allowed Overrides: None, Member, Beginner
+            Default is Member for clans, None for groups, although this means nothing for groups."
+          format: int32
+          x-enum-reference:
+            $ref: '#/components/schemas/HostGuidedGamesPermissionLevel'
+        updateBannerPermissionOverride:
+          type: boolean
+          description: "Minimum Member Level allowed to update banner
+            Always Allowed: Founder, Acting Founder
+            True means admins have this power, false means they don't
+            Default is false for clans, true for groups."
+        joinLevel:
+          type: integer
+          description: "Level to join a member at when accepting an invite, application, or joining an open clan
+            Default is Beginner."
+          format: int32
+          x-enum-reference:
+            $ref: '#/components/schemas/RuntimeGroupMemberType'
+
+    Capabilities:
+      type: integer
+      format: int32
+      enum:
+        - 0
+        - 1
+        - 2
+        - 4
+        - 8
+        - 16
+        - 32
+        - 64
+      x-enum-values:
+        - numericValue: "0"
+          identifier: None
+        - numericValue: "1"
+          identifier: Leaderboards
+        - numericValue: "2"
+          identifier: Callsign
+        - numericValue: "4"
+          identifier: OptionalConversations
+        - numericValue: "8"
+          identifier: ClanBanner
+        - numericValue: "16"
+          identifier: D2InvestmentData
+        - numericValue: "32"
+          identifier: Tags
+        - numericValue: "64"
+          identifier: Alliances
+
+    HostGuidedGamesPermissionLevel:
+      type: integer
+      description: Used for setting the guided game permission level override (admins and founders can always host guided games).
+      format: int32
+      enum:
+        - 0
+        - 1
+        - 2
+      x-enum-values:
+        - numericValue: "0"
+          identifier: None
+        - numericValue: "1"
+          identifier: Beginner
+        - numericValue: "2"
+          identifier: Member
+
+    RuntimeGroupMemberType:
+      type: integer
+      description: The member levels used by all V2 Groups API. Individual group types use their own mappings in their native storage (general uses BnetDbGroupMemberType and D2 clans use ClanMemberLevel), but they are all translated to this in the runtime api. These runtime values should NEVER be stored anywhere, so the values can be changed as necessary.
+      format: int32
+      enum:
+        - 0
+        - 1
+        - 2
+        - 3
+        - 4
+        - 5
+      x-enum-values:
+        - numericValue: "0"
+          identifier: None
+        - numericValue: "1"
+          identifier: Beginner
+        - numericValue: "2"
+          identifier: Member
+        - numericValue: "3"
+          identifier: Admin
+        - numericValue: "4"
+          identifier: ActingFounder
+        - numericValue: "5"
+          identifier: Founder
+
+    GroupV2ClanInfo:
+      type: object
+      properties:
+        clanCallsign:
+          type: string
+        clanBannerData:
+          $ref: '#/components/schemas/ClanBanner'
+      description: This contract contains clan-specific group information. It does not include any investment data.
+
+    ClanBanner:
+      type: object
+      properties:
+        decalId:
+          type: integer
+          format: uint32
+        decalColorId:
+          type: integer
+          format: uint32
+        decalBackgroundColorId:
+          type: integer
+          format: uint32
+        gonfalonId:
+          type: integer
+          format: uint32
+        gonfalonColorId:
+          type: integer
+          format: uint32
+        gonfalonDetailId:
+          type: integer
+          format: uint32
+        gonfalonDetailColorId:
+          type: integer
+          format: uint32
+
+    GroupV2ClanInfoAndInvestment:
+      type: object
+      properties:
+        d2ClanProgressions:
+          type: object
+          additionalProperties:
+            $ref: 'destiny.yml#/components/schemas/DestinyProgression'
+        clanCallsign:
+          type: string
+        clanBannerData:
+          $ref: '#/components/schemas/ClanBanner'
+      description: The same as GroupV2ClanInfo, but includes any investment data.
+
+    GroupUserBase:
+      type: object
+      properties:
+        groupId:
+          type: integer
+          format: int64
+        destinyUserInfo:
+          $ref: '#/components/schemas/GroupUserInfoCard'
+        bungieNetUserInfo:
+          $ref: 'user.yml#/components/schemas/UserInfoCard'
+        joinDate:
+          type: string
+          format: date-time
+
+    GroupMember:
+      type: object
+      properties:
+        memberType:
+          type: integer
+          format: int32
+          x-enum-reference:
+            $ref: '#/components/schemas/RuntimeGroupMemberType'
+        isOnline:
+          type: boolean
+        lastOnlineStatusChange:
+          type: integer
+          format: int64
+        groupId:
+          type: integer
+          format: int64
+        destinyUserInfo:
+          $ref: '#/components/schemas/GroupUserInfoCard'
+        bungieNetUserInfo:
+          $ref: 'user.yml#/components/schemas/UserInfoCard'
+        joinDate:
+          type: string
+          format: date-time
+
+    GroupAllianceStatus:
+      type: integer
+      format: int32
+      enum:
+        - 0
+        - 1
+        - 2
+      x-enum-values:
+        - numericValue: "0"
+          identifier: Unallied
+        - numericValue: "1"
+          identifier: Parent
+        - numericValue: "2"
+          identifier: Child
+
+    GroupPotentialMember:
+      type: object
+      properties:
+        potentialStatus:
+          type: integer
+          format: int32
+          x-enum-reference:
+            $ref: '#/components/schemas/GroupPotentialMemberStatus'
+        groupId:
+          type: integer
+          format: int64
+        destinyUserInfo:
+          $ref: '#/components/schemas/GroupUserInfoCard'
+        bungieNetUserInfo:
+          $ref: 'user.yml#/components/schemas/UserInfoCard'
+        joinDate:
+          type: string
+          format: date-time
+
+    GroupPotentialMemberStatus:
+      type: integer
+      format: int32
+      enum:
+        - 0
+        - 1
+        - 2
+      x-enum-values:
+        - numericValue: "0"
+          identifier: None
+        - numericValue: "1"
+          identifier: Applicant
+        - numericValue: "2"
+          identifier: Invitee
+
+    GroupDateRange:
+      type: integer
+      format: int32
+      enum:
+        - 0
+        - 1
+        - 2
+        - 3
+        - 4
+      x-enum-values:
+        - numericValue: "0"
+          identifier: All
+        - numericValue: "1"
+          identifier: PastDay
+        - numericValue: "2"
+          identifier: PastWeek
+        - numericValue: "3"
+          identifier: PastMonth
+        - numericValue: "4"
+          identifier: PastYear
+
+    GroupV2Card:
+      type: object
+      properties:
+        groupId:
+          type: integer
+          format: int64
+        name:
+          type: string
+        groupType:
+          type: integer
+          format: int32
+          x-enum-reference:
+            $ref: '#/components/schemas/GroupType'
+        creationDate:
+          type: string
+          format: date-time
+        about:
+          type: string
+        motto:
+          type: string
+        memberCount:
+          type: integer
+          format: int32
+        locale:
+          type: string
+        membershipOption:
+          type: integer
+          format: int32
+          x-enum-reference:
+            $ref: '#/components/schemas/MembershipOption'
+        capabilities:
+          type: integer
+          format: int32
+          x-enum-reference:
+            $ref: '#/components/schemas/Capabilities'
+        clanInfo:
+          $ref: '#/components/schemas/GroupV2ClanInfo'
+        avatarPath:
+          type: string
+        theme:
+          type: string
+      description: A small infocard of group information, usually used for when a list of groups are returned
+
+    GroupSearchResponse:
+      type: object
+      properties:
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/GroupV2Card'
+        totalResults:
+          type: integer
+          format: int32
+        hasMore:
+          type: boolean
+        query:
+          $ref: 'queries.yml#/components/schemas/PagedQuery'
+        replacementContinuationToken:
+          type: string
+        useTotalResults:
+          type: boolean
+          description: "
+            If useTotalResults is true, then totalResults represents an accurate count.
+            If False, it does not, and may be estimated/only the size of the current page.
+            Either way, you should probably always only trust hasMore.
+            This is a long-held historical throwback to when we used to do paging with known total results. Those queries toasted our database, and we were left to hastily alter our endpoints and create backward- compatible shims, of which useTotalResults is one."
+
+    GroupQuery:
+      type: object
+      properties:
+        name:
+          type: string
+        groupType:
+          type: integer
+          format: int32
+          x-enum-reference:
+            $ref: '#/components/schemas/GroupType'
+        creationDate:
+          type: integer
+          format: int32
+          x-enum-reference:
+            $ref: '#/components/schemas/GroupDateRange'
+        sortBy:
+          type: integer
+          format: int32
+          x-enum-reference:
+            $ref: '#/components/schemas/GroupSortBy'
+        groupMemberCountFilter:
+          type: integer
+          format: int32
+          enum:
+            - 0
+            - 1
+            - 2
+            - 3
+          x-enum-values:
+            - numericValue: "0"
+              identifier: All
+            - numericValue: "1"
+              identifier: OneToTen
+            - numericValue: "2"
+              identifier: ElevenToOneHundred
+            - numericValue: "3"
+              identifier: GreaterThanOneHundred
+        localeFilter:
+          type: string
+        tagText:
+          type: string
+        itemsPerPage:
+          type: integer
+          format: int32
+        currentPage:
+          type: integer
+          format: int32
+        requestContinuationToken:
+          type: string
+      description: "NOTE: GroupQuery, as of Destiny 2, has essentially two totally different and incompatible \"modes\".
+        If you are querying for a group, you can pass any of the properties below.
+        If you are querying for a Clan, you MUST NOT pass any of the following properties (they must be null or undefined in your request, not just empty string/default values):
+        - groupMemberCountFilter - localeFilter - tagText
+        If you pass these, you will get a useless InvalidParameters error."
+
+    GroupSortBy:
+      type: integer
+      format: int32
+      enum:
+        - 0
+        - 1
+        - 2
+        - 3
+      x-enum-values:
+        - numericValue: "0"
+          identifier: Name
+        - numericValue: "1"
+          identifier: Date
+        - numericValue: "2"
+          identifier: Popularity
+        - numericValue: "3"
+          identifier: Id
+
+    GroupMemberCountFilter:
+      type: integer
+      format: int32
+      enum:
+        - 0
+        - 1
+        - 2
+        - 3
+      x-enum-values:
+        - numericValue: "0"
+          identifier: All
+        - numericValue: "1"
+          identifier: OneToTen
+        - numericValue: "2"
+          identifier: ElevenToOneHundred
+        - numericValue: "3"
+          identifier: GreaterThanOneHundred
+
+    GroupNameSearchRequest:
+      type: object
+      properties:
+        groupName:
+          type: string
+        groupType:
+          type: integer
+          format: int32
+          x-enum-reference:
+            $ref: '#/components/schemas/GroupType'
+
+    GroupOptionalConversation:
+      type: object
+      properties:
+        groupId:
+          type: integer
+          format: int64
+        conversationId:
+          type: integer
+          format: int64
+        chatEnabled:
+          type: boolean
+        chatName:
+          type: string
+        chatSecurity:
+          type: integer
+          format: int32
+          x-enum-reference:
+            $ref: '#/components/schemas/ChatSecuritySetting'
+
+    GroupEditAction:
+      type: object
+      properties:
+        name:
+          type: string
+        about:
+          type: string
+        motto:
+          type: string
+        theme:
+          type: string
+        avatarImageIndex:
+          type: integer
+          format: int32
+        tags:
+          type: string
+        isPublic:
+          type: boolean
+        membershipOption:
+          type: integer
+          format: int32
+          enum:
+            - 0
+            - 1
+            - 2
+          x-enum-values:
+            - numericValue: "0"
+              identifier: Reviewed
+            - numericValue: "1"
+              identifier: Open
+            - numericValue: "2"
+              identifier: Closed
+        isPublicTopicAdminOnly:
+          type: boolean
+        allowChat:
+          type: boolean
+        chatSecurity:
+          type: integer
+          format: int32
+          enum:
+            - 0
+            - 1
+          x-enum-values:
+            - numericValue: "0"
+              identifier: Group
+            - numericValue: "1"
+              identifier: Admins
+        callsign:
+          type: string
+        locale:
+          type: string
+        homepage:
+          type: integer
+          format: int32
+          enum:
+            - 0
+            - 1
+            - 2
+          x-enum-values:
+            - numericValue: "0"
+              identifier: Wall
+            - numericValue: "1"
+              identifier: Forum
+            - numericValue: "2"
+              identifier: AllianceForum
+        enableInvitationMessagingForAdmins:
+          type: boolean
+        defaultPublicity:
+          type: integer
+          format: int32
+          enum:
+            - 0
+            - 1
+            - 2
+          x-enum-values:
+            - numericValue: "0"
+              identifier: Public
+            - numericValue: "1"
+              identifier: Alliance
+            - numericValue: "2"
+              identifier: Private
+
+    GroupOptionsEditAction:
+      type: object
+      properties:
+        InvitePermissionOverride:
+          type: boolean
+          description: "Minimum Member Level allowed to invite new members to group
+            Always Allowed: Founder, Acting Founder
+            True means admins have this power, false means they don't
+            Default is false for clans, true for groups."
+        UpdateCulturePermissionOverride:
+          type: boolean
+          description: "Minimum Member Level allowed to update group culture
+            Always Allowed: Founder, Acting Founder
+            True means admins have this power, false means they don't
+            Default is false for clans, true for groups."
+        HostGuidedGamePermissionOverride:
+          type: integer
+          description: "Minimum Member Level allowed to host guided games
+            Always Allowed: Founder, Acting Founder, Admin
+            Allowed Overrides: None, Member, Beginner
+            Default is Member for clans, None for groups, although this means nothing for groups."
+          format: int32
+          enum:
+            - 0
+            - 1
+            - 2
+          x-enum-values:
+            - numericValue: "0"
+              identifier: None
+            - numericValue: "1"
+              identifier: Beginner
+            - numericValue: "2"
+              identifier: Member
+        UpdateBannerPermissionOverride:
+          type: boolean
+          description: "Minimum Member Level allowed to update banner
+            Always Allowed: Founder, Acting Founder
+            True means admins have this power, false means they don't
+            Default is false for clans, true for groups."
+        JoinLevel:
+          type: integer
+          description: "Level to join a member at when accepting an invite, application, or joining an open clan
+            Default is Beginner."
+          format: int32
+          enum:
+            - 0
+            - 1
+            - 2
+            - 3
+            - 4
+            - 5
+          x-enum-values:
+            - numericValue: "0"
+              identifier: None
+            - numericValue: "1"
+              identifier: Beginner
+            - numericValue: "2"
+              identifier: Member
+            - numericValue: "3"
+              identifier: Admin
+            - numericValue: "4"
+              identifier: ActingFounder
+            - numericValue: "5"
+              identifier: Founder
+
+    GroupOptionalConversationAddRequest:
+      type: object
+      properties:
+        chatName:
+          type: string
+        chatSecurity:
+          type: integer
+          format: int32
+          x-enum-reference:
+            $ref: '#/components/schemas/ChatSecuritySetting'
+
+    GroupOptionalConversationEditRequest:
+      type: object
+      properties:
+        chatEnabled:
+          type: boolean
+        chatName:
+          type: string
+        chatSecurity:
+          type: integer
+          format: int32
+          enum:
+            - 0
+            - 1
+          x-enum-values:
+            - numericValue: "0"
+              identifier: Group
+            - numericValue: "1"
+              identifier: Admins
+
+    GroupMemberLeaveResult:
+      type: object
+      properties:
+        group:
+          $ref: '#/components/schemas/GroupV2'
+        groupDeleted:
+          type: boolean
+
+    GroupBanRequest:
+      type: object
+      properties:
+        comment:
+          type: string
+        length:
+          type: integer
+          format: int32
+          x-enum-reference:
+            $ref: 'ignores.yml#/components/schemas/IgnoreLength'
+
+    GroupBan:
+      type: object
+      properties:
+        groupId:
+          type: integer
+          format: int64
+        lastModifiedBy:
+          $ref: 'user.yml#/components/schemas/UserInfoCard'
+        createdBy:
+          $ref: 'user.yml#/components/schemas/UserInfoCard'
+        dateBanned:
+          type: string
+          format: date-time
+        dateExpires:
+          type: string
+          format: date-time
+        comment:
+          type: string
+        bungieNetUserInfo:
+          $ref: 'user.yml#/components/schemas/UserInfoCard'
+        destinyUserInfo:
+          $ref: '#/components/schemas/GroupUserInfoCard'
+
+    GroupMemberApplication:
+      type: object
+      properties:
+        groupId:
+          type: integer
+          format: int64
+        creationDate:
+          type: string
+          format: date-time
+        resolveState:
+          type: integer
+          format: int32
+          x-enum-reference:
+            $ref: '#/components/schemas/GroupApplicationResolveState'
+        resolveDate:
+          type: string
+          format: date-time
+        resolvedByMembershipId:
+          type: integer
+          format: int64
+        requestMessage:
+          type: string
+        resolveMessage:
+          type: string
+        destinyUserInfo:
+          $ref: '#/components/schemas/GroupUserInfoCard'
+        bungieNetUserInfo:
+          $ref: 'user.yml#/components/schemas/UserInfoCard'
+
+    GroupApplicationResolveState:
+      type: integer
+      format: int32
+      enum:
+        - 0
+        - 1
+        - 2
+        - 3
+      x-enum-values:
+        - numericValue: "0"
+          identifier: Unresolved
+        - numericValue: "1"
+          identifier: Accepted
+        - numericValue: "2"
+          identifier: Denied
+        - numericValue: "3"
+          identifier: Rescinded
+
+    GroupApplicationRequest:
+      type: object
+      properties:
+        message:
+          type: string
+
+    GroupApplicationListRequest:
+      type: object
+      properties:
+        memberships:
+          type: array
+          items:
+            $ref: 'user.yml#/components/schemas/UserMembership'
+        message:
+          type: string
+
+    GroupsForMemberFilter:
+      type: integer
+      format: int32
+      enum:
+        - 0
+        - 1
+        - 2
+      x-enum-values:
+        - numericValue: "0"
+          identifier: All
+        - numericValue: "1"
+          identifier: Founded
+        - numericValue: "2"
+          identifier: NonFounded
+
+    GroupMembershipBase:
+      type: object
+      properties:
+        group:
+          $ref: '#/components/schemas/GroupV2'
+
+    GroupMembership:
+      type: object
+      properties:
+        member:
+          $ref: '#/components/schemas/GroupMember'
+        group:
+          $ref: '#/components/schemas/GroupV2'
+
+    GroupMembershipSearchResponse:
+      type: object
+      properties:
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/GroupMembership'
+        totalResults:
+          type: integer
+          format: int32
+        hasMore:
+          type: boolean
+        query:
+          $ref: 'queries.yml#/components/schemas/PagedQuery'
+        replacementContinuationToken:
+          type: string
+        useTotalResults:
+          type: boolean
+          description: "
+            If useTotalResults is true, then totalResults represents an accurate count.
+            If False, it does not, and may be estimated/only the size of the current page.
+            Either way, you should probably always only trust hasMore.
+            This is a long-held historical throwback to when we used to do paging with known total results. Those queries toasted our database, and we were left to hastily alter our endpoints and create backward- compatible shims, of which useTotalResults is one."
+
+    GetGroupsForMemberResponse:
+      type: object
+      properties:
+        areAllMembershipsInactive:
+          type: object
+          additionalProperties:
+            type: boolean
+          description: "A convenience property that indicates if every membership this user has that is a part of this group are part of an account that is considered inactive - for example, overridden accounts in Cross Save.
+            The key is the Group ID for the group being checked, and the value is true if the users' memberships for that group are all inactive."
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/GroupMembership'
+        totalResults:
+          type: integer
+          format: int32
+        hasMore:
+          type: boolean
+        query:
+          $ref: 'queries.yml#/components/schemas/PagedQuery'
+        replacementContinuationToken:
+          type: string
+        useTotalResults:
+          type: boolean
+          description: "
+            If useTotalResults is true, then totalResults represents an accurate count.
+            If False, it does not, and may be estimated/only the size of the current page.
+            Either way, you should probably always only trust hasMore.
+            This is a long-held historical throwback to when we used to do paging with known total results. Those queries toasted our database, and we were left to hastily alter our endpoints and create backward- compatible shims, of which useTotalResults is one."
+
+    GroupPotentialMembership:
+      type: object
+      properties:
+        member:
+          $ref: '#/components/schemas/GroupPotentialMember'
+        group:
+          $ref: '#/components/schemas/GroupV2'
+
+    GroupPotentialMembershipSearchResponse:
+      type: object
+      properties:
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/GroupPotentialMembership'
+        totalResults:
+          type: integer
+          format: int32
+        hasMore:
+          type: boolean
+        query:
+          $ref: 'queries.yml#/components/schemas/PagedQuery'
+        replacementContinuationToken:
+          type: string
+        useTotalResults:
+          type: boolean
+          description: "
+            If useTotalResults is true, then totalResults represents an accurate count.
+            If False, it does not, and may be estimated/only the size of the current page.
+            Either way, you should probably always only trust hasMore.
+            This is a long-held historical throwback to when we used to do paging with known total results. Those queries toasted our database, and we were left to hastily alter our endpoints and create backward- compatible shims, of which useTotalResults is one."
+
+    GroupApplicationResponse:
+      type: object
+      properties:
+        resolution:
+          type: integer
+          format: int32
+          x-enum-reference:
+            $ref: '#/components/schemas/GroupApplicationResolveState'
+

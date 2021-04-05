@@ -1,0 +1,2222 @@
+components:
+  schemas:
+    DestinyProgression:
+      type: object
+      properties:
+        progressionHash:
+          type: integer
+          description: The hash identifier of the Progression in question. Use it to look up the DestinyProgressionDefinition in static data.
+          format: uint32
+          x-mapped-definition:
+            $ref: 'destiny/definitions.yml#/components/schemas/DestinyProgressionDefinition'
+        dailyProgress:
+          type: integer
+          description: The amount of progress earned today for this progression.
+          format: int32
+        dailyLimit:
+          type: integer
+          description: If this progression has a daily limit, this is that limit.
+          format: int32
+        weeklyProgress:
+          type: integer
+          description: The amount of progress earned toward this progression in the current week.
+          format: int32
+        weeklyLimit:
+          type: integer
+          description: If this progression has a weekly limit, this is that limit.
+          format: int32
+        currentProgress:
+          type: integer
+          description: This is the total amount of progress obtained overall for this progression (for instance, the total amount of Character Level experience earned)
+          format: int32
+        level:
+          type: integer
+          description: This is the level of the progression (for instance, the Character Level).
+          format: int32
+        levelCap:
+          type: integer
+          description: This is the maximum possible level you can achieve for this progression (for example, the maximum character level obtainable)
+          format: int32
+        stepIndex:
+          type: integer
+          description: Progressions define their levels in "steps". Since the last step may be repeatable, the user may be at a higher level than the actual Step achieved in the progression. Not necessarily useful, but potentially interesting for those cruising the API. Relate this to the "steps" property of the DestinyProgression to see which step the user is on, if you care about that. (Note that this is Content Version dependent since it refers to indexes.)
+          format: int32
+        progressToNextLevel:
+          type: integer
+          description: The amount of progression (i.e. "Experience") needed to reach the next level of this Progression. Jeez, progression is such an overloaded word.
+          format: int32
+        nextLevelAt:
+          type: integer
+          description: The total amount of progression (i.e. "Experience") needed in order to reach the next level.
+          format: int32
+        currentResetCount:
+          type: integer
+          description: The number of resets of this progression you've executed this season, if applicable to this progression.
+          format: int32
+        seasonResets:
+          type: array
+          description: Information about historical resets of this progression, if there is any data for it.
+          items:
+            $ref: '#/components/schemas/DestinyProgressionResetEntry'
+        rewardItemStates:
+          type: array
+          description: Information about historical rewards for this progression, if there is any data for it.
+          items:
+            type: integer
+            description: Represents the different states a progression reward item can be in.
+            format: int32
+            x-enum-reference:
+              $ref: '#/components/schemas/DestinyProgressionRewardItemState'
+      description: Information about a current character's status with a Progression. A progression is a value that can increase with activity and has levels. Think Character Level and Reputation Levels. Combine this "live" data with the related DestinyProgressionDefinition for a full picture of the Progression.
+
+    DestinyProgressionResetEntry:
+      type: object
+      properties:
+        season:
+          type: integer
+          format: int32
+        resets:
+          type: integer
+          format: int32
+      description: "Represents a season and the number of resets you had in that season.
+       We do not necessarily - even for progressions with resets - track it over all seasons. So be careful and check the season numbers being returned."
+
+    DestinyProgressionRewardItemState:
+      type: integer
+      description: Represents the different states a progression reward item can be in.
+      format: int32
+      enum:
+        - 0
+        - 1
+        - 2
+        - 4
+        - 8
+      x-enum-values:
+        - numericValue: "0"
+          identifier: None
+        - numericValue: "1"
+          identifier: Invisible
+          description: If this is set, the reward should be hidden.
+        - numericValue: "2"
+          identifier: Earned
+          description: If this is set, the reward has been earned.
+        - numericValue: "4"
+          identifier: Claimed
+          description: If this is set, the reward has been claimed.
+        - numericValue: "8"
+          identifier: ClaimAllowed
+          description: If this is set, the reward is allowed to be claimed by this Character. An item can be earned but still can't be claimed in certain circumstances, like if it's only allowed for certain subclasses. It also might not be able to be claimed if you already claimed it!
+
+    DestinyProgressionScope:
+      type: integer
+      description: 'There are many Progressions in Destiny (think Character Level, or Reputation). These are the various "Scopes" of Progressions, which affect many things: * Where/if they are stored * How they are calculated * Where they can be used in other game logic'
+      format: int32
+      enum:
+        - 0
+        - 1
+        - 2
+        - 3
+        - 4
+        - 5
+        - 6
+        - 7
+        - 8
+      x-enum-values:
+        - numericValue: "0"
+          identifier: Account
+        - numericValue: "1"
+          identifier: Character
+        - numericValue: "2"
+          identifier: Clan
+        - numericValue: "3"
+          identifier: Item
+        - numericValue: "4"
+          identifier: ImplicitFromEquipment
+        - numericValue: "5"
+          identifier: Mapped
+        - numericValue: "6"
+          identifier: MappedAggregate
+        - numericValue: "7"
+          identifier: MappedStat
+        - numericValue: "8"
+          identifier: MappedUnlockValue
+
+    DestinyProgressionStepDisplayEffect:
+      type: integer
+      description: If progression is earned, this determines whether the progression shows visual effects on the character or its item - or neither.
+      format: int32
+      enum:
+        - 0
+        - 1
+        - 2
+      x-enum-values:
+        - numericValue: "0"
+          identifier: None
+        - numericValue: "1"
+          identifier: Character
+        - numericValue: "2"
+          identifier: Item
+
+    DestinyItemQuantity:
+      type: object
+      properties:
+        itemHash:
+          type: integer
+          description: The hash identifier for the item in question. Use it to look up the item's DestinyInventoryItemDefinition.
+          format: uint32
+          x-mapped-definition:
+            $ref: 'destiny/definitions.yml#/components/schemas/DestinyInventoryItemDefinition'
+        itemInstanceId:
+          type: integer
+          description: If this quantity is referring to a specific instance of an item, this will have the item's instance ID. Normally, this will be null.
+          format: int64
+        quantity:
+          type: integer
+          description: The amount of the item needed/available depending on the context of where DestinyItemQuantity is being used.
+          format: int32
+      description: Used in a number of Destiny contracts to return data about an item stack and its quantity. Can optionally return an itemInstanceId if the item is instanced - in which case, the quantity returned will be 1. If it's not... uh, let me know okayThanks.
+
+    TierType:
+      type: integer
+      format: int32
+      enum:
+        - 0
+        - 1
+        - 2
+        - 3
+        - 4
+        - 5
+        - 6
+      x-enum-values:
+        - numericValue: "0"
+          identifier: Unknown
+        - numericValue: "1"
+          identifier: Currency
+        - numericValue: "2"
+          identifier: Basic
+        - numericValue: "3"
+          identifier: Common
+        - numericValue: "4"
+          identifier: Rare
+        - numericValue: "5"
+          identifier: Superior
+        - numericValue: "6"
+          identifier: Exotic
+
+    BucketScope:
+      type: integer
+      format: int32
+      enum:
+        - 0
+        - 1
+      x-enum-values:
+        - numericValue: "0"
+          identifier: Character
+        - numericValue: "1"
+          identifier: Account
+
+    BucketCategory:
+      type: integer
+      format: int32
+      enum:
+        - 0
+        - 1
+        - 2
+        - 3
+        - 4
+      x-enum-values:
+        - numericValue: "0"
+          identifier: Invisible
+        - numericValue: "1"
+          identifier: Item
+        - numericValue: "2"
+          identifier: Currency
+        - numericValue: "3"
+          identifier: Equippable
+        - numericValue: "4"
+          identifier: Ignored
+
+    ItemLocation:
+      type: integer
+      format: int32
+      enum:
+        - 0
+        - 1
+        - 2
+        - 3
+        - 4
+      x-enum-values:
+        - numericValue: "0"
+          identifier: Unknown
+        - numericValue: "1"
+          identifier: Inventory
+        - numericValue: "2"
+          identifier: Vault
+        - numericValue: "3"
+          identifier: Vendor
+        - numericValue: "4"
+          identifier: Postmaster
+
+    DestinyStatAggregationType:
+      type: integer
+      description: "When a Stat (DestinyStatDefinition) is aggregated, this is the rules used for 
+        determining the level and formula used for aggregation.
+        * CharacterAverage = apply a weighted average using the related DestinyStatGroupDefinition on the DestinyInventoryItemDefinition across the character's equipped items. See both of those definitions for details. * Character = don't aggregate: the stat should be located and used directly on the character. * Item = don't aggregate: the stat should be located and used directly on the item."
+      format: int32
+      enum:
+        - 0
+        - 1
+        - 2
+      x-enum-values:
+        - numericValue: "0"
+          identifier: CharacterAverage
+        - numericValue: "1"
+          identifier: Character
+        - numericValue: "2"
+          identifier: Item
+
+    DestinyStatCategory:
+      type: integer
+      description: At last, stats have categories. Use this for whatever purpose you might wish.
+      format: int32
+      enum:
+        - 0
+        - 1
+        - 2
+        - 3
+      x-enum-values:
+        - numericValue: "0"
+          identifier: Gameplay
+        - numericValue: "1"
+          identifier: Weapon
+        - numericValue: "2"
+          identifier: Defense
+        - numericValue: "3"
+          identifier: Primary
+
+    EquippingItemBlockAttributes:
+      type: integer
+      format: int32
+      enum:
+        - 0
+        - 1
+      x-enum-values:
+        - numericValue: "0"
+          identifier: None
+        - numericValue: "1"
+          identifier: EquipOnAcquire
+
+    DestinyAmmunitionType:
+      type: integer
+      format: int32
+      enum:
+        - 0
+        - 1
+        - 2
+        - 3
+        - 4
+      x-enum-values:
+        - numericValue: "0"
+          identifier: None
+        - numericValue: "1"
+          identifier: Primary
+        - numericValue: "2"
+          identifier: Special
+        - numericValue: "3"
+          identifier: Heavy
+        - numericValue: "4"
+          identifier: Unknown
+
+    DyeReference:
+      type: object
+      properties:
+        channelHash:
+          type: integer
+          format: uint32
+        dyeHash:
+          type: integer
+          format: uint32
+
+    DestinyVendorProgressionType:
+      type: integer
+      description: Describes the type of progression that a vendor has.
+      format: int32
+      enum:
+        - 0
+        - 1
+      x-enum-values:
+        - numericValue: "0"
+          identifier: Default
+          description: The original rank progression from token redemption.
+        - numericValue: "1"
+          identifier: Ritual
+          description: 'Progression from ranks in ritual content. For example: Crucible (Shaxx), Gambit (Drifter), and Season 13 Battlegrounds (War Table).'
+
+    VendorDisplayCategorySortOrder:
+      type: integer
+      description: Display categories can have custom sort orders. These are the possible options.
+      format: int32
+      enum:
+        - 0
+        - 1
+      x-enum-values:
+        - numericValue: "0"
+          identifier: Default
+        - numericValue: "1"
+          identifier: SortByTier
+
+    DestinyVendorInteractionRewardSelection:
+      type: integer
+      description: When a Vendor Interaction provides rewards, they'll either let you choose one or let you have all of them. This determines which it will be.
+      format: int32
+      enum:
+        - 0
+        - 1
+        - 2
+      x-enum-values:
+        - numericValue: "0"
+          identifier: None
+        - numericValue: "1"
+          identifier: One
+        - numericValue: "2"
+          identifier: All
+
+    DestinyVendorReplyType:
+      type: integer
+      description: This determines the type of reply that a Vendor will have during an Interaction.
+      format: int32
+      enum:
+        - 0
+        - 1
+        - 2
+      x-enum-values:
+        - numericValue: "0"
+          identifier: Accept
+        - numericValue: "1"
+          identifier: Decline
+        - numericValue: "2"
+          identifier: Complete
+
+    VendorInteractionType:
+      type: integer
+      description: An enumeration of the known UI interactions for Vendors.
+      format: int32
+      enum:
+        - 0
+        - 1
+        - 2
+        - 3
+        - 4
+        - 5
+        - 6
+        - 7
+        - 8
+        - 9
+        - 10
+      x-enum-values:
+        - numericValue: "0"
+          identifier: Unknown
+        - numericValue: "1"
+          identifier: Undefined
+          description: An empty interaction. If this ends up in content, it is probably a game bug.
+        - numericValue: "2"
+          identifier: QuestComplete
+          description: An interaction shown when you complete a quest and receive a reward.
+        - numericValue: "3"
+          identifier: QuestContinue
+          description: An interaction shown when you talk to a Vendor as an intermediary step of a quest.
+        - numericValue: "4"
+          identifier: ReputationPreview
+          description: An interaction shown when you are previewing the vendor's reputation rewards.
+        - numericValue: "5"
+          identifier: RankUpReward
+          description: An interaction shown when you rank up with the vendor.
+        - numericValue: "6"
+          identifier: TokenTurnIn
+          description: An interaction shown when you have tokens to turn in for the vendor.
+        - numericValue: "7"
+          identifier: QuestAccept
+          description: An interaction shown when you're accepting a new quest.
+        - numericValue: "8"
+          identifier: ProgressTab
+          description: Honestly, this doesn't seem consistent to me. It is used to give you choices in the Cryptarch as well as some reward prompts by the Eververse vendor. I'll have to look into that further at some point.
+        - numericValue: "9"
+          identifier: End
+          description: These seem even less consistent. I don't know what these are.
+        - numericValue: "10"
+          identifier: Start
+          description: Also seem inconsistent. I also don't know what these are offhand.
+
+    DestinyItemSortType:
+      type: integer
+      description: Determines how items are sorted in an inventory bucket.
+      format: int32
+      enum:
+        - 0
+        - 1
+        - 2
+      x-enum-values:
+        - numericValue: "0"
+          identifier: ItemId
+        - numericValue: "1"
+          identifier: Timestamp
+        - numericValue: "2"
+          identifier: StackSize
+
+    DestinyVendorItemRefundPolicy:
+      type: integer
+      description: The action that happens when the user attempts to refund an item.
+      format: int32
+      enum:
+        - 0
+        - 1
+        - 2
+      x-enum-values:
+        - numericValue: "0"
+          identifier: NotRefundable
+        - numericValue: "1"
+          identifier: DeletesItem
+        - numericValue: "2"
+          identifier: RevokesLicense
+
+    DestinyGatingScope:
+      type: integer
+      description: "
+        This enumeration represents the most restrictive type of gating that is being performed by an entity. This is useful as a shortcut to avoid a lot of lookups when determining whether the gating on an Entity applies to everyone equally, or to their specific Profile or Character states.
+        None = There is no gating on this item.
+        Global = The gating on this item is based entirely on global game state. It will be gated the same for everyone.
+        Clan = The gating on this item is at the Clan level. For instance, if you're gated by Clan level this will be the case.
+        Profile = The gating includes Profile-specific checks, but not on the Profile's characters. An example of this might be when you acquire an Emblem: the Emblem will be available in your Kiosk for all characters in your Profile from that point onward.
+        Character = The gating includes Character-specific checks, including character level restrictions. An example of this might be an item that you can't purchase from a Vendor until you reach a specific Character Level.
+        Item = The gating includes item-specific checks. For BNet, this generally implies that we'll show this data only on a character level or deeper.
+        AssumedWorstCase = The unlocks and checks being used for this calculation are of an unknown type and are used for unknown purposes. For instance, if some great person decided that an unlock value should be globally scoped, but then the game changes it using character-specific data in a way that BNet doesn't know about. Because of the open-ended potential for this to occur, many unlock checks for \"globally\" scoped unlock data may be assumed as the worst case unless it has been specifically whitelisted as otherwise. That sucks, but them's the breaks."
+      format: int32
+      enum:
+        - 0
+        - 1
+        - 2
+        - 3
+        - 4
+        - 5
+        - 6
+      x-enum-values:
+        - numericValue: "0"
+          identifier: None
+        - numericValue: "1"
+          identifier: Global
+        - numericValue: "2"
+          identifier: Clan
+        - numericValue: "3"
+          identifier: Profile
+        - numericValue: "4"
+          identifier: Character
+        - numericValue: "5"
+          identifier: Item
+        - numericValue: "6"
+          identifier: AssumedWorstCase
+
+    SocketTypeActionType:
+      type: integer
+      description: Indicates the type of actions that can be performed
+      format: int32
+      enum:
+        - 0
+        - 1
+        - 2
+      x-enum-values:
+        - numericValue: "0"
+          identifier: InsertPlug
+        - numericValue: "1"
+          identifier: InfuseItem
+        - numericValue: "2"
+          identifier: ReinitializeSocket
+
+    DestinySocketVisibility:
+      type: integer
+      format: int32
+      enum:
+        - 0
+        - 1
+        - 2
+        - 3
+      x-enum-values:
+        - numericValue: "0"
+          identifier: Visible
+        - numericValue: "1"
+          identifier: Hidden
+        - numericValue: "2"
+          identifier: HiddenWhenEmpty
+        - numericValue: "3"
+          identifier: HiddenIfNoPlugsAvailable
+
+    DestinySocketCategoryStyle:
+      type: integer
+      description: Represents the possible and known UI styles used by the game for rendering Socket Categories.
+      format: int32
+      enum:
+        - 0
+        - 1
+        - 2
+        - 3
+        - 4
+        - 5
+        - 6
+        - 7
+        - 8
+      x-enum-values:
+        - numericValue: "0"
+          identifier: Unknown
+        - numericValue: "1"
+          identifier: Reusable
+        - numericValue: "2"
+          identifier: Consumable
+        - numericValue: "3"
+          identifier: Unlockable
+        - numericValue: "4"
+          identifier: Intrinsic
+        - numericValue: "5"
+          identifier: EnergyMeter
+        - numericValue: "6"
+          identifier: LargePerk
+        - numericValue: "7"
+          identifier: Abilities
+        - numericValue: "8"
+          identifier: Supers
+
+    ActivityGraphNodeHighlightType:
+      type: integer
+      description: The various known UI styles in which an item can be highlighted. It'll be up to you to determine what you want to show based on this highlighting, BNet doesn't have any assets that correspond to these states. And yeah, RiseOfIron and Comet have their own special highlight states. Don't ask me, I can't imagine they're still used.
+      format: int32
+      enum:
+        - 0
+        - 1
+        - 2
+        - 3
+        - 4
+      x-enum-values:
+        - numericValue: "0"
+          identifier: None
+        - numericValue: "1"
+          identifier: Normal
+        - numericValue: "2"
+          identifier: Hyper
+        - numericValue: "3"
+          identifier: Comet
+        - numericValue: "4"
+          identifier: RiseOfIron
+
+    DestinyUnlockValueUIStyle:
+      type: integer
+      description: If you're showing an unlock value in the UI, this is the format in which it should be shown. You'll have to build your own algorithms on the client side to determine how best to render these options.
+      format: int32
+      enum:
+        - 0
+        - 1
+        - 2
+        - 3
+        - 4
+        - 5
+        - 6
+        - 7
+        - 8
+        - 9
+        - 10
+        - 11
+        - 12
+        - 13
+      x-enum-values:
+        - numericValue: "0"
+          identifier: Automatic
+          description: Generally, Automatic means "Just show the number"
+        - numericValue: "1"
+          identifier: Fraction
+          description: Show the number as a fractional value. For this to make sense, the value being displayed should have a comparable upper bound, like the progress to the next level of a Progression.
+        - numericValue: "2"
+          identifier: Checkbox
+          description: Show the number as a checkbox. 0 Will mean unchecked, any other value will mean checked.
+        - numericValue: "3"
+          identifier: Percentage
+          description: Show the number as a percentage. For this to make sense, the value being displayed should have a comparable upper bound, like the progress to the next level of a Progression.
+        - numericValue: "4"
+          identifier: DateTime
+          description: Show the number as a date and time. The number will be the number of seconds since the Unix Epoch (January 1st, 1970 at midnight UTC). It'll be up to you to convert this into a date and time format understandable to the user in their time zone.
+        - numericValue: "5"
+          identifier: FractionFloat
+          description: Show the number as a floating point value that represents a fraction, where 0 is min and 1 is max. For this to make sense, the value being displayed should have a comparable upper bound, like the progress to the next level of a Progression.
+        - numericValue: "6"
+          identifier: Integer
+          description: Show the number as a straight-up integer.
+        - numericValue: "7"
+          identifier: TimeDuration
+          description: Show the number as a time duration. The value will be returned as seconds.
+        - numericValue: "8"
+          identifier: Hidden
+          description: Don't bother showing the value at all, it's not easily human-interpretable, and used for some internal purpose.
+        - numericValue: "9"
+          identifier: Multiplier
+          description: 'Example: "1.5x"'
+        - numericValue: "10"
+          identifier: GreenPips
+          description: Show the value as a series of green pips, like the wins in a Trials of Osiris score card.
+        - numericValue: "11"
+          identifier: RedPips
+          description: Show the value as a series of red pips, like the losses in a Trials of Osiris score card.
+        - numericValue: "12"
+          identifier: ExplicitPercentage
+          description: 'Show the value as a percentage. For example: "51%" - Does no division, only appends ''%'''
+        - numericValue: "13"
+          identifier: RawFloat
+          description: 'Show the value as a floating-point number. For example: "4.52" NOTE: Passed along from Investment as whole number with last two digits as decimal values (452 -> 4.52)'
+
+    DestinyObjectiveGrantStyle:
+      type: integer
+      description: Some Objectives provide perks, generally as part of providing some kind of interesting modifier for a Challenge or Quest. This indicates when the Perk is granted.
+      format: int32
+      enum:
+        - 0
+        - 1
+        - 2
+      x-enum-values:
+        - numericValue: "0"
+          identifier: WhenIncomplete
+        - numericValue: "1"
+          identifier: WhenComplete
+        - numericValue: "2"
+          identifier: Always
+
+    DamageType:
+      type: integer
+      format: int32
+      enum:
+        - 0
+        - 1
+        - 2
+        - 3
+        - 4
+        - 5
+        - 6
+      x-enum-values:
+        - numericValue: "0"
+          identifier: None
+        - numericValue: "1"
+          identifier: Kinetic
+        - numericValue: "2"
+          identifier: Arc
+        - numericValue: "3"
+          identifier: Thermal
+        - numericValue: "4"
+          identifier: Void
+        - numericValue: "5"
+          identifier: Raid
+        - numericValue: "6"
+          identifier: Stasis
+
+    DestinyActivityNavPointType:
+      type: integer
+      format: int32
+      enum:
+        - 0
+        - 1
+        - 2
+        - 3
+        - 4
+        - 5
+        - 6
+        - 7
+        - 8
+        - 9
+        - 10
+        - 11
+        - 12
+        - 13
+        - 14
+        - 15
+        - 16
+      x-enum-values:
+        - numericValue: "0"
+          identifier: Inactive
+        - numericValue: "1"
+          identifier: PrimaryObjective
+        - numericValue: "2"
+          identifier: SecondaryObjective
+        - numericValue: "3"
+          identifier: TravelObjective
+        - numericValue: "4"
+          identifier: PublicEventObjective
+        - numericValue: "5"
+          identifier: AmmoCache
+        - numericValue: "6"
+          identifier: PointTypeFlag
+        - numericValue: "7"
+          identifier: CapturePoint
+        - numericValue: "8"
+          identifier: DefensiveEncounter
+        - numericValue: "9"
+          identifier: GhostInteraction
+        - numericValue: "10"
+          identifier: KillAi
+        - numericValue: "11"
+          identifier: QuestItem
+        - numericValue: "12"
+          identifier: PatrolMission
+        - numericValue: "13"
+          identifier: Incoming
+        - numericValue: "14"
+          identifier: ArenaObjective
+        - numericValue: "15"
+          identifier: AutomationHint
+        - numericValue: "16"
+          identifier: TrackedQuest
+
+    DestinyActivityModeCategory:
+      type: integer
+      description: Activity Modes are grouped into a few possible broad categories.
+      format: int32
+      enum:
+        - 0
+        - 1
+        - 2
+        - 3
+      x-enum-values:
+        - numericValue: "0"
+          identifier: None
+          description: Activities that are neither PVP nor PVE, such as social activities.
+        - numericValue: "1"
+          identifier: PvE
+          description: PvE activities, where you shoot aliens in the face.
+        - numericValue: "2"
+          identifier: PvP
+          description: PvP activities, where you shoot your "friends".
+        - numericValue: "3"
+          identifier: PvECompetitive
+          description: PVE competitive activities, where you shoot whoever you want whenever you want. Or run around collecting small glowing triangles.
+
+    DestinyItemSubType:
+      type: integer
+      description: "
+        This Enumeration further classifies items by more specific categorizations than DestinyItemType. The \"Sub-Type\" is where we classify and categorize items one step further in specificity: \"Auto Rifle\" instead of just \"Weapon\" for example, or \"Vanguard Bounty\" instead of merely \"Bounty\".
+        These sub-types are provided for historical compatibility with Destiny 1, but an ideal alternative is to use DestinyItemCategoryDefinitions and the DestinyItemDefinition.itemCategories property instead. Item Categories allow for arbitrary hierarchies of specificity, and for items to belong to multiple categories across multiple hierarchies simultaneously. For this enum, we pick a single type as a \"best guess\" fit.
+        NOTE: This is not all of the item types available, and some of these are holdovers from Destiny 1 that may or may not still exist."
+      format: int32
+      enum:
+        - 0
+        - 1
+        - 2
+        - 5
+        - 6
+        - 7
+        - 8
+        - 9
+        - 10
+        - 11
+        - 12
+        - 13
+        - 14
+        - 16
+        - 17
+        - 18
+        - 19
+        - 20
+        - 21
+        - 22
+        - 23
+        - 24
+        - 25
+        - 26
+        - 27
+        - 28
+        - 29
+        - 30
+        - 31
+        - 32
+      x-enum-values:
+        - numericValue: "0"
+          identifier: None
+        - numericValue: "1"
+          identifier: Crucible
+          description: DEPRECATED. Items can be both "Crucible" and something else interesting.
+        - numericValue: "2"
+          identifier: Vanguard
+          description: DEPRECATED. An item can both be "Vanguard" and something else.
+        - numericValue: "5"
+          identifier: Exotic
+          description: DEPRECATED. An item can both be Exotic and something else.
+        - numericValue: "6"
+          identifier: AutoRifle
+        - numericValue: "7"
+          identifier: Shotgun
+        - numericValue: "8"
+          identifier: Machinegun
+        - numericValue: "9"
+          identifier: HandCannon
+        - numericValue: "10"
+          identifier: RocketLauncher
+        - numericValue: "11"
+          identifier: FusionRifle
+        - numericValue: "12"
+          identifier: SniperRifle
+        - numericValue: "13"
+          identifier: PulseRifle
+        - numericValue: "14"
+          identifier: ScoutRifle
+        - numericValue: "16"
+          identifier: Crm
+          description: DEPRECATED. An item can both be CRM and something else.
+        - numericValue: "17"
+          identifier: Sidearm
+        - numericValue: "18"
+          identifier: Sword
+        - numericValue: "19"
+          identifier: Mask
+        - numericValue: "20"
+          identifier: Shader
+        - numericValue: "21"
+          identifier: Ornament
+        - numericValue: "22"
+          identifier: FusionRifleLine
+        - numericValue: "23"
+          identifier: GrenadeLauncher
+        - numericValue: "24"
+          identifier: SubmachineGun
+        - numericValue: "25"
+          identifier: TraceRifle
+        - numericValue: "26"
+          identifier: HelmetArmor
+        - numericValue: "27"
+          identifier: GauntletsArmor
+        - numericValue: "28"
+          identifier: ChestArmor
+        - numericValue: "29"
+          identifier: LegArmor
+        - numericValue: "30"
+          identifier: ClassArmor
+        - numericValue: "31"
+          identifier: Bow
+        - numericValue: "32"
+          identifier: DummyRepeatableBounty
+
+    DestinyGraphNodeState:
+      type: integer
+      description: Represents a potential state of an Activity Graph node.
+      format: int32
+      enum:
+        - 0
+        - 1
+        - 2
+        - 3
+        - 4
+      x-enum-values:
+        - numericValue: "0"
+          identifier: Hidden
+        - numericValue: "1"
+          identifier: Visible
+        - numericValue: "2"
+          identifier: Teaser
+        - numericValue: "3"
+          identifier: Incomplete
+        - numericValue: "4"
+          identifier: Completed
+
+    DestinyPresentationNodeType:
+      type: integer
+      format: int32
+      enum:
+        - 0
+        - 1
+        - 2
+        - 3
+        - 4
+      x-enum-values:
+        - numericValue: "0"
+          identifier: Default
+        - numericValue: "1"
+          identifier: Category
+        - numericValue: "2"
+          identifier: Collectibles
+        - numericValue: "3"
+          identifier: Records
+        - numericValue: "4"
+          identifier: Metric
+
+    DestinyScope:
+      type: integer
+      description: There's a lot of places where we need to know scope on more than just a profile or character level. For everything else, there's this more generic sense of scope.
+      format: int32
+      enum:
+        - 0
+        - 1
+      x-enum-values:
+        - numericValue: "0"
+          identifier: Profile
+        - numericValue: "1"
+          identifier: Character
+
+    DestinyPresentationDisplayStyle:
+      type: integer
+      description: A hint for how the presentation node should be displayed when shown in a list. How you use this is your UI is up to you.
+      format: int32
+      enum:
+        - 0
+        - 1
+        - 2
+        - 3
+        - 4
+      x-enum-values:
+        - numericValue: "0"
+          identifier: Category
+          description: Display the item as a category, through which sub-items are filtered.
+        - numericValue: "1"
+          identifier: Badge
+        - numericValue: "2"
+          identifier: Medals
+        - numericValue: "3"
+          identifier: Collectible
+        - numericValue: "4"
+          identifier: Record
+
+    DestinyRecordValueStyle:
+      type: integer
+      format: int32
+      enum:
+        - 0
+        - 1
+        - 2
+        - 3
+        - 4
+      x-enum-values:
+        - numericValue: "0"
+          identifier: Integer
+        - numericValue: "1"
+          identifier: Percentage
+        - numericValue: "2"
+          identifier: Milliseconds
+        - numericValue: "3"
+          identifier: Boolean
+        - numericValue: "4"
+          identifier: Decimal
+
+    DestinyGender:
+      type: integer
+      format: int32
+      enum:
+        - 0
+        - 1
+        - 2
+      x-enum-values:
+        - numericValue: "0"
+          identifier: Male
+        - numericValue: "1"
+          identifier: Female
+        - numericValue: "2"
+          identifier: Unknown
+
+    DestinyRecordToastStyle:
+      type: integer
+      format: int32
+      enum:
+        - 0
+        - 1
+        - 2
+        - 3
+        - 4
+        - 5
+        - 6
+        - 7
+      x-enum-values:
+        - numericValue: "0"
+          identifier: None
+        - numericValue: "1"
+          identifier: Record
+        - numericValue: "2"
+          identifier: Lore
+        - numericValue: "3"
+          identifier: Badge
+        - numericValue: "4"
+          identifier: MetaRecord
+        - numericValue: "5"
+          identifier: MedalComplete
+        - numericValue: "6"
+          identifier: SeasonChallengeComplete
+        - numericValue: "7"
+          identifier: GildedTitleComplete
+
+    DestinyPresentationScreenStyle:
+      type: integer
+      description: A hint for what screen should be shown when this presentation node is clicked into. How you use this is your UI is up to you.
+      format: int32
+      enum:
+        - 0
+        - 1
+        - 2
+      x-enum-values:
+        - numericValue: "0"
+          identifier: Default
+          description: Use the "default" view for the presentation nodes.
+        - numericValue: "1"
+          identifier: CategorySets
+          description: Show sub-items as "category sets". In-game, you'd see these as a vertical list of child presentation nodes - armor sets for example - and the icons of items within those sets displayed horizontally.
+        - numericValue: "2"
+          identifier: Badge
+          description: Show sub-items as Badges. (I know, I know. We don't need no stinkin' badges har har har)
+
+    PlugUiStyles:
+      type: integer
+      description: If the plug has a specific custom style, this enumeration will represent that style/those styles.
+      format: int32
+      enum:
+        - 0
+        - 1
+      x-enum-values:
+        - numericValue: "0"
+          identifier: None
+        - numericValue: "1"
+          identifier: Masterwork
+
+    PlugAvailabilityMode:
+      type: integer
+      description: "This enum determines whether the plug is available to be inserted.
+        - Normal means that all existing rules for plug insertion apply.
+        - UnavailableIfSocketContainsMatchingPlugCategory means that the plug is only available if the socket does NOT match the plug category.
+        - AvailableIfSocketContainsMatchingPlugCategory means that the plug is only available if the socket DOES match the plug category.
+        For category matching, use the plug's \"plugCategoryIdentifier\" property, comparing it to"
+      format: int32
+      enum:
+        - 0
+        - 1
+        - 2
+      x-enum-values:
+        - numericValue: "0"
+          identifier: Normal
+        - numericValue: "1"
+          identifier: UnavailableIfSocketContainsMatchingPlugCategory
+        - numericValue: "2"
+          identifier: AvailableIfSocketContainsMatchingPlugCategory
+
+    DestinyEnergyType:
+      type: integer
+      description: Represents the socket energy types for Armor 2.0, Ghosts 2.0, and Stasis subclasses.
+      format: int32
+      enum:
+        - 0
+        - 1
+        - 2
+        - 3
+        - 4
+        - 5
+      x-enum-values:
+        - numericValue: "0"
+          identifier: Any
+        - numericValue: "1"
+          identifier: Arc
+        - numericValue: "2"
+          identifier: Thermal
+        - numericValue: "3"
+          identifier: Void
+        - numericValue: "4"
+          identifier: Ghost
+        - numericValue: "5"
+          identifier: Subclass
+
+    SocketPlugSources:
+      type: integer
+      description: "Indicates how a socket is populated, and where you should look for valid plug data.
+       This is a flags enumeration/bitmask field, as you may have to look in multiple sources across multiple components for valid plugs.
+       For instance, a socket could have plugs that are sourced from its own definition, as well as plugs that are sourced from Character-scoped AND profile-scoped Plug Sets. Only by combining plug data for every indicated source will you be able to know all of the plugs available for a socket."
+      format: int32
+      enum:
+        - 0
+        - 1
+        - 2
+        - 4
+        - 8
+      x-enum-values:
+        - numericValue: "0"
+          identifier: None
+          description: If there's no way we can detect to insert new plugs.
+        - numericValue: "1"
+          identifier: InventorySourced
+          description: "
+            Use plugs found in the player's inventory, based on the socket type rules (see DestinySocketTypeDefinition for more info)
+            Note that a socket - like Shaders - can have *both* reusable plugs and inventory items inserted theoretically."
+        - numericValue: "2"
+          identifier: ReusablePlugItems
+          description: "
+            Use the DestinyItemSocketsComponent.sockets.reusablePlugs property to determine which plugs are valid for this socket. This may have to be combined with other sources, such as plug sets, if those flags are set.
+            Note that \"Reusable\" plugs may not necessarily come from a plug set, nor from the \"reusablePlugItems\" in the socket's Definition data. They can sometimes be \"randomized\" in which case the only source of truth at the moment is still the runtime DestinyItemSocketsComponent.sockets.reusablePlugs property."
+        - numericValue: "4"
+          identifier: ProfilePlugSet
+          description: Use the ProfilePlugSets (DestinyProfileResponse.profilePlugSets) component data to determine which plugs are valid for this socket.
+        - numericValue: "8"
+          identifier: CharacterPlugSet
+          description: Use the CharacterPlugSets (DestinyProfileResponse.characterPlugSets) component data to determine which plugs are valid for this socket.
+
+    ItemPerkVisibility:
+      type: integer
+      description: Indicates how a perk should be shown, or if it should be, in the game UI. Maybe useful for those of you trying to filter out internal-use-only perks (or for those of you trying to figure out what they do!)
+      format: int32
+      enum:
+        - 0
+        - 1
+        - 2
+      x-enum-values:
+        - numericValue: "0"
+          identifier: Visible
+        - numericValue: "1"
+          identifier: Disabled
+        - numericValue: "2"
+          identifier: Hidden
+
+    SpecialItemType:
+      type: integer
+      description: "
+        As you run into items that need to be classified for Milestone purposes in ways that we cannot infer via direct data, add a new classification here and use a string constant to represent it in the local item config file.
+        NOTE: This is not all of the item types available, and some of these are holdovers from Destiny 1 that may or may not still exist."
+      format: int32
+      enum:
+        - 0
+        - 1
+        - 8
+        - 9
+        - 23
+        - 24
+        - 25
+        - 27
+        - 29
+      x-enum-values:
+        - numericValue: "0"
+          identifier: None
+        - numericValue: "1"
+          identifier: SpecialCurrency
+        - numericValue: "8"
+          identifier: Armor
+        - numericValue: "9"
+          identifier: Weapon
+        - numericValue: "23"
+          identifier: Engram
+        - numericValue: "24"
+          identifier: Consumable
+        - numericValue: "25"
+          identifier: ExchangeMaterial
+        - numericValue: "27"
+          identifier: MissionReward
+        - numericValue: "29"
+          identifier: Currency
+
+    DestinyItemType:
+      type: integer
+      description: "
+        An enumeration that indicates the high-level \"type\" of the item, attempting to iron out the context specific differences for specific instances of an entity. For instance, though a weapon may be of various weapon \"Types\", in DestinyItemType they are all classified as \"Weapon\". This allows for better filtering on a higher level of abstraction for the concept of types.
+        This enum is provided for historical compatibility with Destiny 1, but an ideal alternative is to use DestinyItemCategoryDefinitions and the DestinyItemDefinition.itemCategories property instead. Item Categories allow for arbitrary hierarchies of specificity, and for items to belong to multiple categories across multiple hierarchies simultaneously. For this enum, we pick a single type as a \"best guess\" fit.
+        NOTE: This is not all of the item types available, and some of these are holdovers from Destiny 1 that may or may not still exist.
+        I keep updating these because they're so damn convenient. I guess I shouldn't fight it."
+      format: int32
+      enum:
+        - 0
+        - 1
+        - 2
+        - 3
+        - 7
+        - 8
+        - 9
+        - 10
+        - 11
+        - 12
+        - 13
+        - 14
+        - 15
+        - 16
+        - 17
+        - 18
+        - 19
+        - 20
+        - 21
+        - 22
+        - 23
+        - 24
+        - 25
+        - 26
+        - 27
+        - 28
+        - 29
+      x-enum-values:
+        - numericValue: "0"
+          identifier: None
+        - numericValue: "1"
+          identifier: Currency
+        - numericValue: "2"
+          identifier: Armor
+        - numericValue: "3"
+          identifier: Weapon
+        - numericValue: "7"
+          identifier: Message
+        - numericValue: "8"
+          identifier: Engram
+        - numericValue: "9"
+          identifier: Consumable
+        - numericValue: "10"
+          identifier: ExchangeMaterial
+        - numericValue: "11"
+          identifier: MissionReward
+        - numericValue: "12"
+          identifier: QuestStep
+        - numericValue: "13"
+          identifier: QuestStepComplete
+        - numericValue: "14"
+          identifier: Emblem
+        - numericValue: "15"
+          identifier: Quest
+        - numericValue: "16"
+          identifier: Subclass
+        - numericValue: "17"
+          identifier: ClanBanner
+        - numericValue: "18"
+          identifier: Aura
+        - numericValue: "19"
+          identifier: Mod
+        - numericValue: "20"
+          identifier: Dummy
+        - numericValue: "21"
+          identifier: Ship
+        - numericValue: "22"
+          identifier: Vehicle
+        - numericValue: "23"
+          identifier: Emote
+        - numericValue: "24"
+          identifier: Ghost
+        - numericValue: "25"
+          identifier: Package
+        - numericValue: "26"
+          identifier: Bounty
+        - numericValue: "27"
+          identifier: Wrapper
+        - numericValue: "28"
+          identifier: SeasonalArtifact
+        - numericValue: "29"
+          identifier: Finisher
+
+    DestinyClass:
+      type: integer
+      format: int32
+      enum:
+        - 0
+        - 1
+        - 2
+        - 3
+      x-enum-values:
+        - numericValue: "0"
+          identifier: Titan
+        - numericValue: "1"
+          identifier: Hunter
+        - numericValue: "2"
+          identifier: Warlock
+        - numericValue: "3"
+          identifier: Unknown
+
+    DestinyBreakerType:
+      type: integer
+      description: 'A plug can optionally have a "Breaker Type": a special ability that can affect units in unique ways. Activating this plug can grant one of these types.'
+      format: int32
+      enum:
+        - 0
+        - 1
+        - 2
+        - 3
+      x-enum-values:
+        - numericValue: "0"
+          identifier: None
+        - numericValue: "1"
+          identifier: ShieldPiercing
+        - numericValue: "2"
+          identifier: Disruption
+        - numericValue: "3"
+          identifier: Stagger
+
+    DestinyProgressionRewardItemAcquisitionBehavior:
+      type: integer
+      description: Represents the different kinds of acquisition behavior for progression reward items.
+      format: int32
+      enum:
+        - 0
+        - 1
+      x-enum-values:
+        - numericValue: "0"
+          identifier: Instant
+        - numericValue: "1"
+          identifier: PlayerClaimRequired
+
+    ItemBindStatus:
+      type: integer
+      format: int32
+      enum:
+        - 0
+        - 1
+        - 2
+        - 3
+      x-enum-values:
+        - numericValue: "0"
+          identifier: NotBound
+        - numericValue: "1"
+          identifier: BoundToCharacter
+        - numericValue: "2"
+          identifier: BoundToAccount
+        - numericValue: "3"
+          identifier: BoundToGuild
+
+    TransferStatuses:
+      type: integer
+      description: Whether you can transfer an item, and why not if you can't.
+      format: int32
+      enum:
+        - 0
+        - 1
+        - 2
+        - 4
+      x-enum-values:
+        - numericValue: "0"
+          identifier: CanTransfer
+          description: The item can be transferred.
+        - numericValue: "1"
+          identifier: ItemIsEquipped
+          description: You can't transfer the item because it is equipped on a character.
+        - numericValue: "2"
+          identifier: NotTransferrable
+          description: The item is defined as not transferrable in its DestinyInventoryItemDefinition.nonTransferrable property.
+        - numericValue: "4"
+          identifier: NoRoomInDestination
+          description: You could transfer the item, but the place you're trying to put it has run out of room! Check your remaining Vault and/or character space.
+
+    ItemState:
+      type: integer
+      description: A flags enumeration/bitmask where each bit represents a different possible state that the item can be in that may effect how the item is displayed to the user and what actions can be performed against it.
+      format: int32
+      enum:
+        - 0
+        - 1
+        - 2
+        - 4
+      x-enum-values:
+        - numericValue: "0"
+          identifier: None
+        - numericValue: "1"
+          identifier: Locked
+          description: If this bit is set, the item has been "locked" by the user and cannot be deleted. You may want to represent this visually with a "lock" icon.
+        - numericValue: "2"
+          identifier: Tracked
+          description: If this bit is set, the item is a quest that's being tracked by the user. You may want a visual indicator to show that this is a tracked quest.
+        - numericValue: "4"
+          identifier: Masterwork
+          description: If this bit is set, the item has a Masterwork plug inserted. This usually coincides with having a special "glowing" effect applied to the item's icon.
+
+    DestinyGameVersions:
+      type: integer
+      description: A flags enumeration/bitmask indicating the versions of the game that a given user has purchased.
+      format: int32
+      enum:
+        - 0
+        - 1
+        - 2
+        - 4
+        - 8
+        - 16
+        - 32
+        - 64
+      x-enum-values:
+        - numericValue: "0"
+          identifier: None
+        - numericValue: "1"
+          identifier: Destiny2
+        - numericValue: "2"
+          identifier: DLC1
+        - numericValue: "4"
+          identifier: DLC2
+        - numericValue: "8"
+          identifier: Forsaken
+        - numericValue: "16"
+          identifier: YearTwoAnnualPass
+        - numericValue: "32"
+          identifier: Shadowkeep
+        - numericValue: "64"
+          identifier: BeyondLight
+
+    DestinyComponentType:
+      type: integer
+      description: "
+        Represents the possible components that can be returned from Destiny \"Get\" calls such as GetProfile, GetCharacter, GetVendor etc...
+        When making one of these requests, you will pass one or more of these components as a comma separated list in the \"?components=\" querystring parameter. For instance, if you want baseline Profile data, Character Data, and character progressions, you would pass \"?components=Profiles,Characters,CharacterProgressions\" You may use either the numerical or string values."
+      format: int32
+      enum:
+        - 0
+        - 100
+        - 101
+        - 102
+        - 103
+        - 104
+        - 105
+        - 200
+        - 201
+        - 202
+        - 203
+        - 204
+        - 205
+        - 300
+        - 301
+        - 302
+        - 303
+        - 304
+        - 305
+        - 306
+        - 307
+        - 308
+        - 309
+        - 310
+        - 400
+        - 401
+        - 402
+        - 500
+        - 600
+        - 700
+        - 800
+        - 900
+        - 1000
+        - 1100
+      x-enum-values:
+        - numericValue: "0"
+          identifier: None
+        - numericValue: "100"
+          identifier: Profiles
+          description: 'Profiles is the most basic component, only relevant when calling GetProfile. This returns basic information about the profile, which is almost nothing: a list of characterIds, some information about the last time you logged in, and that most sobering statistic: how long you''ve played.'
+        - numericValue: "101"
+          identifier: VendorReceipts
+          description: Only applicable for GetProfile, this will return information about receipts for refundable vendor items.
+        - numericValue: "102"
+          identifier: ProfileInventories
+          description: Asking for this will get you the profile-level inventories, such as your Vault buckets (yeah, the Vault is really inventory buckets located on your Profile)
+        - numericValue: "103"
+          identifier: ProfileCurrencies
+          description: This will get you a summary of items on your Profile that we consider to be "currencies", such as Glimmer. I mean, if there's Glimmer in Destiny 2. I didn't say there was Glimmer.
+        - numericValue: "104"
+          identifier: ProfileProgression
+          description: This will get you any progression-related information that exists on a Profile-wide level, across all characters.
+        - numericValue: "105"
+          identifier: PlatformSilver
+          description: "
+            This will get you information about the silver that this profile has on every platform on which it plays.
+            You may only request this component for the logged in user's Profile, and will not recieve it if you request it for another Profile."
+        - numericValue: "200"
+          identifier: Characters
+          description: This will get you summary info about each of the characters in the profile.
+        - numericValue: "201"
+          identifier: CharacterInventories
+          description: This will get you information about any non-equipped items on the character or character(s) in question, if you're allowed to see it. You have to either be authenticated as that user, or that user must allow anonymous viewing of their non-equipped items in Bungie.Net settings to actually get results.
+        - numericValue: "202"
+          identifier: CharacterProgressions
+          description: This will get you information about the progression (faction, experience, etc... "levels") relevant to each character, if you are the currently authenticated user or the user has elected to allow anonymous viewing of its progression info.
+        - numericValue: "203"
+          identifier: CharacterRenderData
+          description: This will get you just enough information to be able to render the character in 3D if you have written a 3D rendering library for Destiny Characters, or "borrowed" ours. It's okay, I won't tell anyone if you're using it. I'm no snitch. (actually, we don't care if you use it - go to town)
+        - numericValue: "204"
+          identifier: CharacterActivities
+          description: This will return info about activities that a user can see and gating on it, if you are the currently authenticated user or the user has elected to allow anonymous viewing of its progression info. Note that the data returned by this can be unfortunately problematic and relatively unreliable in some cases. We'll eventually work on making it more consistently reliable.
+        - numericValue: "205"
+          identifier: CharacterEquipment
+          description: This will return info about the equipped items on the character(s). Everyone can see this.
+        - numericValue: "300"
+          identifier: ItemInstances
+          description: This will return basic info about instanced items - whether they can be equipped, their tracked status, and some info commonly needed in many places (current damage type, primary stat value, etc)
+        - numericValue: "301"
+          identifier: ItemObjectives
+          description: Items can have Objectives (DestinyObjectiveDefinition) bound to them. If they do, this will return info for items that have such bound objectives.
+        - numericValue: "302"
+          identifier: ItemPerks
+          description: Items can have perks (DestinyPerkDefinition). If they do, this will return info for what perks are active on items.
+        - numericValue: "303"
+          identifier: ItemRenderData
+          description: If you just want to render the weapon, this is just enough info to do that rendering.
+        - numericValue: "304"
+          identifier: ItemStats
+          description: Items can have stats, like rate of fire. Asking for this component will return requested item's stats if they have stats.
+        - numericValue: "305"
+          identifier: ItemSockets
+          description: Items can have sockets, where plugs can be inserted. Asking for this component will return all info relevant to the sockets on items that have them.
+        - numericValue: "306"
+          identifier: ItemTalentGrids
+          description: Items can have talent grids, though that matters a lot less frequently than it used to. Asking for this component will return all relevant info about activated Nodes and Steps on this talent grid, like the good ol' days.
+        - numericValue: "307"
+          identifier: ItemCommonData
+          description: 'Items that *aren''t* instanced still have important information you need to know: how much of it you have, the itemHash so you can look up their DestinyInventoryItemDefinition, whether they''re locked, etc... Both instanced and non-instanced items will have these properties. You will get this automatically with Inventory components - you only need to pass this when calling GetItem on a specific item.'
+        - numericValue: "308"
+          identifier: ItemPlugStates
+          description: Items that are "Plugs" can be inserted into sockets. This returns statuses about those plugs and why they can/can't be inserted. I hear you giggling, there's nothing funny about inserting plugs. Get your head out of the gutter and pay attention!
+        - numericValue: "309"
+          identifier: ItemPlugObjectives
+          description: Sometimes, plugs have objectives on them. This data can get really large, so we split it into its own component. Please, don't grab it unless you need it.
+        - numericValue: "310"
+          identifier: ItemReusablePlugs
+          description: "
+            Sometimes, designers create thousands of reusable plugs and suddenly your response sizes are almost 3MB, and something has to give.
+            Reusable Plugs were split off as their own component, away from ItemSockets, as a result of the Plug changes in Shadowkeep that made plug data infeasibly large for the most common use cases.
+            Request this component if and only if you need to know what plugs *could* be inserted into a socket, and need to know it before \"drilling\" into the details of an item in your application (for instance, if you're doing some sort of interesting sorting or aggregation based on available plugs.
+            When you get this, you will also need to combine it with \"Plug Sets\" data if you want a full picture of all of the available plugs: this component will only return plugs that have state data that is per-item. See Plug Sets for available plugs that have Character, Profile, or no state-specific restrictions."
+        - numericValue: "400"
+          identifier: Vendors
+          description: When obtaining vendor information, this will return summary information about the Vendor or Vendors being returned.
+        - numericValue: "401"
+          identifier: VendorCategories
+          description: When obtaining vendor information, this will return information about the categories of items provided by the Vendor.
+        - numericValue: "402"
+          identifier: VendorSales
+          description: When obtaining vendor information, this will return the information about items being sold by the Vendor.
+        - numericValue: "500"
+          identifier: Kiosks
+          description: 'Asking for this component will return you the account''s Kiosk statuses: that is, what items have been filled out/acquired. But only if you are the currently authenticated user or the user has elected to allow anonymous viewing of its progression info.'
+        - numericValue: "600"
+          identifier: CurrencyLookups
+          description: A "shortcut" component that will give you all of the item hashes/quantities of items that the requested character can use to determine if an action (purchasing, socket insertion) has the required currency. (recall that all currencies are just items, and that some vendor purchases require items that you might not traditionally consider to be a "currency", like plugs/mods!)
+        - numericValue: "700"
+          identifier: PresentationNodes
+          description: 'Returns summary status information about all "Presentation Nodes". See DestinyPresentationNodeDefinition for more details, but the gist is that these are entities used by the game UI to bucket Collectibles and Records into a hierarchy of categories. You may ask for and use this data if you want to perform similar bucketing in your own UI: or you can skip it and roll your own.'
+        - numericValue: "800"
+          identifier: Collectibles
+          description: Returns summary status information about all "Collectibles". These are records of what items you've discovered while playing Destiny, and some other basic information. For detailed information, you will have to call a separate endpoint devoted to the purpose.
+        - numericValue: "900"
+          identifier: Records
+          description: Returns summary status information about all "Records" (also known in the game as "Triumphs". I know, it's confusing because there's also "Moments of Triumph" that will themselves be represented as "Triumphs.")
+        - numericValue: "1000"
+          identifier: Transitory
+          description: 'Returns information that Bungie considers to be "Transitory": data that may change too frequently or come from a non-authoritative source such that we don''t consider the data to be fully trustworthy, but that might prove useful for some limited use cases. We can provide no guarantee of timeliness nor consistency for this data: buyer beware with the Transitory component.'
+        - numericValue: "1100"
+          identifier: Metrics
+          description: Returns summary status information about all "Metrics" (also known in the game as "Stat Trackers").
+
+    DestinyPresentationNodeState:
+      type: integer
+      description: I know this doesn't look like a Flags Enumeration/bitmask right now, but I assure you it is. This is the possible states that a Presentation Node can be in, and it is almost certain that its potential states will increase in the future. So don't treat it like a straight up enumeration.
+      format: int32
+      enum:
+        - 0
+        - 1
+        - 2
+      x-enum-values:
+        - numericValue: "0"
+          identifier: None
+        - numericValue: "1"
+          identifier: Invisible
+          description: If this is set, the game recommends that you not show this node. But you know your life, do what you've got to do.
+        - numericValue: "2"
+          identifier: Obscured
+          description: Turns out Presentation Nodes can also be obscured. If they are, this is set.
+
+    DestinyRecordState:
+      type: integer
+      description: A Flags enumeration/bitmask where each bit represents a possible state that a Record/Triumph can be in.
+      format: int32
+      enum:
+        - 0
+        - 1
+        - 2
+        - 4
+        - 8
+        - 16
+        - 32
+        - 64
+      x-enum-values:
+        - numericValue: "0"
+          identifier: None
+          description: If there are no flags set, the record is in a state where it *could* be redeemed, but it has not been yet.
+        - numericValue: "1"
+          identifier: RecordRedeemed
+          description: If this is set, the completed record has been redeemed.
+        - numericValue: "2"
+          identifier: RewardUnavailable
+          description: If this is set, there's a reward available from this Record but it's unavailable for redemption.
+        - numericValue: "4"
+          identifier: ObjectiveNotCompleted
+          description: If this is set, the objective for this Record has not yet been completed.
+        - numericValue: "8"
+          identifier: Obscured
+          description: If this is set, the game recommends that you replace the display text of this Record with DestinyRecordDefinition.stateInfo.obscuredString.
+        - numericValue: "16"
+          identifier: Invisible
+          description: If this is set, the game recommends that you not show this record. Do what you will with this recommendation.
+        - numericValue: "32"
+          identifier: EntitlementUnowned
+          description: If this is set, you can't complete this record because you lack some permission that's required to complete it.
+        - numericValue: "64"
+          identifier: CanEquipTitle
+          description: If this is set, the record has a title (check DestinyRecordDefinition for title info) and you can equip it.
+
+    DestinyCollectibleState:
+      type: integer
+      description: "
+        A Flags Enumeration/bitmask where each bit represents a different state that the Collectible can be in. A collectible can be in any number of these states, and you can choose to use or ignore any or all of them when making your own UI that shows Collectible info. Our displays are going to honor them, but we're also the kind of people who only pretend to inhale before quickly passing it to the left. So, you know, do what you got to do.
+        (All joking aside, please note the caveat I mention around the Invisible flag: there are cases where it is in the best interest of your users to honor these flags even if you're a \"show all the data\" person. Collector-oriented compulsion is a very unfortunate and real thing, and I would hate to instill that compulsion in others through showing them items that they cannot earn. Please consider this when you are making your own apps/sites.)"
+      format: int32
+      enum:
+        - 0
+        - 1
+        - 2
+        - 4
+        - 8
+        - 16
+        - 32
+        - 64
+      x-enum-values:
+        - numericValue: "0"
+          identifier: None
+        - numericValue: "1"
+          identifier: NotAcquired
+          description: If this flag is set, you have not yet obtained this collectible.
+        - numericValue: "2"
+          identifier: Obscured
+          description: 'If this flag is set, the item is "obscured" to you: you can/should use the alternate item hash found in DestinyCollectibleDefinition.stateInfo.obscuredOverrideItemHash when displaying this collectible instead of the default display info.'
+        - numericValue: "4"
+          identifier: Invisible
+          description: "
+            If this flag is set, the collectible should not be shown to the user.
+            Please do consider honoring this flag. It is used - for example - to hide items that a person didn't get from the Eververse. I can't prevent these from being returned in definitions, because some people may have acquired them and thus they should show up: but I would hate for people to start feeling some variant of a Collector's Remorse about these items, and thus increasing their purchasing based on that compulsion. That would be a very unfortunate outcome, and one that I wouldn't like to see happen. So please, whether or not I'm your mom, consider honoring this flag and don't show people invisible collectibles."
+        - numericValue: "8"
+          identifier: CannotAffordMaterialRequirements
+          description: If this flag is set, the collectible requires payment for creating an instance of the item, and you are lacking in currency. Bring the benjamins next time. Or spinmetal. Whatever.
+        - numericValue: "16"
+          identifier: InventorySpaceUnavailable
+          description: If this flag is set, you can't pull this item out of your collection because there's no room left in your inventory.
+        - numericValue: "32"
+          identifier: UniquenessViolation
+          description: If this flag is set, you already have one of these items and can't have a second one.
+        - numericValue: "64"
+          identifier: PurchaseDisabled
+          description: If this flag is set, the ability to pull this item out of your collection has been disabled.
+
+    DestinyPartyMemberStates:
+      type: integer
+      description: A flags enumeration that represents a Fireteam Member's status.
+      format: int32
+      enum:
+        - 0
+        - 1
+        - 2
+        - 4
+        - 8
+      x-enum-values:
+        - numericValue: "0"
+          identifier: None
+        - numericValue: "1"
+          identifier: FireteamMember
+          description: This one's pretty obvious - they're on your Fireteam.
+        - numericValue: "2"
+          identifier: PosseMember
+          description: I don't know what it means to be in a 'Posse', but apparently this is it.
+        - numericValue: "4"
+          identifier: GroupMember
+          description: "
+            Nor do I understand the difference between them being in a 'Group' vs. a 'Fireteam'.
+            I'll update these docs once I get more info. If I get more info. If you're reading this, I never got more info. You're on your own, kid."
+        - numericValue: "8"
+          identifier: PartyLeader
+          description: This person is the party leader.
+
+    DestinyGamePrivacySetting:
+      type: integer
+      description: A player can choose to restrict requests to join their Fireteam to specific states. These are the possible states a user can choose.
+      format: int32
+      enum:
+        - 0
+        - 1
+        - 2
+        - 3
+        - 4
+      x-enum-values:
+        - numericValue: "0"
+          identifier: Open
+        - numericValue: "1"
+          identifier: ClanAndFriendsOnly
+        - numericValue: "2"
+          identifier: FriendsOnly
+        - numericValue: "3"
+          identifier: InvitationOnly
+        - numericValue: "4"
+          identifier: Closed
+
+    DestinyJoinClosedReasons:
+      type: integer
+      description: A Flags enumeration representing the reasons why a person can't join this user's fireteam.
+      format: int32
+      enum:
+        - 0
+        - 1
+        - 2
+        - 4
+        - 8
+        - 16
+        - 32768
+      x-enum-values:
+        - numericValue: "0"
+          identifier: None
+        - numericValue: "1"
+          identifier: InMatchmaking
+          description: The user is currently in matchmaking.
+        - numericValue: "2"
+          identifier: Loading
+          description: The user is currently in a loading screen.
+        - numericValue: "4"
+          identifier: SoloMode
+          description: The user is in an activity that requires solo play.
+        - numericValue: "8"
+          identifier: InternalReasons
+          description: The user can't be joined for one of a variety of internal reasons. Basically, the game can't let you join at this time, but for reasons that aren't under the control of this user.
+        - numericValue: "16"
+          identifier: DisallowedByGameState
+          description: The user's current activity/quest/other transitory game state is preventing joining.
+        - numericValue: "32768"
+          identifier: Offline
+          description: The user appears to be offline.
+
+    DestinyRace:
+      type: integer
+      format: int32
+      enum:
+        - 0
+        - 1
+        - 2
+        - 3
+      x-enum-values:
+        - numericValue: "0"
+          identifier: Human
+        - numericValue: "1"
+          identifier: Awoken
+        - numericValue: "2"
+          identifier: Exo
+        - numericValue: "3"
+          identifier: Unknown
+
+    DestinyActivity:
+      type: object
+      properties:
+        activityHash:
+          type: integer
+          description: The hash identifier of the Activity. Use this to look up the DestinyActivityDefinition of the activity.
+          format: uint32
+          x-mapped-definition:
+            $ref: 'destiny/definitions.yml#/components/schemas/DestinyActivityDefinition'
+        isNew:
+          type: boolean
+          description: If true, then the activity should have a "new" indicator in the Director UI.
+        canLead:
+          type: boolean
+          description: If true, the user is allowed to lead a Fireteam into this activity.
+        canJoin:
+          type: boolean
+          description: If true, the user is allowed to join with another Fireteam in this activity.
+        isCompleted:
+          type: boolean
+          description: If true, we both have the ability to know that the user has completed this activity and they have completed it. Unfortunately, we can't necessarily know this for all activities. As such, this should probably only be used if you already know in advance which specific activities you wish to check.
+        isVisible:
+          type: boolean
+          description: If true, the user should be able to see this activity.
+        displayLevel:
+          type: integer
+          description: The difficulty level of the activity, if applicable.
+          format: int32
+        recommendedLight:
+          type: integer
+          description: The recommended light level for the activity, if applicable.
+          format: int32
+        difficultyTier:
+          type: integer
+          description: A DestinyActivityDifficultyTier enum value indicating the difficulty of the activity.
+          format: int32
+          x-enum-reference:
+            $ref: '#/components/schemas/DestinyActivityDifficultyTier'
+        challenges:
+          type: array
+          items:
+            $ref: 'destiny/challenges.yml#/components/schemas/DestinyChallengeStatus'
+        modifierHashes:
+          type: array
+          description: "
+            If the activity has modifiers, this will be the list of modifiers that all variants have in common. Perform lookups against DestinyActivityModifierDefinition which defines the modifier being applied to get at the modifier data.
+            Note that, in the DestiyActivityDefinition, you will see many more modifiers than this being referred to: those are all *possible* modifiers for the activity, not the active ones. Use only the active ones to match what's really live."
+          items:
+            type: integer
+            format: uint32
+          x-mapped-definition:
+            $ref: 'destiny/definitions/activitymodifiers.yml#/components/schemas/DestinyActivityModifierDefinition'
+        booleanActivityOptions:
+          type: object
+          additionalProperties:
+            type: boolean
+          description: "
+            The set of activity options for this activity, keyed by an identifier that's unique for this activity (not guaranteed to be unique between or across all activities, though should be unique for every *variant* of a given *conceptual* activity: for instance, the original D2 Raid has many variant DestinyActivityDefinitions. While other activities could potentially have the same option hashes, for any given D2 base Raid variant the hash will be unique).
+            As a concrete example of this data, the hashes you get for Raids will correspond to the currently active \"Challenge Mode\".
+            We don't have any human readable information for these, but saavy 3rd party app users could manually associate the key (a hash identifier for the \"option\" that is enabled/disabled) and the value (whether it's enabled or disabled presently)
+            On our side, we don't necessarily even know what these are used for (the game designers know, but we don't), and we have no human readable data for them. In order to use them, you will have to do some experimentation."
+        loadoutRequirementIndex:
+          type: integer
+          description: If returned, this is the index into the DestinyActivityDefinition's "loadouts" property, indicating the currently active loadout requirements.
+          format: int32
+      description: "
+          Represents the \"Live\" data that we can obtain about a Character's status with a specific Activity. This will tell you whether the character can participate in the activity, as well as some other basic mutable information. 
+          Meant to be combined with static DestinyActivityDefinition data for a full picture of the Activity."
+
+    DestinyActivityDifficultyTier:
+      type: integer
+      description: An enumeration representing the potential difficulty levels of an activity. Their names are... more qualitative than quantitative.
+      format: int32
+      enum:
+        - 0
+        - 1
+        - 2
+        - 3
+        - 4
+        - 5
+        - 6
+        - 7
+      x-enum-values:
+        - numericValue: "0"
+          identifier: Trivial
+        - numericValue: "1"
+          identifier: Easy
+        - numericValue: "2"
+          identifier: Normal
+        - numericValue: "3"
+          identifier: Challenging
+        - numericValue: "4"
+          identifier: Hard
+        - numericValue: "5"
+          identifier: Brave
+        - numericValue: "6"
+          identifier: AlmostImpossible
+        - numericValue: "7"
+          identifier: Impossible
+
+    DestinyStat:
+      type: object
+      properties:
+        statHash:
+          type: integer
+          description: The hash identifier for the Stat. Use it to look up the DestinyStatDefinition for static data about the stat.
+          format: uint32
+          x-mapped-definition:
+            $ref: 'destiny/definitions.yml#/components/schemas/DestinyStatDefinition'
+        value:
+          type: integer
+          description: The current value of the Stat.
+          format: int32
+      description: Represents a stat on an item *or* Character (NOT a Historical Stat, but a physical attribute stat like Attack, Defense etc...)
+
+    EquipFailureReason:
+      type: integer
+      description: The reasons why an item cannot be equipped, if any. Many flags can be set, or "None" if
+      format: int32
+      enum:
+        - 0
+        - 1
+        - 2
+        - 4
+        - 8
+        - 16
+      x-enum-values:
+        - numericValue: "0"
+          identifier: None
+          description: The item is/was able to be equipped.
+        - numericValue: "1"
+          identifier: ItemUnequippable
+          description: This is not the kind of item that can be equipped. Did you try equipping Glimmer or something?
+        - numericValue: "2"
+          identifier: ItemUniqueEquipRestricted
+          description: This item is part of a "unique set", and you can't have more than one item of that same set type equipped at once. For instance, if you already have an Exotic Weapon equipped, you can't equip a second one in another weapon slot.
+        - numericValue: "4"
+          identifier: ItemFailedUnlockCheck
+          description: This item has state-based gating that prevents it from being equipped in certain circumstances. For instance, an item might be for Warlocks only and you're a Titan, or it might require you to have beaten some special quest that you haven't beaten yet. Use the additional failure data passed on the item itself to get more information about what the specific failure case was (See DestinyInventoryItemDefinition and DestinyItemInstanceComponent)
+        - numericValue: "8"
+          identifier: ItemFailedLevelCheck
+          description: This item requires you to have reached a specific character level in order to equip it, and you haven't reached that level yet.
+        - numericValue: "16"
+          identifier: ItemNotOnCharacter
+          description: This item can't be equipped on the character requested, because it must be in that character's inventory first. Transfer the item to the character you want to equip it before you attempt to equip it.
+
+    DestinyTalentNode:
+      type: object
+      properties:
+        nodeIndex:
+          type: integer
+          description: The index of the Talent Node being referred to (an index into DestinyTalentGridDefinition.nodes[]). CONTENT VERSION DEPENDENT.
+          format: int32
+        nodeHash:
+          type: integer
+          description: The hash of the Talent Node being referred to (in DestinyTalentGridDefinition.nodes). Deceptively CONTENT VERSION DEPENDENT. We have no guarantee of the hash's immutability between content versions.
+          format: uint32
+        state:
+          type: integer
+          description: 'An DestinyTalentNodeState enum value indicating the node''s state: whether it can be activated or swapped, and why not if neither can be performed.'
+          format: int32
+          x-enum-reference:
+            $ref: '#/components/schemas/DestinyTalentNodeState'
+        isActivated:
+          type: boolean
+          description: 'If true, the node is activated: it''s current step then provides its benefits.'
+        stepIndex:
+          type: integer
+          description: 'The currently relevant Step for the node. It is this step that has rendering data for the node and the benefits that are provided if the node is activated. (the actual rules for benefits provided are extremely complicated in theory, but with how Talent Grids are being used in Destiny 2 you don''t have to worry about a lot of those old Destiny 1 rules.) This is an index into: DestinyTalentGridDefinition.nodes[nodeIndex].steps[stepIndex]'
+          format: int32
+        materialsToUpgrade:
+          type: array
+          description: If the node has material requirements to be activated, this is the list of those requirements.
+          items:
+            $ref: 'destiny/definitions.yml#/components/schemas/DestinyMaterialRequirement'
+        activationGridLevel:
+          type: integer
+          description: The progression level required on the Talent Grid in order to be able to activate this talent node. Talent Grids have their own Progression - similar to Character Level, but in this case it is experience related to the item itself.
+          format: int32
+        progressPercent:
+          type: number
+          description: If you want to show a progress bar or circle for how close this talent node is to being activate-able, this is the percentage to show. It follows the node's underlying rules about when the progress bar should first show up, and when it should be filled.
+          format: float
+        hidden:
+          type: boolean
+          description: Whether or not the talent node is actually visible in the game's UI. Whether you want to show it in your own UI is up to you! I'm not gonna tell you who to sock it to.
+        nodeStatsBlock:
+          type: object
+          description: This property has some history. A talent grid can provide stats on both the item it's related to and the character equipping the item. This returns data about those stat bonuses.
+          allOf:
+            - $ref: '#/components/schemas/DestinyTalentNodeStatBlock'
+      description: 'I see you''ve come to find out more about Talent Nodes. I''m so sorry. Talent Nodes are the conceptual, visual nodes that appear on Talent Grids. Talent Grids, in Destiny 1, were found on almost every instanced item: they had Nodes that could be activated to change the properties of the item. In Destiny 2, Talent Grids only exist for Builds/Subclasses, and while the basic concept is the same (Nodes can be activated once you''ve gained sufficient Experience on the Item, and provide effects), there are some new concepts from Destiny 1. Examine DestinyTalentGridDefinition and its subordinates for more information. This is the "Live" information for the current status of a Talent Node on a specific item. Talent Nodes have many Steps, but only one can be active at any one time: and it is the Step that determines both the visual and the game state-changing properties that the Node provides. Examine this and DestinyTalentNodeStepDefinition carefully. *IMPORTANT NOTE* Talent Nodes are, unfortunately, Content Version DEPENDENT. Though they refer to hashes for Nodes and Steps, those hashes are not guaranteed to be immutable across content versions. This is a source of great exasperation for me, but as a result anyone using Talent Grid data must ensure that the content version of their static content matches that of the server responses before showing or making decisions based on talent grid data.'
+
+    DestinyTalentNodeState:
+      type: integer
+      format: int32
+      enum:
+        - 0
+        - 1
+        - 2
+        - 3
+        - 4
+        - 5
+        - 6
+        - 7
+        - 8
+        - 9
+        - 10
+        - 11
+        - 12
+        - 13
+      x-enum-values:
+        - numericValue: "0"
+          identifier: Invalid
+        - numericValue: "1"
+          identifier: CanUpgrade
+        - numericValue: "2"
+          identifier: NoPoints
+        - numericValue: "3"
+          identifier: NoPrerequisites
+        - numericValue: "4"
+          identifier: NoSteps
+        - numericValue: "5"
+          identifier: NoUnlock
+        - numericValue: "6"
+          identifier: NoMaterial
+        - numericValue: "7"
+          identifier: NoGridLevel
+        - numericValue: "8"
+          identifier: SwappingLocked
+        - numericValue: "9"
+          identifier: MustSwap
+        - numericValue: "10"
+          identifier: Complete
+        - numericValue: "11"
+          identifier: Unknown
+        - numericValue: "12"
+          identifier: CreationOnly
+        - numericValue: "13"
+          identifier: Hidden
+
+    DestinyTalentNodeStatBlock:
+      type: object
+      properties:
+        currentStepStats:
+          type: array
+          description: The stat benefits conferred when this talent node is activated for the current Step that is active on the node.
+          items:
+            $ref: '#/components/schemas/DestinyStat'
+        nextStepStats:
+          type: array
+          description: 'This is a holdover from the old days of Destiny 1, when a node could be activated multiple times, conferring multiple steps worth of benefits: you would use this property to show what activating the "next" step on the node would provide vs. what the current step is providing. While Nodes are currently not being used this way, the underlying system for this functionality still exists. I hesitate to remove this property while the ability for designers to make such a talent grid still exists. Whether you want to show it is up to you.'
+          items:
+            $ref: '#/components/schemas/DestinyStat'
+      description: This property has some history. A talent grid can provide stats on both the item it's related to and the character equipping the item. This returns data about those stat bonuses.
+
+    DestinyVendorFilter:
+      type: integer
+      description: Indicates the type of filter to apply to Vendor results.
+      format: int32
+      enum:
+        - 0
+        - 1
+      x-enum-values:
+        - numericValue: "0"
+          identifier: None
+        - numericValue: "1"
+          identifier: ApiPurchasable
+
+    VendorItemStatus:
+      type: integer
+      format: int32
+      enum:
+        - 0
+        - 1
+        - 2
+        - 4
+        - 8
+        - 16
+        - 32
+        - 64
+        - 128
+        - 256
+        - 512
+        - 1024
+        - 2048
+        - 4096
+        - 8192
+      x-enum-values:
+        - numericValue: "0"
+          identifier: Success
+        - numericValue: "1"
+          identifier: NoInventorySpace
+        - numericValue: "2"
+          identifier: NoFunds
+        - numericValue: "4"
+          identifier: NoProgression
+        - numericValue: "8"
+          identifier: NoUnlock
+        - numericValue: "16"
+          identifier: NoQuantity
+        - numericValue: "32"
+          identifier: OutsidePurchaseWindow
+        - numericValue: "64"
+          identifier: NotAvailable
+        - numericValue: "128"
+          identifier: UniquenessViolation
+        - numericValue: "256"
+          identifier: UnknownError
+        - numericValue: "512"
+          identifier: AlreadySelling
+        - numericValue: "1024"
+          identifier: Unsellable
+        - numericValue: "2048"
+          identifier: SellingInhibited
+        - numericValue: "4096"
+          identifier: AlreadyOwned
+        - numericValue: "8192"
+          identifier: DisplayOnly
+
+    DestinyUnlockStatus:
+      type: object
+      properties:
+        unlockHash:
+          type: integer
+          description: The hash identifier for the Unlock Flag. Use to lookup DestinyUnlockDefinition for static data. Not all unlocks have human readable data - in fact, most don't. But when they do, it can be very useful to show. Even if they don't have human readable data, you might be able to infer the meaning of an unlock flag with a bit of experimentation...
+          format: uint32
+          x-mapped-definition:
+            $ref: 'destiny/definitions.yml#/components/schemas/DestinyUnlockDefinition'
+        isSet:
+          type: boolean
+          description: Whether the unlock flag is set.
+      description: "
+        Indicates the status of an \"Unlock Flag\" on a Character or Profile.
+        These are individual bits of state that can be either set or not set, and sometimes provide interesting human-readable information in their related DestinyUnlockDefinition."
+
+    DestinyVendorItemState:
+      type: integer
+      description: 'The possible states of Destiny Profile Records. IMPORTANT: Any given item can theoretically have many of these states simultaneously: as a result, this was altered to be a flags enumeration/bitmask for v3.2.0.'
+      format: int32
+      enum:
+        - 0
+        - 1
+        - 2
+        - 4
+        - 8
+        - 16
+        - 32
+        - 64
+        - 128
+        - 256
+        - 512
+        - 1024
+        - 2048
+        - 4096
+        - 8192
+        - 16384
+      x-enum-values:
+        - numericValue: "0"
+          identifier: None
+          description: There are no augments on the item.
+        - numericValue: "1"
+          identifier: Incomplete
+          description: Deprecated forever (probably). There was a time when Records were going to be implemented through Vendors, and this field was relevant. Now they're implemented through Presentation Nodes, and this field doesn't matter anymore.
+        - numericValue: "2"
+          identifier: RewardAvailable
+          description: Deprecated forever (probably). See the description of the "Incomplete" value for the juicy scoop.
+        - numericValue: "4"
+          identifier: Complete
+          description: Deprecated forever (probably). See the description of the "Incomplete" value for the juicy scoop.
+        - numericValue: "8"
+          identifier: New
+          description: This item is considered to be "newly available", and should have some UI showing how shiny it is.
+        - numericValue: "16"
+          identifier: Featured
+          description: This item is being "featured", and should be shiny in a different way from items that are merely new.
+        - numericValue: "32"
+          identifier: Ending
+          description: This item is only available for a limited time, and that time is approaching.
+        - numericValue: "64"
+          identifier: OnSale
+          description: This item is "on sale". Get it while it's hot.
+        - numericValue: "128"
+          identifier: Owned
+          description: This item is already owned.
+        - numericValue: "256"
+          identifier: WideView
+          description: This item should be shown with a "wide view" instead of normal icon view.
+        - numericValue: "512"
+          identifier: NexusAttention
+          description: This indicates that you should show some kind of attention-requesting indicator on the item, in a similar manner to items in the nexus that have such notifications.
+        - numericValue: "1024"
+          identifier: SetDiscount
+          description: This indicates that the item has some sort of a 'set' discount.
+        - numericValue: "2048"
+          identifier: PriceDrop
+          description: This indicates that the item has a price drop.
+        - numericValue: "4096"
+          identifier: DailyOffer
+          description: This indicates that the item is a daily offer.
+        - numericValue: "8192"
+          identifier: Charity
+          description: This indicates that the item is for charity.
+        - numericValue: "16384"
+          identifier: SeasonalRewardExpiration
+          description: This indicates that the item has a seasonal reward expiration.
+
+    DestinyEquipItemResults:
+      type: object
+      properties:
+        equipResults:
+          type: array
+          items:
+            $ref: '#/components/schemas/DestinyEquipItemResult'
+      description: The results of a bulk Equipping operation performed through the Destiny API.
+
+    DestinyEquipItemResult:
+      type: object
+      properties:
+        itemInstanceId:
+          type: integer
+          description: The instance ID of the item in question (all items that can be equipped must, but definition, be Instanced and thus have an Instance ID that you can use to refer to them)
+          format: int64
+        equipStatus:
+          type: integer
+          description: A PlatformErrorCodes enum indicating whether it succeeded, and if it failed why.
+          format: int32
+          x-enum-reference:
+            $ref: 'exceptions.yml#/components/schemas/PlatformErrorCodes'
+      description: The results of an Equipping operation performed through the Destiny API.
+

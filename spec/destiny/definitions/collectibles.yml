@@ -1,0 +1,98 @@
+components:
+  schemas:
+    DestinyCollectibleDefinition:
+      type: object
+      properties:
+        displayProperties:
+          $ref: 'common.yml#/components/schemas/DestinyDisplayPropertiesDefinition'
+        scope:
+          type: integer
+          description: Indicates whether the state of this Collectible is determined on a per-character or on an account-wide basis.
+          format: int32
+          x-enum-reference:
+            $ref: '../../destiny.yml#/components/schemas/DestinyScope'
+        sourceString:
+          type: string
+          description: A human readable string for a hint about how to acquire the item.
+        sourceHash:
+          type: integer
+          description: "
+            This is a hash identifier we are building on the BNet side in an attempt to let people group collectibles by similar sources.
+            I can't promise that it's going to be 100% accurate, but if the designers were consistent in assigning the same source strings to items with the same sources, it *ought to* be. No promises though.
+            This hash also doesn't relate to an actual definition, just to note: we've got nothing useful other than the source string for this data."
+          format: uint32
+        itemHash:
+          type: integer
+          format: uint32
+          x-mapped-definition:
+            $ref: '../definitions.yml#/components/schemas/DestinyInventoryItemDefinition'
+        acquisitionInfo:
+          $ref: '#/components/schemas/DestinyCollectibleAcquisitionBlock'
+        stateInfo:
+          $ref: '#/components/schemas/DestinyCollectibleStateBlock'
+        presentationInfo:
+          $ref: 'presentation.yml#/components/schemas/DestinyPresentationChildBlock'
+        presentationNodeType:
+          type: integer
+          format: int32
+          x-enum-reference:
+            $ref: '../../destiny.yml#/components/schemas/DestinyPresentationNodeType'
+        traitIds:
+          type: array
+          items:
+            type: string
+        traitHashes:
+          type: array
+          items:
+            type: integer
+            format: uint32
+          x-mapped-definition:
+            $ref: 'traits.yml#/components/schemas/DestinyTraitDefinition'
+        parentNodeHashes:
+          type: array
+          description: A quick reference to presentation nodes that have this node as a child. Presentation nodes can be parented under multiple parents.
+          items:
+            type: integer
+            format: uint32
+          x-mapped-definition:
+            $ref: 'presentation.yml#/components/schemas/DestinyPresentationNodeDefinition'
+        hash:
+          type: integer
+          description: 'The unique identifier for this entity. Guaranteed to be unique for the type of entity, but not globally.
+            When entities refer to each other in Destiny content, it is this hash that they are referring to.'
+          format: uint32
+        index:
+          type: integer
+          description: The index of the entity as it was found in the investment tables.
+          format: int32
+        redacted:
+          type: boolean
+          description: If this is true, then there is an entity with this identifier/type combination, but BNet is not yet allowed to show it. Sorry!
+      description: Defines a
+      x-mobile-manifest-name: Collectibles
+
+    DestinyCollectibleAcquisitionBlock:
+      type: object
+      properties:
+        acquireMaterialRequirementHash:
+          type: integer
+          format: uint32
+          x-mapped-definition:
+            $ref: '../definitions.yml#/components/schemas/DestinyMaterialRequirementSetDefinition'
+        acquireTimestampUnlockValueHash:
+          type: integer
+          format: uint32
+          x-mapped-definition:
+            $ref: '../definitions.yml#/components/schemas/DestinyUnlockValueDefinition'
+
+    DestinyCollectibleStateBlock:
+      type: object
+      properties:
+        obscuredOverrideItemHash:
+          type: integer
+          format: uint32
+          x-mapped-definition:
+            $ref: '../definitions.yml#/components/schemas/DestinyInventoryItemDefinition'
+        requirements:
+          $ref: 'presentation.yml#/components/schemas/DestinyPresentationNodeRequirementsBlock'
+

@@ -1,0 +1,77 @@
+components:
+  schemas:
+    ForumPostCategoryEnums:
+      type: integer
+      format: int32
+      enum:
+        - 0
+        - 1
+        - 2
+        - 4
+        - 8
+        - 16
+        - 32
+        - 64
+        - 128
+        - 256
+        - 512
+        - 1024
+      x-enum-values:
+        - numericValue: "0"
+          identifier: None
+        - numericValue: "1"
+          identifier: TextOnly
+        - numericValue: "2"
+          identifier: Media
+        - numericValue: "4"
+          identifier: Link
+        - numericValue: "8"
+          identifier: Poll
+        - numericValue: "16"
+          identifier: Question
+        - numericValue: "32"
+          identifier: Answered
+        - numericValue: "64"
+          identifier: Announcement
+        - numericValue: "128"
+          identifier: ContentComment
+        - numericValue: "256"
+          identifier: BungieOfficial
+        - numericValue: "512"
+          identifier: NinjaOfficial
+        - numericValue: "1024"
+          identifier: Recruitment
+
+    ForumFlagsEnum:
+      type: integer
+      format: int32
+      enum:
+        - 0
+        - 1
+        - 2
+        - 4
+        - 8
+        - 16
+        - 32
+        - 64
+        - 128
+      x-enum-values:
+        - numericValue: "0"
+          identifier: None
+        - numericValue: "1"
+          identifier: BungieStaffPost
+        - numericValue: "2"
+          identifier: ForumNinjaPost
+        - numericValue: "4"
+          identifier: ForumMentorPost
+        - numericValue: "8"
+          identifier: TopicBungieStaffPosted
+        - numericValue: "16"
+          identifier: TopicBungieVolunteerPosted
+        - numericValue: "32"
+          identifier: QuestionAnsweredByBungie
+        - numericValue: "64"
+          identifier: QuestionAnsweredByNinja
+        - numericValue: "128"
+          identifier: CommunityContent
+

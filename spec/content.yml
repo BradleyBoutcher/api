@@ -1,0 +1,71 @@
+components:
+  schemas:
+    ContentItemPublicContract:
+      type: object
+      properties:
+        contentId:
+          type: integer
+          format: int64
+        cType:
+          type: string
+        cmsPath:
+          type: string
+        creationDate:
+          type: string
+          format: date-time
+        modifyDate:
+          type: string
+          format: date-time
+        allowComments:
+          type: boolean
+        hasAgeGate:
+          type: boolean
+        minimumAge:
+          type: integer
+          format: int32
+        ratingImagePath:
+          type: string
+        author:
+          $ref: 'user.yml#/components/schemas/GeneralUser'
+        autoEnglishPropertyFallback:
+          type: boolean
+        properties:
+          type: object
+          additionalProperties:
+            type: object
+            properties: {}
+          description: "
+            Firehose content is really a collection of metadata and \"properties\", which are the potentially-but-not-strictly localizable data that comprises the meat of whatever content is being shown.
+            As Cole Porter would have crooned, \"Anything Goes\" with Firehose properties. They are most often strings, but they can theoretically be anything. They are JSON encoded, and could be JSON structures, simple strings, numbers etc... The Content Type of the item (cType) will describe the properties, and thus how they ought to be deserialized."
+        representations:
+          type: array
+          items:
+            $ref: '#/components/schemas/ContentRepresentation'
+        tags:
+          type: array
+          description: 'NOTE: Tags will always be lower case.'
+          items:
+            type: string
+        commentSummary:
+          $ref: '#/components/schemas/CommentSummary'
+
+    ContentRepresentation:
+      type: object
+      properties:
+        name:
+          type: string
+        path:
+          type: string
+        validationString:
+          type: string
+
+    CommentSummary:
+      type: object
+      properties:
+        topicId:
+          type: integer
+          format: int64
+        commentCount:
+          type: integer
+          format: int32
+

@@ -1,0 +1,23 @@
+components:
+  schemas:
+    UserTheme:
+      type: object
+      properties:
+        userThemeId:
+          type: integer
+          format: int32
+        userThemeName:
+          type: string
+        userThemeDescription:
+          type: string
+
+    GroupTheme:
+      type: object
+      properties:
+        name:
+          type: string
+        folder:
+          type: string
+        description:
+          type: string
+

@@ -1,2 +1,4 @@
 # Ignore output from generator
 out
+entries.txt
+mappings.txt

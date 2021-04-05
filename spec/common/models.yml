@@ -1,0 +1,186 @@
+components:
+  schemas:
+    CoreSettingsConfiguration:
+      type: object
+      properties:
+        environment:
+          type: string
+        systems:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/CoreSystem'
+        ignoreReasons:
+          type: array
+          items:
+            $ref: '#/components/schemas/CoreSetting'
+        forumCategories:
+          type: array
+          items:
+            $ref: '#/components/schemas/CoreSetting'
+        groupAvatars:
+          type: array
+          items:
+            $ref: '#/components/schemas/CoreSetting'
+        destinyMembershipTypes:
+          type: array
+          items:
+            $ref: '#/components/schemas/CoreSetting'
+        recruitmentPlatformTags:
+          type: array
+          items:
+            $ref: '#/components/schemas/CoreSetting'
+        recruitmentMiscTags:
+          type: array
+          items:
+            $ref: '#/components/schemas/CoreSetting'
+        recruitmentActivities:
+          type: array
+          items:
+            $ref: '#/components/schemas/CoreSetting'
+        userContentLocales:
+          type: array
+          items:
+            $ref: '#/components/schemas/CoreSetting'
+        systemContentLocales:
+          type: array
+          items:
+            $ref: '#/components/schemas/CoreSetting'
+        clanBannerDecals:
+          type: array
+          items:
+            $ref: '#/components/schemas/CoreSetting'
+        clanBannerDecalColors:
+          type: array
+          items:
+            $ref: '#/components/schemas/CoreSetting'
+        clanBannerGonfalons:
+          type: array
+          items:
+            $ref: '#/components/schemas/CoreSetting'
+        clanBannerGonfalonColors:
+          type: array
+          items:
+            $ref: '#/components/schemas/CoreSetting'
+        clanBannerGonfalonDetails:
+          type: array
+          items:
+            $ref: '#/components/schemas/CoreSetting'
+        clanBannerGonfalonDetailColors:
+          type: array
+          items:
+            $ref: '#/components/schemas/CoreSetting'
+        clanBannerStandards:
+          type: array
+          items:
+            $ref: '#/components/schemas/CoreSetting'
+        destiny2CoreSettings:
+          $ref: '#/components/schemas/Destiny2CoreSettings'
+        emailSettings:
+          $ref: '../user.yml#/components/schemas/EmailSettings'
+        fireteamActivities:
+          type: array
+          items:
+            $ref: '#/components/schemas/CoreSetting'
+
+    CoreSystem:
+      type: object
+      properties:
+        enabled:
+          type: boolean
+        parameters:
+          type: object
+          additionalProperties:
+            type: string
+
+    CoreSetting:
+      type: object
+      properties:
+        identifier:
+          type: string
+        isDefault:
+          type: boolean
+        displayName:
+          type: string
+        summary:
+          type: string
+        imagePath:
+          type: string
+        childSettings:
+          type: array
+          items:
+            $ref: '#/components/schemas/CoreSetting'
+
+    Destiny2CoreSettings:
+      type: object
+      properties:
+        collectionRootNode:
+          type: integer
+          format: uint32
+        badgesRootNode:
+          type: integer
+          format: uint32
+        recordsRootNode:
+          type: integer
+          format: uint32
+        medalsRootNode:
+          type: integer
+          format: uint32
+        metricsRootNode:
+          type: integer
+          format: uint32
+        activeTriumphsRootNodeHash:
+          type: integer
+          format: uint32
+        activeSealsRootNodeHash:
+          type: integer
+          format: uint32
+        legacyTriumphsRootNodeHash:
+          type: integer
+          format: uint32
+        legacySealsRootNodeHash:
+          type: integer
+          format: uint32
+        medalsRootNodeHash:
+          type: integer
+          format: uint32
+        exoticCatalystsRootNodeHash:
+          type: integer
+          format: uint32
+        loreRootNodeHash:
+          type: integer
+          format: uint32
+        currentRankProgressionHashes:
+          type: array
+          items:
+            type: integer
+            format: uint32
+        undiscoveredCollectibleImage:
+          type: string
+        ammoTypeHeavyIcon:
+          type: string
+        ammoTypeSpecialIcon:
+          type: string
+        ammoTypePrimaryIcon:
+          type: string
+        currentSeasonalArtifactHash:
+          type: integer
+          format: uint32
+        currentSeasonHash:
+          type: integer
+          format: uint32
+        seasonalChallengesPresentationNodeHash:
+          type: integer
+          format: uint32
+          x-mapped-definition:
+            $ref: '../destiny/definitions/presentation.yml#/components/schemas/DestinyPresentationNodeDefinition'
+        futureSeasonHashes:
+          type: array
+          items:
+            type: integer
+            format: uint32
+        pastSeasonHashes:
+          type: array
+          items:
+            type: integer
+            format: uint32
+

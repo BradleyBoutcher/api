@@ -34,39 +34,27 @@ components:
           description: 'Represents the possible components that can be returned
             from Destiny "Get" calls such as GetProfile, GetCharacter, GetVendor
             etc...When making one of these requests, you will pass one or
-            more of these components as a comma separated list in the "components="
+            more of these components as a comma separated list in the "components=""
             querystring parameter. For instance, if you want baseline Profile
             data, Character Data, and character progressions, you would pass
             "components=Profiles,Characters,CharacterProgressions" You may use
             either the numerical or string values.'
           format: int32
           x-enum-reference:
-            $ref: "./components/destiny.yml#/components/schemas/DestinyComponentType"
+            $ref: "./destiny.yml#/components/schemas/DestinyComponentType"
 
   schemas:
     Application:
-      $ref: "./components/applications.yml#/components/schemas/Application"
+      $ref: "./applications.yml#/components/schemas/Application"
 
     ApiUsage:
-      $ref: "./components/applications.yml#/components/schemas/ApiUsage"
+      $ref: "./applications.yml#/components/schemas/ApiUsage"
 
     GeneralUser:
-      $ref: "./components/user.yml#/components/schemas/GeneralUser"
+      $ref: "./user.yml#/components/schemas/GeneralUser"
 
     PlatformErrorCodes:
-      $ref: "./components/exceptions.yml#/components/schemas/PlatformErrorCodes"
-
-    "BungieMembershipType[]":
-      type: array
-      items:
-        format: int32
-        description: >-
-          The types of membership the Accounts system supports. This is the
-          external facing enum used in place of the internal-only
-          Bungie.SharedDefinitions.MembershipType.
-        type: integer
-        x-enum-reference:
-          $ref: "./components/user.yml#/components/schemas/BungieMembershipType"
+      $ref: "./exceptions.yml#/components/schemas/PlatformErrorCodes"
 
   securitySchemes:
     apiKey:
@@ -130,7 +118,7 @@ components:
               for a partner
 
 paths:
-  /App/ApiUsage/{applicationId}/:
+  /App/ApiUsage/{applicationId}:
     get:
       tags:
         - App
@@ -194,7 +182,7 @@ paths:
       security:
         - oauth2:
             - ReadUserData
-  /App/FirstParty/:
+  /App/FirstParty:
     get:
       tags:
         - App
@@ -233,7 +221,7 @@ paths:
                   DetailedErrorTrace:
                     type: string
       deprecated: false
-  /User/GetBungieNetUserById/{id}/:
+  /User/GetBungieNetUserById/{id}:
     get:
       tags:
         - User
@@ -258,7 +246,7 @@ paths:
                 type: object
                 properties:
                   Response:
-                    $ref: "#/components/schemas/User.GeneralUser"
+                    $ref: "user.yml#/components/schemas/GeneralUser"
                   ErrorCode:
                     type: integer
                     format: int32
@@ -278,7 +266,7 @@ paths:
                   DetailedErrorTrace:
                     type: string
       deprecated: false
-  /User/SearchUsers/:
+  /User/SearchUsers:
     get:
       tags:
         - User
@@ -323,7 +311,7 @@ paths:
                   DetailedErrorTrace:
                     type: string
       deprecated: false
-  /User/GetCredentialTypesForTargetAccount/{membershipId}/:
+  /User/GetCredentialTypesForTargetAccount/{membershipId}:
     get:
       tags:
         - User
@@ -350,7 +338,7 @@ paths:
                   Response:
                     type: array
                     items:
-                      $ref: "./components/users.yml#/schemas/GetCredentialTypesForAccountResponse"
+                      $ref: "user/models.yml#/components/schemas/GetCredentialTypesForAccountResponse"
                   ErrorCode:
                     type: integer
                     format: int32
@@ -370,7 +358,7 @@ paths:
                   DetailedErrorTrace:
                     type: string
       deprecated: false
-  /User/GetAvailableThemes/:
+  /User/GetAvailableThemes:
     get:
       tags:
         - User
@@ -389,7 +377,7 @@ paths:
                   Response:
                     type: array
                     items:
-                      $ref: "#/components/schemas/Config.UserTheme"
+                      $ref: "config.yml#/components/schemas/UserTheme"
                   ErrorCode:
                     type: integer
                     format: int32
@@ -409,7 +397,7 @@ paths:
                   DetailedErrorTrace:
                     type: string
       deprecated: false
-  /User/GetMembershipsById/{membershipId}/{membershipType}/:
+  /User/GetMembershipsById/{membershipId}/{membershipType}:
     get:
       tags:
         - User
@@ -444,7 +432,7 @@ paths:
                 type: object
                 properties:
                   Response:
-                    $ref: "#/components/schemas/User.UserMembershipData"
+                    $ref: "user.yml#/components/schemas/UserMembershipData"
                   ErrorCode:
                     type: integer
                     format: int32
@@ -464,7 +452,7 @@ paths:
                   DetailedErrorTrace:
                     type: string
       deprecated: false
-  /User/GetMembershipsForCurrentUser/:
+  /User/GetMembershipsForCurrentUser:
     get:
       tags:
         - User
@@ -484,7 +472,7 @@ paths:
                 type: object
                 properties:
                   Response:
-                    $ref: "#/components/schemas/User.UserMembershipData"
+                    $ref: "user.yml#/components/schemas/UserMembershipData"
                   ErrorCode:
                     type: integer
                     format: int32
@@ -507,7 +495,7 @@ paths:
       security:
         - oauth2:
             - ReadBasicUserProfile
-  /User/GetMembershipFromHardLinkedCredential/{crType}/{credential}/:
+  /User/GetMembershipFromHardLinkedCredential/{crType}/{credential}:
     get:
       tags:
         - User
@@ -527,7 +515,7 @@ paths:
           description: The credential type. 'SteamId' is the only valid value at present.
           required: true
           schema:
-            type: integer
+            type: string
             format: byte
       responses:
         200:
@@ -540,7 +528,7 @@ paths:
                 type: object
                 properties:
                   Response:
-                    $ref: "#/components/schemas/User.HardLinkedUserMembership"
+                    $ref: "user.yml#/components/schemas/HardLinkedUserMembership"
                   ErrorCode:
                     type: integer
                     format: int32
@@ -560,7 +548,7 @@ paths:
                   DetailedErrorTrace:
                     type: string
       deprecated: false
-  /Content/GetContentType/{type}/:
+  /Content/GetContentType/{type}:
     get:
       tags:
         - Content
@@ -583,7 +571,7 @@ paths:
                 type: object
                 properties:
                   Response:
-                    $ref: "#/components/schemas/Content.Models.ContentTypeDescription"
+                    $ref: "content/models.yml#/components/schemas/ContentTypeDescription"
                   ErrorCode:
                     type: integer
                     format: int32
@@ -603,7 +591,7 @@ paths:
                   DetailedErrorTrace:
                     type: string
       deprecated: false
-  /Content/GetContentById/{id}/{locale}/:
+  /Content/GetContentById/{id}/{locale}:
     get:
       tags:
         - Content
@@ -637,7 +625,7 @@ paths:
                 type: object
                 properties:
                   Response:
-                    $ref: "#/components/schemas/Content.ContentItemPublicContract"
+                    $ref: "content.yml#/components/schemas/ContentItemPublicContract"
                   ErrorCode:
                     type: integer
                     format: int32
@@ -657,7 +645,7 @@ paths:
                   DetailedErrorTrace:
                     type: string
       deprecated: false
-  /Content/GetContentByTagAndType/{tag}/{type}/{locale}/:
+  /Content/GetContentByTagAndType/{tag}/{type}/{locale}:
     get:
       tags:
         - Content
@@ -695,7 +683,7 @@ paths:
                 type: object
                 properties:
                   Response:
-                    $ref: "#/components/schemas/Content.ContentItemPublicContract"
+                    $ref: "content.yml#/components/schemas/ContentItemPublicContract"
                   ErrorCode:
                     type: integer
                     format: int32
@@ -715,7 +703,7 @@ paths:
                   DetailedErrorTrace:
                     type: string
       deprecated: false
-  /Content/Search/{locale}/:
+  /Content/Search/{locale}:
     get:
       tags:
         - Content
@@ -775,7 +763,7 @@ paths:
                 type: object
                 properties:
                   Response:
-                    $ref: "#/components/schemas/SearchResultOfContentItemPublicContract"
+                    $ref: "shared.yml#/components/schemas/SearchResultOfContentItemPublicContract"
                   ErrorCode:
                     type: integer
                     format: int32
@@ -795,7 +783,7 @@ paths:
                   DetailedErrorTrace:
                     type: string
       deprecated: false
-  /Content/SearchContentByTagAndType/{tag}/{type}/{locale}/:
+  /Content/SearchContentByTagAndType/{tag}/{type}/{locale}:
     get:
       tags:
         - Content
@@ -847,7 +835,7 @@ paths:
                 type: object
                 properties:
                   Response:
-                    $ref: "#/components/schemas/SearchResultOfContentItemPublicContract"
+                    $ref: "shared.yml#/components/schemas/SearchResultOfContentItemPublicContract"
                   ErrorCode:
                     type: integer
                     format: int32
@@ -867,7 +855,7 @@ paths:
                   DetailedErrorTrace:
                     type: string
       deprecated: false
-  /Content/SearchHelpArticles/{searchtext}/{size}/:
+  /Content/SearchHelpArticles/{searchtext}/{size}:
     get:
       tags:
         - Content
@@ -989,7 +977,7 @@ paths:
                 type: object
                 properties:
                   Response:
-                    $ref: "#/components/schemas/Forum.PostSearchResponse"
+                    $ref: "forum.yml#/components/schemas/PostSearchResponse"
                   ErrorCode:
                     type: integer
                     format: int32
@@ -1009,7 +997,7 @@ paths:
                   DetailedErrorTrace:
                     type: string
       deprecated: false
-  /Forum/GetCoreTopicsPaged/{page}/{sort}/{quickDate}/{categoryFilter}/:
+  /Forum/GetCoreTopicsPaged/{page}/{sort}/{quickDate}/{categoryFilter}:
     get:
       tags:
         - Forum
@@ -1062,7 +1050,7 @@ paths:
                 type: object
                 properties:
                   Response:
-                    $ref: "#/components/schemas/Forum.PostSearchResponse"
+                    $ref: "forum.yml#/components/schemas/PostSearchResponse"
                   ErrorCode:
                     type: integer
                     format: int32
@@ -1149,7 +1137,7 @@ paths:
                 type: object
                 properties:
                   Response:
-                    $ref: "#/components/schemas/Forum.PostSearchResponse"
+                    $ref: "forum.yml#/components/schemas/PostSearchResponse"
                   ErrorCode:
                     type: integer
                     format: int32
@@ -1232,7 +1220,7 @@ paths:
                 type: object
                 properties:
                   Response:
-                    $ref: "#/components/schemas/Forum.PostSearchResponse"
+                    $ref: "forum.yml#/components/schemas/PostSearchResponse"
                   ErrorCode:
                     type: integer
                     format: int32
@@ -1252,7 +1240,7 @@ paths:
                   DetailedErrorTrace:
                     type: string
       deprecated: false
-  /Forum/GetPostAndParent/{childPostId}/:
+  /Forum/GetPostAndParent/{childPostId}:
     get:
       tags:
         - Forum
@@ -1283,7 +1271,7 @@ paths:
                 type: object
                 properties:
                   Response:
-                    $ref: "#/components/schemas/Forum.PostSearchResponse"
+                    $ref: "forum.yml#/components/schemas/PostSearchResponse"
                   ErrorCode:
                     type: integer
                     format: int32
@@ -1303,7 +1291,7 @@ paths:
                   DetailedErrorTrace:
                     type: string
       deprecated: false
-  /Forum/GetPostAndParentAwaitingApproval/{childPostId}/:
+  /Forum/GetPostAndParentAwaitingApproval/{childPostId}:
     get:
       tags:
         - Forum
@@ -1336,7 +1324,7 @@ paths:
                 type: object
                 properties:
                   Response:
-                    $ref: "#/components/schemas/Forum.PostSearchResponse"
+                    $ref: "forum.yml#/components/schemas/PostSearchResponse"
                   ErrorCode:
                     type: integer
                     format: int32
@@ -1356,7 +1344,7 @@ paths:
                   DetailedErrorTrace:
                     type: string
       deprecated: false
-  /Forum/GetTopicForContent/{contentId}/:
+  /Forum/GetTopicForContent/{contentId}:
     get:
       tags:
         - Forum
@@ -1401,7 +1389,7 @@ paths:
                   DetailedErrorTrace:
                     type: string
       deprecated: false
-  /Forum/GetForumTagSuggestions/:
+  /Forum/GetForumTagSuggestions:
     get:
       tags:
         - Forum
@@ -1428,7 +1416,7 @@ paths:
                   Response:
                     type: array
                     items:
-                      $ref: "#/components/schemas/Tags.Models.Contracts.TagResponse"
+                      $ref: "tags/models/contracts.yml#/components/schemas/TagResponse"
                   ErrorCode:
                     type: integer
                     format: int32
@@ -1448,7 +1436,7 @@ paths:
                   DetailedErrorTrace:
                     type: string
       deprecated: false
-  /Forum/Poll/{topicId}/:
+  /Forum/Poll/{topicId}:
     get:
       tags:
         - Forum
@@ -1473,7 +1461,7 @@ paths:
                 type: object
                 properties:
                   Response:
-                    $ref: "#/components/schemas/Forum.PostSearchResponse"
+                    $ref: "forum.yml#/components/schemas/PostSearchResponse"
                   ErrorCode:
                     type: integer
                     format: int32
@@ -1493,7 +1481,7 @@ paths:
                   DetailedErrorTrace:
                     type: string
       deprecated: false
-  /Forum/Recruit/Summaries/:
+  /Forum/Recruit/Summaries:
     post:
       tags:
         - Forum
@@ -1514,7 +1502,7 @@ paths:
                   Response:
                     type: array
                     items:
-                      $ref: "#/components/schemas/Forum.ForumRecruitmentDetail"
+                      $ref: "forum.yml#/components/schemas/ForumRecruitmentDetail"
                   ErrorCode:
                     type: integer
                     format: int32
@@ -1534,7 +1522,7 @@ paths:
                   DetailedErrorTrace:
                     type: string
       deprecated: false
-  /GroupV2/GetAvailableAvatars/:
+  /GroupV2/GetAvailableAvatars:
     get:
       tags:
         - GroupV2
@@ -1575,7 +1563,7 @@ paths:
                   DetailedErrorTrace:
                     type: string
       deprecated: false
-  /GroupV2/GetAvailableThemes/:
+  /GroupV2/GetAvailableThemes:
     get:
       tags:
         - GroupV2
@@ -1594,7 +1582,7 @@ paths:
                   Response:
                     type: array
                     items:
-                      $ref: "#/components/schemas/Config.GroupTheme"
+                      $ref: "config.yml#/components/schemas/GroupTheme"
                   ErrorCode:
                     type: integer
                     format: int32
@@ -1614,7 +1602,7 @@ paths:
                   DetailedErrorTrace:
                     type: string
       deprecated: false
-  /GroupV2/GetUserClanInviteSetting/{mType}/:
+  /GroupV2/GetUserClanInviteSetting/{mType}:
     get:
       tags:
         - GroupV2
@@ -1666,7 +1654,7 @@ paths:
       security:
         - oauth2:
             - ReadUserData
-  /GroupV2/Recommended/{groupType}/{createDateRange}/:
+  /GroupV2/Recommended/{groupType}/{createDateRange}:
     post:
       tags:
         - GroupV2
@@ -1702,7 +1690,7 @@ paths:
                   Response:
                     type: array
                     items:
-                      $ref: "#/components/schemas/GroupsV2.GroupV2Card"
+                      $ref: "groupsv2.yml#/components/schemas/GroupV2Card"
                   ErrorCode:
                     type: integer
                     format: int32
@@ -1725,7 +1713,7 @@ paths:
       security:
         - oauth2:
             - ReadGroups
-  /GroupV2/Search/:
+  /GroupV2/Search:
     post:
       tags:
         - GroupV2
@@ -1742,7 +1730,7 @@ paths:
                 type: object
                 properties:
                   Response:
-                    $ref: "#/components/schemas/GroupsV2.GroupSearchResponse"
+                    $ref: "groupsv2.yml#/components/schemas/GroupSearchResponse"
                   ErrorCode:
                     type: integer
                     format: int32
@@ -1762,7 +1750,7 @@ paths:
                   DetailedErrorTrace:
                     type: string
       deprecated: false
-  /GroupV2/{groupId}/:
+  /GroupV2/{groupId}:
     get:
       tags:
         - GroupV2
@@ -1787,7 +1775,7 @@ paths:
                 type: object
                 properties:
                   Response:
-                    $ref: "#/components/schemas/GroupsV2.GroupResponse"
+                    $ref: "groupsv2.yml#/components/schemas/GroupResponse"
                   ErrorCode:
                     type: integer
                     format: int32
@@ -1807,7 +1795,7 @@ paths:
                   DetailedErrorTrace:
                     type: string
       deprecated: false
-  /GroupV2/Name/{groupName}/{groupType}/:
+  /GroupV2/Name/{groupName}/{groupType}:
     get:
       tags:
         - GroupV2
@@ -1840,7 +1828,7 @@ paths:
                 type: object
                 properties:
                   Response:
-                    $ref: "#/components/schemas/GroupsV2.GroupResponse"
+                    $ref: "groupsv2.yml#/components/schemas/GroupResponse"
                   ErrorCode:
                     type: integer
                     format: int32
@@ -1860,7 +1848,7 @@ paths:
                   DetailedErrorTrace:
                     type: string
       deprecated: false
-  /GroupV2/NameV2/:
+  /GroupV2/NameV2:
     post:
       tags:
         - GroupV2
@@ -1879,7 +1867,7 @@ paths:
                 type: object
                 properties:
                   Response:
-                    $ref: "#/components/schemas/GroupsV2.GroupResponse"
+                    $ref: "groupsv2.yml#/components/schemas/GroupResponse"
                   ErrorCode:
                     type: integer
                     format: int32
@@ -1899,7 +1887,7 @@ paths:
                   DetailedErrorTrace:
                     type: string
       deprecated: false
-  /GroupV2/{groupId}/OptionalConversations/:
+  /GroupV2/{groupId}/OptionalConversations:
     get:
       tags:
         - GroupV2
@@ -1928,7 +1916,7 @@ paths:
                   Response:
                     type: array
                     items:
-                      $ref: "#/components/schemas/GroupsV2.GroupOptionalConversation"
+                      $ref: "groupsv2.yml#/components/schemas/GroupOptionalConversation"
                   ErrorCode:
                     type: integer
                     format: int32
@@ -1948,7 +1936,7 @@ paths:
                   DetailedErrorTrace:
                     type: string
       deprecated: false
-  /GroupV2/{groupId}/Edit/:
+  /GroupV2/{groupId}/Edit:
     post:
       tags:
         - GroupV2
@@ -2000,7 +1988,7 @@ paths:
       security:
         - oauth2:
             - AdminGroups
-  /GroupV2/{groupId}/EditClanBanner/:
+  /GroupV2/{groupId}/EditClanBanner:
     post:
       tags:
         - GroupV2
@@ -2051,7 +2039,7 @@ paths:
       security:
         - oauth2:
             - AdminGroups
-  /GroupV2/{groupId}/EditFounderOptions/:
+  /GroupV2/{groupId}/EditFounderOptions:
     post:
       tags:
         - GroupV2
@@ -2102,7 +2090,7 @@ paths:
       security:
         - oauth2:
             - AdminGroups
-  /GroupV2/{groupId}/OptionalConversations/Add/:
+  /GroupV2/{groupId}/OptionalConversations/Add:
     post:
       tags:
         - GroupV2
@@ -2153,7 +2141,7 @@ paths:
       security:
         - oauth2:
             - AdminGroups
-  /GroupV2/{groupId}/OptionalConversations/Edit/{conversationId}/:
+  /GroupV2/{groupId}/OptionalConversations/Edit/{conversationId}:
     post:
       tags:
         - GroupV2
@@ -2211,7 +2199,7 @@ paths:
       security:
         - oauth2:
             - AdminGroups
-  /GroupV2/{groupId}/Members/:
+  /GroupV2/{groupId}/Members:
     get:
       tags:
         - GroupV2
@@ -2258,7 +2246,7 @@ paths:
                 type: object
                 properties:
                   Response:
-                    $ref: "#/components/schemas/SearchResultOfGroupMember"
+                    $ref: "shared.yml#/components/schemas/SearchResultOfGroupMember"
                   ErrorCode:
                     type: integer
                     format: int32
@@ -2278,7 +2266,7 @@ paths:
                   DetailedErrorTrace:
                     type: string
       deprecated: false
-  /GroupV2/{groupId}/AdminsAndFounder/:
+  /GroupV2/{groupId}/AdminsAndFounder:
     get:
       tags:
         - GroupV2
@@ -2314,7 +2302,7 @@ paths:
                 type: object
                 properties:
                   Response:
-                    $ref: "#/components/schemas/SearchResultOfGroupMember"
+                    $ref: "shared.yml#/components/schemas/SearchResultOfGroupMember"
                   ErrorCode:
                     type: integer
                     format: int32
@@ -2334,8 +2322,8 @@ paths:
                   DetailedErrorTrace:
                     type: string
       deprecated: false
-  /GroupV2/{groupId}/Members/{membershipType}/{membershipId}/SetMembershipType/{memberType}/:
-     post:
+  /GroupV2/{groupId}/Members/{membershipType}/{membershipId}/SetMembershipType/{memberType}/: 
+    post:
       tags:
         - GroupV2
       description:
@@ -2406,7 +2394,7 @@ paths:
       security:
         - oauth2:
             - AdminGroups
-  /GroupV2/{groupId}/Members/{membershipType}/{membershipId}/Kick/:
+  /GroupV2/{groupId}/Members/{membershipType}/{membershipId}/Kick:
     post:
       tags:
         - GroupV2
@@ -2448,7 +2436,7 @@ paths:
                 type: object
                 properties:
                   Response:
-                    $ref: "#/components/schemas/GroupsV2.GroupMemberLeaveResult"
+                    $ref: "groupsv2.yml#/components/schemas/GroupMemberLeaveResult"
                   ErrorCode:
                     type: integer
                     format: int32
@@ -2471,7 +2459,7 @@ paths:
       security:
         - oauth2:
             - AdminGroups
-  /GroupV2/{groupId}/Members/{membershipType}/{membershipId}/Ban/:
+  /GroupV2/{groupId}/Members/{membershipType}/{membershipId}/Ban:
     post:
       tags:
         - GroupV2
@@ -2536,7 +2524,7 @@ paths:
       security:
         - oauth2:
             - AdminGroups
-  /GroupV2/{groupId}/Members/{membershipType}/{membershipId}/Unban/:
+  /GroupV2/{groupId}/Members/{membershipType}/{membershipId}/Unban:
     post:
       tags:
         - GroupV2
@@ -2598,7 +2586,7 @@ paths:
       security:
         - oauth2:
             - AdminGroups
-  /GroupV2/{groupId}/Banned/:
+  /GroupV2/{groupId}/Banned:
     get:
       tags:
         - GroupV2
@@ -2634,7 +2622,7 @@ paths:
                 type: object
                 properties:
                   Response:
-                    $ref: "#/components/schemas/SearchResultOfGroupBan"
+                    $ref: "shared.yml#/components/schemas/SearchResultOfGroupBan"
                   ErrorCode:
                     type: integer
                     format: int32
@@ -2657,7 +2645,7 @@ paths:
       security:
         - oauth2:
             - AdminGroups
-  /GroupV2/{groupId}/Admin/AbdicateFoundership/{membershipType}/{founderIdNew}/:
+  /GroupV2/{groupId}/Admin/AbdicateFoundership/{membershipType}/{founderIdNew}:
     post:
       tags:
         - GroupV2
@@ -2718,7 +2706,7 @@ paths:
                   DetailedErrorTrace:
                     type: string
       deprecated: false
-  /GroupV2/{groupId}/Members/Pending/:
+  /GroupV2/{groupId}/Members/Pending:
     get:
       tags:
         - GroupV2
@@ -2728,7 +2716,7 @@ paths:
       operationId: GroupV2.GetPendingMemberships
       parameters:
         - name: currentpage
-          in: path
+          in: query
           description:
             Page number (starting with 1). Each page has a fixed size of
             50 items per page.
@@ -2754,7 +2742,7 @@ paths:
                 type: object
                 properties:
                   Response:
-                    $ref: "#/components/schemas/SearchResultOfGroupMemberApplication"
+                    $ref: "shared.yml#/components/schemas/SearchResultOfGroupMemberApplication"
                   ErrorCode:
                     type: integer
                     format: int32
@@ -2777,7 +2765,7 @@ paths:
       security:
         - oauth2:
             - AdminGroups
-  /GroupV2/{groupId}/Members/InvitedIndividuals/:
+  /GroupV2/{groupId}/Members/InvitedIndividuals:
     get:
       tags:
         - GroupV2
@@ -2785,7 +2773,7 @@ paths:
       operationId: GroupV2.GetInvitedIndividuals
       parameters:
         - name: currentpage
-          in: path
+          in: query
           description:
             Page number (starting with 1). Each page has a fixed size of
             50 items per page.
@@ -2811,7 +2799,7 @@ paths:
                 type: object
                 properties:
                   Response:
-                    $ref: "#/components/schemas/SearchResultOfGroupMemberApplication"
+                    $ref: "shared.yml#/components/schemas/SearchResultOfGroupMemberApplication"
                   ErrorCode:
                     type: integer
                     format: int32
@@ -2834,7 +2822,7 @@ paths:
       security:
         - oauth2:
             - AdminGroups
-  /GroupV2/{groupId}/Members/ApproveAll/:
+  /GroupV2/{groupId}/Members/ApproveAll:
     post:
       tags:
         - GroupV2
@@ -2861,7 +2849,7 @@ paths:
                   Response:
                     type: array
                     items:
-                      $ref: "#/components/schemas/Entities.EntityActionResult"
+                      $ref: "entities.yml#/components/schemas/EntityActionResult"
                   ErrorCode:
                     type: integer
                     format: int32
@@ -2884,7 +2872,7 @@ paths:
       security:
         - oauth2:
             - AdminGroups
-  /GroupV2/{groupId}/Members/DenyAll/:
+  /GroupV2/{groupId}/Members/DenyAll:
     post:
       tags:
         - GroupV2
@@ -2911,7 +2899,7 @@ paths:
                   Response:
                     type: array
                     items:
-                      $ref: "#/components/schemas/Entities.EntityActionResult"
+                      $ref: "entities.yml#/components/schemas/EntityActionResult"
                   ErrorCode:
                     type: integer
                     format: int32
@@ -2934,7 +2922,7 @@ paths:
       security:
         - oauth2:
             - AdminGroups
-  /GroupV2/{groupId}/Members/ApproveList/:
+  /GroupV2/{groupId}/Members/ApproveList:
     post:
       tags:
         - GroupV2
@@ -2961,7 +2949,7 @@ paths:
                   Response:
                     type: array
                     items:
-                      $ref: "#/components/schemas/Entities.EntityActionResult"
+                      $ref: "entities.yml#/components/schemas/EntityActionResult"
                   ErrorCode:
                     type: integer
                     format: int32
@@ -2984,7 +2972,7 @@ paths:
       security:
         - oauth2:
             - AdminGroups
-  /GroupV2/{groupId}/Members/Approve/{membershipType}/{membershipId}/:
+  /GroupV2/{groupId}/Members/Approve/{membershipType}/{membershipId}:
     post:
       tags:
         - GroupV2
@@ -3048,7 +3036,7 @@ paths:
       security:
         - oauth2:
             - AdminGroups
-  /GroupV2/{groupId}/Members/DenyList/:
+  /GroupV2/{groupId}/Members/DenyList:
     post:
       tags:
         - GroupV2
@@ -3077,7 +3065,7 @@ paths:
                   Response:
                     type: array
                     items:
-                      $ref: "#/components/schemas/Entities.EntityActionResult"
+                      $ref: "entities.yml#/components/schemas/EntityActionResult"
                   ErrorCode:
                     type: integer
                     format: int32
@@ -3100,7 +3088,7 @@ paths:
       security:
         - oauth2:
             - AdminGroups
-  /GroupV2/User/{membershipType}/{membershipId}/{filter}/{groupType}/:
+  /GroupV2/User/{membershipType}/{membershipId}/{filter}/{groupType}:
     get:
       tags:
         - GroupV2
@@ -3146,7 +3134,7 @@ paths:
                 type: object
                 properties:
                   Response:
-                    $ref: "#/components/schemas/GroupsV2.GetGroupsForMemberResponse"
+                    $ref: "groupsv2.yml#/components/schemas/GetGroupsForMemberResponse"
                   ErrorCode:
                     type: integer
                     format: int32
@@ -3166,7 +3154,7 @@ paths:
                   DetailedErrorTrace:
                     type: string
       deprecated: false
-  /GroupV2/Recover/{membershipType}/{membershipId}/{groupType}/:
+  /GroupV2/Recover/{membershipType}/{membershipId}/{groupType}:
     get:
       tags:
         - GroupV2
@@ -3207,7 +3195,7 @@ paths:
                 type: object
                 properties:
                   Response:
-                    $ref: "#/components/schemas/GroupsV2.GroupMembershipSearchResponse"
+                    $ref: "groupsv2.yml#/components/schemas/GroupMembershipSearchResponse"
                   ErrorCode:
                     type: integer
                     format: int32
@@ -3227,7 +3215,7 @@ paths:
                   DetailedErrorTrace:
                     type: string
       deprecated: false
-  /GroupV2/User/Potential/{membershipType}/{membershipId}/{filter}/{groupType}/:
+  /GroupV2/User/Potential/{membershipType}/{membershipId}/{filter}/{groupType}:
     get:
       tags:
         - GroupV2
@@ -3275,7 +3263,7 @@ paths:
                 type: object
                 properties:
                   Response:
-                    $ref: "#/components/schemas/GroupsV2.GroupPotentialMembershipSearchResponse"
+                    $ref: "groupsv2.yml#/components/schemas/GroupPotentialMembershipSearchResponse"
                   ErrorCode:
                     type: integer
                     format: int32
@@ -3295,7 +3283,7 @@ paths:
                   DetailedErrorTrace:
                     type: string
       deprecated: false
-  /GroupV2/{groupId}/Members/IndividualInvite/{membershipType}/{membershipId}/:
+  /GroupV2/{groupId}/Members/IndividualInvite/{membershipType}/{membershipId}:
     post:
       tags:
         - GroupV2
@@ -3334,7 +3322,7 @@ paths:
                 type: object
                 properties:
                   Response:
-                    $ref: "#/components/schemas/GroupsV2.GroupApplicationResponse"
+                    $ref: "groupsv2.yml#/components/schemas/GroupApplicationResponse"
                   ErrorCode:
                     type: integer
                     format: int32
@@ -3357,7 +3345,7 @@ paths:
       security:
         - oauth2:
             - AdminGroups
-  /GroupV2/{groupId}/Members/IndividualInviteCancel/{membershipType}/{membershipId}/:
+  /GroupV2/{groupId}/Members/IndividualInviteCancel/{membershipType}/{membershipId}/: 
     post:
       tags:
         - GroupV2
@@ -3396,7 +3384,7 @@ paths:
                 type: object
                 properties:
                   Response:
-                    $ref: "#/components/schemas/GroupsV2.GroupApplicationResponse"
+                    $ref: "groupsv2.yml#/components/schemas/GroupApplicationResponse"
                   ErrorCode:
                     type: integer
                     format: int32
@@ -3419,7 +3407,7 @@ paths:
       security:
         - oauth2:
             - AdminGroups
-  /Tokens/Partner/ClaimOffer/:
+  /Tokens/Partner/ClaimOffer:
     post:
       tags:
         - Tokens
@@ -3459,7 +3447,7 @@ paths:
       security:
         - oauth2:
             - PartnerOfferGrant
-  /Tokens/Partner/ApplyMissingOffers/{partnerApplicationId}/{targetBnetMembershipId}/:
+  /Tokens/Partner/ApplyMissingOffers/{partnerApplicationId}/{targetBnetMembershipId}/: 
     post:
       tags:
         - Tokens
@@ -3519,7 +3507,7 @@ paths:
       security:
         - oauth2:
             - PartnerOfferGrant
-  /Tokens/Partner/History/{partnerApplicationId}/{targetBnetMembershipId}/:
+  /Tokens/Partner/History/{partnerApplicationId}/{targetBnetMembershipId}:
     get:
       tags:
         - Tokens
@@ -3557,7 +3545,7 @@ paths:
                   Response:
                     type: array
                     items:
-                      $ref: "#/components/schemas/Tokens.PartnerOfferSkuHistoryResponse"
+                      $ref: "tokens.yml#/components/schemas/PartnerOfferSkuHistoryResponse"
                   ErrorCode:
                     type: integer
                     format: int32
@@ -3580,7 +3568,7 @@ paths:
       security:
         - oauth2:
             - PartnerOfferGrant
-  /Destiny2/Manifest/:
+  /Destiny2/Manifest:
     get:
       tags:
         - Destiny2
@@ -3597,7 +3585,7 @@ paths:
                 type: object
                 properties:
                   Response:
-                    $ref: "#/components/schemas/Destiny.Config.DestinyManifest"
+                    $ref: "destiny/config.yml#/components/schemas/DestinyManifest"
                   ErrorCode:
                     type: integer
                     format: int32
@@ -3617,7 +3605,7 @@ paths:
                   DetailedErrorTrace:
                     type: string
       deprecated: false
-  /Destiny2/Manifest/{entityType}/{hashIdentifier}/:
+  /Destiny2/Manifest/{entityType}/{hashIdentifier}:
     get:
       tags:
         - Destiny2
@@ -3659,7 +3647,7 @@ paths:
                 type: object
                 properties:
                   Response:
-                    $ref: "#/components/schemas/Destiny.Definitions.DestinyDefinition"
+                    $ref: "destiny/definitions.yml#/components/schemas/DestinyDefinition"
                   ErrorCode:
                     type: integer
                     format: int32
@@ -3679,7 +3667,7 @@ paths:
                   DetailedErrorTrace:
                     type: string
       deprecated: false
-  /Destiny2/SearchDestinyPlayer/{membershipType}/{displayName}/:
+  /Destiny2/SearchDestinyPlayer/{membershipType}/{displayName}:
     get:
       tags:
         - Destiny2
@@ -3726,7 +3714,7 @@ paths:
                   Response:
                     type: array
                     items:
-                      $ref: "#/components/schemas/User.UserInfoCard"
+                      $ref: "user.yml#/components/schemas/UserInfoCard"
                   ErrorCode:
                     type: integer
                     format: int32
@@ -3746,7 +3734,7 @@ paths:
                   DetailedErrorTrace:
                     type: string
       deprecated: false
-  /Destiny2/{membershipType}/Profile/{membershipId}/LinkedProfiles/:
+  /Destiny2/{membershipType}/Profile/{membershipId}/LinkedProfiles:
     get:
       tags:
         - Destiny2
@@ -3792,7 +3780,7 @@ paths:
         200:
           description:
             "I know what you seek. You seek linked accounts. Found them,
-            you have.This contract returns a minimal amount of data about Destiny
+            you have. This contract returns a minimal amount of data about Destiny
             Accounts that are linked through your Bungie.Net account. We will not
             return accounts in this response whose"
           content:
@@ -3801,7 +3789,7 @@ paths:
                 type: object
                 properties:
                   Response:
-                    $ref: "#/components/schemas/Destiny.Responses.DestinyLinkedProfilesResponse"
+                    $ref: "destiny/responses.yml#/components/schemas/DestinyLinkedProfilesResponse"
                   ErrorCode:
                     type: integer
                     format: int32
@@ -3821,7 +3809,7 @@ paths:
                   DetailedErrorTrace:
                     type: string
       deprecated: false
-  /Destiny2/{membershipType}/Profile/{destinyMembershipId}/:
+  /Destiny2/{membershipType}/Profile/{destinyMembershipId}:
     get:
       tags:
         - Destiny2
@@ -3854,7 +3842,7 @@ paths:
                 type: object
                 properties:
                   Response:
-                    $ref: "#/components/schemas/Destiny.Responses.DestinyProfileResponse"
+                    $ref: "destiny/responses.yml#/components/schemas/DestinyProfileResponse"
                   ErrorCode:
                     type: integer
                     format: int32
@@ -3874,7 +3862,7 @@ paths:
                   DetailedErrorTrace:
                     type: string
       deprecated: false
-  /Destiny2/{membershipType}/Profile/{destinyMembershipId}/Character/{characterId}/:
+  /Destiny2/{membershipType}/Profile/{destinyMembershipId}/Character/{characterId}/: 
     get:
       tags:
         - Destiny2
@@ -3914,7 +3902,7 @@ paths:
                 type: object
                 properties:
                   Response:
-                    $ref: "#/components/schemas/Destiny.Responses.DestinyCharacterResponse"
+                    $ref: "destiny/responses.yml#/components/schemas/DestinyCharacterResponse"
                   ErrorCode:
                     type: integer
                     format: int32
@@ -3934,7 +3922,7 @@ paths:
                   DetailedErrorTrace:
                     type: string
       deprecated: false
-  /Destiny2/Clan/{groupId}/WeeklyRewardState/:
+  /Destiny2/Clan/{groupId}/WeeklyRewardState:
     get:
       tags:
         - Destiny2
@@ -3956,7 +3944,7 @@ paths:
             Represents a runtime instance of a user's milestone status.
             Live Milestone data should be combined with DestinyMilestoneDefinition
             data to show the user a picture of what is available for them to do in
-            the game, and their status in regards to said "things to do." Consider
+            the game, and their status in regards to said 'things to do.' Consider
             it a big, wonky to-do list, or Advisors 3.0 for those who remember the
             Destiny 1 API.
           content:
@@ -3965,7 +3953,7 @@ paths:
                 type: object
                 properties:
                   Response:
-                    $ref: "#/components/schemas/Destiny.Milestones.DestinyMilestone"
+                    $ref: "destiny/milestones.yml#/components/schemas/DestinyMilestone"
                   ErrorCode:
                     type: integer
                     format: int32
@@ -3985,7 +3973,7 @@ paths:
                   DetailedErrorTrace:
                     type: string
       deprecated: false
-  /Destiny2/{membershipType}/Profile/{destinyMembershipId}/Item/{itemInstanceId}/:
+  /Destiny2/{membershipType}/Profile/{destinyMembershipId}/Item/{itemInstanceId}/: 
     get:
       tags:
         - Destiny2
@@ -4020,16 +4008,16 @@ paths:
       responses:
         200:
           description:
-            'The response object for retrieving an individual instanced
-            item. None of these components are relevant for an item that doesn''t
-            have an "itemInstanceId": for those, get your information from the DestinyInventoryDefinition.'
+            "The response object for retrieving an individual instanced
+            item. None of these components are relevant for an item that doesn't
+            have an 'itemInstanceId': for those, get your information from the DestinyInventoryDefinition."
           content:
             "*/*":
               schema:
                 type: object
                 properties:
                   Response:
-                    $ref: "#/components/schemas/Destiny.Responses.DestinyItemResponse"
+                    $ref: "destiny/responses.yml#/components/schemas/DestinyItemResponse"
                   ErrorCode:
                     type: integer
                     format: int32
@@ -4049,7 +4037,7 @@ paths:
                   DetailedErrorTrace:
                     type: string
       deprecated: false
-  /Destiny2/{membershipType}/Profile/{destinyMembershipId}/Character/{characterId}/Vendors/:
+  /Destiny2/{membershipType}/Profile/{destinyMembershipId}/Character/{characterId}/Vendors/: 
     get:
       tags:
         - Destiny2
@@ -4101,7 +4089,7 @@ paths:
                 type: object
                 properties:
                   Response:
-                    $ref: "#/components/schemas/Destiny.Responses.DestinyVendorsResponse"
+                    $ref: "destiny/responses.yml#/components/schemas/DestinyVendorsResponse"
                   ErrorCode:
                     type: integer
                     format: int32
@@ -4121,7 +4109,7 @@ paths:
                   DetailedErrorTrace:
                     type: string
       deprecated: false
-  /Destiny2/{membershipType}/Profile/{destinyMembershipId}/Character/{characterId}/Vendors/{vendorHash}/:
+  /Destiny2/{membershipType}/Profile/{destinyMembershipId}/Character/{characterId}/Vendors/{vendorHash}/: 
     get:
       tags:
         - Destiny2
@@ -4168,7 +4156,7 @@ paths:
                 type: object
                 properties:
                   Response:
-                    $ref: "#/components/schemas/Destiny.Responses.DestinyVendorResponse"
+                    $ref: "destiny/responses.yml#/components/schemas/DestinyVendorResponse"
                   ErrorCode:
                     type: integer
                     format: int32
@@ -4188,7 +4176,7 @@ paths:
                   DetailedErrorTrace:
                     type: string
       deprecated: false
-  /Destiny2/Vendors/:
+  /Destiny2/Vendors:
     get:
       tags:
         - Destiny2
@@ -4217,7 +4205,7 @@ paths:
                 type: object
                 properties:
                   Response:
-                    $ref: "#/components/schemas/Destiny.Responses.DestinyPublicVendorsResponse"
+                    $ref: "destiny/responses.yml#/components/schemas/DestinyPublicVendorsResponse"
                   ErrorCode:
                     type: integer
                     format: int32
@@ -4238,7 +4226,7 @@ paths:
                     type: string
       deprecated: false
       x-preview: true
-  /Destiny2/{membershipType}/Profile/{destinyMembershipId}/Character/{characterId}/Collectibles/{collectiblePresentationNodeHash}/:
+  /Destiny2/{membershipType}/Profile/{destinyMembershipId}/Character/{characterId}/Collectibles/{collectiblePresentationNodeHash}/: 
     get:
       tags:
         - Destiny2
@@ -4293,7 +4281,7 @@ paths:
                 type: object
                 properties:
                   Response:
-                    $ref: "#/components/schemas/Destiny.Responses.DestinyCollectibleNodeDetailResponse"
+                    $ref: "destiny/responses.yml#/components/schemas/DestinyCollectibleNodeDetailResponse"
                   ErrorCode:
                     type: integer
                     format: int32
@@ -4313,7 +4301,7 @@ paths:
                   DetailedErrorTrace:
                     type: string
       deprecated: false
-  /Destiny2/Actions/Items/TransferItem/:
+  /Destiny2/Actions/Items/TransferItem:
     post:
       tags:
         - Destiny2
@@ -4359,7 +4347,7 @@ paths:
             - MoveEquipDestinyItems
       x-documentation-attributes:
         ThrottleSecondsBetweenActionPerUser: "0.1"
-  /Destiny2/Actions/Items/PullFromPostmaster/:
+  /Destiny2/Actions/Items/PullFromPostmaster:
     post:
       tags:
         - Destiny2
@@ -4405,7 +4393,7 @@ paths:
             - MoveEquipDestinyItems
       x-documentation-attributes:
         ThrottleSecondsBetweenActionPerUser: "0.1"
-  /Destiny2/Actions/Items/EquipItem/:
+  /Destiny2/Actions/Items/EquipItem:
     post:
       tags:
         - Destiny2
@@ -4450,7 +4438,7 @@ paths:
             - MoveEquipDestinyItems
       x-documentation-attributes:
         ThrottleSecondsBetweenActionPerUser: "0.1"
-  /Destiny2/Actions/Items/EquipItems/:
+  /Destiny2/Actions/Items/EquipItems:
     post:
       tags:
         - Destiny2
@@ -4470,7 +4458,7 @@ paths:
                 type: object
                 properties:
                   Response:
-                    $ref: "#/components/schemas/Destiny.DestinyEquipItemResults"
+                    $ref: "destiny.yml#/components/schemas/DestinyEquipItemResults"
                   ErrorCode:
                     type: integer
                     format: int32
@@ -4495,7 +4483,7 @@ paths:
             - MoveEquipDestinyItems
       x-documentation-attributes:
         ThrottleSecondsBetweenActionPerUser: "0.1"
-  /Destiny2/Actions/Items/SetLockState/:
+  /Destiny2/Actions/Items/SetLockState:
     post:
       tags:
         - Destiny2
@@ -4540,7 +4528,7 @@ paths:
             - MoveEquipDestinyItems
       x-documentation-attributes:
         ThrottleSecondsBetweenActionPerUser: "0.1"
-  /Destiny2/Actions/Items/SetTrackedState/:
+  /Destiny2/Actions/Items/SetTrackedState:
     post:
       tags:
         - Destiny2
@@ -4585,7 +4573,7 @@ paths:
             - MoveEquipDestinyItems
       x-documentation-attributes:
         ThrottleSecondsBetweenActionPerUser: "1"
-  /Destiny2/Actions/Items/InsertSocketPlug/:
+  /Destiny2/Actions/Items/InsertSocketPlug:
     post:
       tags:
         - Destiny2
@@ -4610,7 +4598,7 @@ paths:
                 type: object
                 properties:
                   Response:
-                    $ref: "#/components/schemas/Destiny.Responses.DestinyItemChangeResponse"
+                    $ref: "destiny/responses.yml#/components/schemas/DestinyItemChangeResponse"
                   ErrorCode:
                     type: integer
                     format: int32
@@ -4636,7 +4624,7 @@ paths:
       x-preview: true
       x-documentation-attributes:
         ThrottleSecondsBetweenActionPerUser: "1"
-  /Destiny2/Stats/PostGameCarnageReport/{activityId}/:
+  /Destiny2/Stats/PostGameCarnageReport/{activityId}:
     get:
       tags:
         - Destiny2
@@ -4661,7 +4649,7 @@ paths:
                 type: object
                 properties:
                   Response:
-                    $ref: "#/components/schemas/Destiny.HistoricalStats.DestinyPostGameCarnageReportData"
+                    $ref: "destiny/historicalstats.yml#/components/schemas/DestinyPostGameCarnageReportData"
                   ErrorCode:
                     type: integer
                     format: int32
@@ -4681,7 +4669,7 @@ paths:
                   DetailedErrorTrace:
                     type: string
       deprecated: false
-  /Destiny2/Stats/PostGameCarnageReport/{activityId}/Report/:
+  /Destiny2/Stats/PostGameCarnageReport/{activityId}/Report:
     post:
       tags:
         - Destiny2
@@ -4736,7 +4724,7 @@ paths:
       security:
         - oauth2:
             - BnetWrite
-  /Destiny2/Stats/Definition/:
+  /Destiny2/Stats/Definition:
     get:
       tags:
         - Destiny2
@@ -4755,7 +4743,7 @@ paths:
                   Response:
                     type: object
                     additionalProperties:
-                      $ref: "#/components/schemas/Destiny.HistoricalStats.Definitions.DestinyHistoricalStatsDefinition"
+                      $ref: "destiny/historicalstats/definitions.yml#/components/schemas/DestinyHistoricalStatsDefinition"
                   ErrorCode:
                     type: integer
                     format: int32
@@ -4775,7 +4763,7 @@ paths:
                   DetailedErrorTrace:
                     type: string
       deprecated: false
-  /Destiny2/Stats/Leaderboards/Clans/{groupId}/:
+  /Destiny2/Stats/Leaderboards/Clans/{groupId}:
     get:
       tags:
         - Destiny2
@@ -4830,7 +4818,7 @@ paths:
                     additionalProperties:
                       type: object
                       additionalProperties:
-                        $ref: "#/components/schemas/Destiny.HistoricalStats.DestinyLeaderboard"
+                        $ref: "destiny/historicalstats.yml#/components/schemas/DestinyLeaderboard"
                   ErrorCode:
                     type: integer
                     format: int32
@@ -4851,7 +4839,7 @@ paths:
                     type: string
       deprecated: false
       x-preview: true
-  /Destiny2/Stats/AggregateClanStats/{groupId}/:
+  /Destiny2/Stats/AggregateClanStats/{groupId}:
     get:
       tags:
         - Destiny2
@@ -4891,7 +4879,7 @@ paths:
                   Response:
                     type: array
                     items:
-                      $ref: "#/components/schemas/Destiny.HistoricalStats.DestinyClanAggregateStat"
+                      $ref: "destiny/historicalstats.yml#/components/schemas/DestinyClanAggregateStat"
                   ErrorCode:
                     type: integer
                     format: int32
@@ -4912,7 +4900,7 @@ paths:
                     type: string
       deprecated: false
       x-preview: true
-  /Destiny2/{membershipType}/Account/{destinyMembershipId}/Stats/Leaderboards/:
+  /Destiny2/{membershipType}/Account/{destinyMembershipId}/Stats/Leaderboards:
     get:
       tags:
         - Destiny2
@@ -4974,7 +4962,7 @@ paths:
                     additionalProperties:
                       type: object
                       additionalProperties:
-                        $ref: "#/components/schemas/Destiny.HistoricalStats.DestinyLeaderboard"
+                        $ref: "destiny/historicalstats.yml#/components/schemas/DestinyLeaderboard"
                   ErrorCode:
                     type: integer
                     format: int32
@@ -4995,7 +4983,7 @@ paths:
                     type: string
       deprecated: false
       x-preview: true
-  /Destiny2/Stats/Leaderboards/{membershipType}/{destinyMembershipId}/{characterId}/:
+  /Destiny2/Stats/Leaderboards/{membershipType}/{destinyMembershipId}/{characterId}/: 
     get:
       tags:
         - Destiny2
@@ -5066,7 +5054,7 @@ paths:
                     additionalProperties:
                       type: object
                       additionalProperties:
-                        $ref: "#/components/schemas/Destiny.HistoricalStats.DestinyLeaderboard"
+                        $ref: "destiny/historicalstats.yml#/components/schemas/DestinyLeaderboard"
                   ErrorCode:
                     type: integer
                     format: int32
@@ -5087,7 +5075,7 @@ paths:
                     type: string
       deprecated: false
       x-preview: true
-  /Destiny2/Armory/Search/{type}/{searchTerm}/:
+  /Destiny2/Armory/Search/{type}/{searchTerm}:
     get:
       tags:
         - Destiny2
@@ -5127,7 +5115,7 @@ paths:
                 type: object
                 properties:
                   Response:
-                    $ref: "#/components/schemas/Destiny.Definitions.DestinyEntitySearchResult"
+                    $ref: "destiny/definitions.yml#/components/schemas/DestinyEntitySearchResult"
                   ErrorCode:
                     type: integer
                     format: int32
@@ -5147,7 +5135,7 @@ paths:
                   DetailedErrorTrace:
                     type: string
       deprecated: false
-  /Destiny2/{membershipType}/Account/{destinyMembershipId}/Character/{characterId}/Stats/:
+  /Destiny2/{membershipType}/Account/{destinyMembershipId}/Character/{characterId}/Stats/: 
     get:
       tags:
         - Destiny2
@@ -5200,12 +5188,12 @@ paths:
             items:
               type: integer
               description:
-                If the enum value is > 100, it is a "special" group that
+                If the enum value is > 100, it is a 'special' group that
                 cannot be queried for directly (special cases apply to when they are
                 returned, and are not relevant in general cases)
               format: int32
               x-enum-reference:
-                $ref: "#/components/schemas/Destiny.HistoricalStats.Definitions.DestinyStatsGroupType"
+                $ref: "destiny/historicalstats/definitions.yml#/components/schemas/DestinyStatsGroupType"
         - name: membershipType
           in: path
           description: A valid non-BungieNet membership type.
@@ -5230,7 +5218,7 @@ paths:
                 feature is coming back!
               format: int32
               x-enum-reference:
-                $ref: "#/components/schemas/Destiny.HistoricalStats.Definitions.DestinyActivityModeType"
+                $ref: "destiny/historicalstats/definitions.yml#/components/schemas/DestinyActivityModeType"
         - name: periodType
           in: query
           description:
@@ -5252,7 +5240,7 @@ paths:
                   Response:
                     type: object
                     additionalProperties:
-                      $ref: "#/components/schemas/Destiny.HistoricalStats.DestinyHistoricalStatsByPeriod"
+                      $ref: "destiny/historicalstats.yml#/components/schemas/DestinyHistoricalStatsByPeriod"
                   ErrorCode:
                     type: integer
                     format: int32
@@ -5272,7 +5260,7 @@ paths:
                   DetailedErrorTrace:
                     type: string
       deprecated: false
-  /Destiny2/{membershipType}/Account/{destinyMembershipId}/Stats/:
+  /Destiny2/{membershipType}/Account/{destinyMembershipId}/Stats:
     get:
       tags:
         - Destiny2
@@ -5300,12 +5288,12 @@ paths:
             items:
               type: integer
               description:
-                If the enum value is > 100, it is a "special" group that
+                If the enum value is > 100, it is a 'special' group that
                 cannot be queried for directly (special cases apply to when they are
                 returned, and are not relevant in general cases)
               format: int32
               x-enum-reference:
-                $ref: "#/components/schemas/Destiny.HistoricalStats.Definitions.DestinyStatsGroupType"
+                $ref: "destiny/historicalstats/definitions.yml#/components/schemas/DestinyStatsGroupType"
         - name: membershipType
           in: path
           description: A valid non-BungieNet membership type.
@@ -5324,7 +5312,7 @@ paths:
                 type: object
                 properties:
                   Response:
-                    $ref: "#/components/schemas/Destiny.HistoricalStats.DestinyHistoricalStatsAccountResult"
+                    $ref: "destiny/historicalstats.yml#/components/schemas/DestinyHistoricalStatsAccountResult"
                   ErrorCode:
                     type: integer
                     format: int32
@@ -5344,7 +5332,7 @@ paths:
                   DetailedErrorTrace:
                     type: string
       deprecated: false
-  /Destiny2/{membershipType}/Account/{destinyMembershipId}/Character/{characterId}/Stats/Activities:
+  /Destiny2/{membershipType}/Account/{destinyMembershipId}/Character/{characterId}/Stats/Activities: 
     get:
       tags:
         - Destiny2
@@ -5404,7 +5392,7 @@ paths:
                 type: object
                 properties:
                   Response:
-                    $ref: "#/components/schemas/Destiny.HistoricalStats.DestinyActivityHistoryResults"
+                    $ref: "destiny/historicalstats.yml#/components/schemas/DestinyActivityHistoryResults"
                   ErrorCode:
                     type: integer
                     format: int32
@@ -5424,7 +5412,7 @@ paths:
                   DetailedErrorTrace:
                     type: string
       deprecated: false
-  /Destiny2/{membershipType}/Account/{destinyMembershipId}/Character/{characterId}/Stats/UniqueWeapons/:
+  /Destiny2/{membershipType}/Account/{destinyMembershipId}/Character/{characterId}/Stats/UniqueWeapons/: 
     get:
       tags:
         - Destiny2
@@ -5463,7 +5451,7 @@ paths:
                 type: object
                 properties:
                   Response:
-                    $ref: "#/components/schemas/Destiny.HistoricalStats.DestinyHistoricalWeaponStatsData"
+                    $ref: "destiny/historicalstats.yml#/components/schemas/DestinyHistoricalWeaponStatsData"
                   ErrorCode:
                     type: integer
                     format: int32
@@ -5483,7 +5471,7 @@ paths:
                   DetailedErrorTrace:
                     type: string
       deprecated: false
-  /Destiny2/{membershipType}/Account/{destinyMembershipId}/Character/{characterId}/Stats/AggregateActivityStats/:
+  /Destiny2/{membershipType}/Account/{destinyMembershipId}/Character/{characterId}/Stats/AggregateActivityStats/: 
     get:
       tags:
         - Destiny2
@@ -5524,7 +5512,7 @@ paths:
                 type: object
                 properties:
                   Response:
-                    $ref: "#/components/schemas/Destiny.HistoricalStats.DestinyAggregateActivityResults"
+                    $ref: "destiny/historicalstats.yml#/components/schemas/DestinyAggregateActivityResults"
                   ErrorCode:
                     type: integer
                     format: int32
@@ -5544,7 +5532,7 @@ paths:
                   DetailedErrorTrace:
                     type: string
       deprecated: false
-  /Destiny2/Milestones/{milestoneHash}/Content/:
+  /Destiny2/Milestones/{milestoneHash}/Content:
     get:
       tags:
         - Destiny2
@@ -5574,7 +5562,7 @@ paths:
                 type: object
                 properties:
                   Response:
-                    $ref: "#/components/schemas/Destiny.Milestones.DestinyMilestoneContent"
+                    $ref: "destiny/milestones.yml#/components/schemas/DestinyMilestoneContent"
                   ErrorCode:
                     type: integer
                     format: int32
@@ -5594,7 +5582,7 @@ paths:
                   DetailedErrorTrace:
                     type: string
       deprecated: false
-  /Destiny2/Milestones/:
+  /Destiny2/Milestones:
     get:
       tags:
         - Destiny2
@@ -5613,7 +5601,7 @@ paths:
                   Response:
                     type: object
                     additionalProperties:
-                      $ref: "#/components/schemas/Destiny.Milestones.DestinyPublicMilestone"
+                      $ref: "destiny/milestones.yml#/components/schemas/DestinyPublicMilestone"
                   ErrorCode:
                     type: integer
                     format: int32
@@ -5633,7 +5621,7 @@ paths:
                   DetailedErrorTrace:
                     type: string
       deprecated: false
-  /Destiny2/Awa/Initialize/:
+  /Destiny2/Awa/Initialize:
     post:
       tags:
         - Destiny2
@@ -5650,7 +5638,7 @@ paths:
                 type: object
                 properties:
                   Response:
-                    $ref: "#/components/schemas/Destiny.Advanced.AwaInitializeResponse"
+                    $ref: "destiny/advanced.yml#/components/schemas/AwaInitializeResponse"
                   ErrorCode:
                     type: integer
                     format: int32
@@ -5673,7 +5661,7 @@ paths:
       security:
         - oauth2:
             - AdvancedWriteActions
-  /Destiny2/Awa/AwaProvideAuthorizationResult/:
+  /Destiny2/Awa/AwaProvideAuthorizationResult:
     post:
       tags:
         - Destiny2
@@ -5713,7 +5701,7 @@ paths:
                   DetailedErrorTrace:
                     type: string
       deprecated: false
-  /Destiny2/Awa/GetActionToken/{correlationId}/:
+  /Destiny2/Awa/GetActionToken/{correlationId}:
     get:
       tags:
         - Destiny2
@@ -5737,7 +5725,7 @@ paths:
                 type: object
                 properties:
                   Response:
-                    $ref: "#/components/schemas/Destiny.Advanced.AwaAuthorizationResult"
+                    $ref: "destiny/advanced.yml#/components/schemas/AwaAuthorizationResult"
                   ErrorCode:
                     type: integer
                     format: int32
@@ -5760,7 +5748,7 @@ paths:
       security:
         - oauth2:
             - AdvancedWriteActions
-  /CommunityContent/Get/{sort}/{mediaFilter}/{page}/:
+  /CommunityContent/Get/{sort}/{mediaFilter}/{page}:
     get:
       tags:
         - CommunityContent
@@ -5799,7 +5787,7 @@ paths:
                 type: object
                 properties:
                   Response:
-                    $ref: "#/components/schemas/Forum.PostSearchResponse"
+                    $ref: "forum.yml#/components/schemas/PostSearchResponse"
                   ErrorCode:
                     type: integer
                     format: int32
@@ -5819,7 +5807,7 @@ paths:
                   DetailedErrorTrace:
                     type: string
       deprecated: false
-  /Trending/Categories/:
+  /Trending/Categories:
     get:
       tags:
         - Trending
@@ -5838,7 +5826,7 @@ paths:
                 type: object
                 properties:
                   Response:
-                    $ref: "#/components/schemas/Trending.TrendingCategories"
+                    $ref: "trending.yml#/components/schemas/TrendingCategories"
                   ErrorCode:
                     type: integer
                     format: int32
@@ -5858,7 +5846,7 @@ paths:
                   DetailedErrorTrace:
                     type: string
       deprecated: false
-  /Trending/Categories/{categoryId}/{pageNumber}/:
+  /Trending/Categories/{categoryId}/{pageNumber}:
     get:
       tags:
         - Trending
@@ -5889,7 +5877,7 @@ paths:
                 type: object
                 properties:
                   Response:
-                    $ref: "#/components/schemas/SearchResultOfTrendingEntry"
+                    $ref: "shared.yml#/components/schemas/SearchResultOfTrendingEntry"
                   ErrorCode:
                     type: integer
                     format: int32
@@ -5909,7 +5897,7 @@ paths:
                   DetailedErrorTrace:
                     type: string
       deprecated: false
-  /Trending/Details/{trendingEntryType}/{identifier}/:
+  /Trending/Details/{trendingEntryType}/{identifier}:
     get:
       tags:
         - Trending
@@ -5944,7 +5932,7 @@ paths:
                 type: object
                 properties:
                   Response:
-                    $ref: "#/components/schemas/Trending.TrendingDetail"
+                    $ref: "trending.yml#/components/schemas/TrendingDetail"
                   ErrorCode:
                     type: integer
                     format: int32
@@ -5964,7 +5952,7 @@ paths:
                   DetailedErrorTrace:
                     type: string
       deprecated: false
-  /Fireteam/Clan/{groupId}/ActiveCount/:
+  /Fireteam/Clan/{groupId}/ActiveCount:
     get:
       tags:
         - Fireteam
@@ -6015,7 +6003,7 @@ paths:
       security:
         - oauth2:
             - ReadGroups
-  /Fireteam/Clan/{groupId}/Available/{platform}/{activityType}/{dateRange}/{slotFilter}/{publicOnly}/{page}/:
+  /Fireteam/Clan/{groupId}/Available/{platform}/{activityType}/{dateRange}/{slotFilter}/{publicOnly}/{page}/: 
     get:
       tags:
         - Fireteam
@@ -6089,7 +6077,7 @@ paths:
                 type: object
                 properties:
                   Response:
-                    $ref: "#/components/schemas/SearchResultOfFireteamSummary"
+                    $ref: "shared.yml#/components/schemas/SearchResultOfFireteamSummary"
                   ErrorCode:
                     type: integer
                     format: int32
@@ -6112,7 +6100,7 @@ paths:
       security:
         - oauth2:
             - ReadGroups
-  /Fireteam/Search/Available/{platform}/{activityType}/{dateRange}/{slotFilter}/{page}/:
+  /Fireteam/Search/Available/{platform}/{activityType}/{dateRange}/{slotFilter}/{page}/: 
     get:
       tags:
         - Fireteam
@@ -6172,7 +6160,7 @@ paths:
                 type: object
                 properties:
                   Response:
-                    $ref: "#/components/schemas/SearchResultOfFireteamSummary"
+                    $ref: "shared.yml#/components/schemas/SearchResultOfFireteamSummary"
                   ErrorCode:
                     type: integer
                     format: int32
@@ -6195,7 +6183,7 @@ paths:
       security:
         - oauth2:
             - ReadGroups
-  /Fireteam/Clan/{groupId}/My/{platform}/{includeClosed}/{page}/:
+  /Fireteam/Clan/{groupId}/My/{platform}/{includeClosed}/{page}:
     get:
       tags:
         - Fireteam
@@ -6256,7 +6244,7 @@ paths:
                 type: object
                 properties:
                   Response:
-                    $ref: "#/components/schemas/SearchResultOfFireteamResponse"
+                    $ref: "shared.yml#/components/schemas/SearchResultOfFireteamResponse"
                   ErrorCode:
                     type: integer
                     format: int32
@@ -6279,7 +6267,7 @@ paths:
       security:
         - oauth2:
             - ReadGroups
-  /Fireteam/Clan/{groupId}/Summary/{fireteamId}/:
+  /Fireteam/Clan/{groupId}/Summary/{fireteamId}:
     get:
       tags:
         - Fireteam
@@ -6311,7 +6299,7 @@ paths:
                 type: object
                 properties:
                   Response:
-                    $ref: "#/components/schemas/Fireteam.FireteamResponse"
+                    $ref: "fireteam.yml#/components/schemas/FireteamResponse"
                   ErrorCode:
                     type: integer
                     format: int32
@@ -6334,7 +6322,7 @@ paths:
       security:
         - oauth2:
             - ReadGroups
-  /GetAvailableLocales/:
+  /GetAvailableLocales:
     get:
       tags:
         - ""
@@ -6373,7 +6361,7 @@ paths:
                   DetailedErrorTrace:
                     type: string
       deprecated: false
-  /Settings/:
+  /Settings:
     get:
       tags:
         - ""
@@ -6390,7 +6378,7 @@ paths:
                 type: object
                 properties:
                   Response:
-                    $ref: "#/components/schemas/Common.Models.CoreSettingsConfiguration"
+                    $ref: "common/models.yml#/components/schemas/CoreSettingsConfiguration"
                   ErrorCode:
                     type: integer
                     format: int32
@@ -6410,7 +6398,7 @@ paths:
                   DetailedErrorTrace:
                     type: string
       deprecated: false
-  /UserSystemOverrides/:
+  /UserSystemOverrides:
     get:
       tags:
         - ""
@@ -6431,7 +6419,7 @@ paths:
                   Response:
                     type: object
                     additionalProperties:
-                      $ref: "#/components/schemas/Common.Models.CoreSystem"
+                      $ref: "common/models.yml#/components/schemas/CoreSystem"
                   ErrorCode:
                     type: integer
                     format: int32
@@ -6451,7 +6439,7 @@ paths:
                   DetailedErrorTrace:
                     type: string
       deprecated: false
-  /GlobalAlerts/:
+  /GlobalAlerts:
     get:
       tags:
         - ""
@@ -6478,7 +6466,7 @@ paths:
                   Response:
                     type: array
                     items:
-                      $ref: "#/components/schemas/GlobalAlert"
+                      $ref: "shared.yml#/components/schemas/GlobalAlert"
                   ErrorCode:
                     type: integer
                     format: int32
@@ -6520,7 +6508,7 @@ tags:
     description: trending
   - name: Fireteam
     description: fireteam
-  - name: ""
+  - name: default
     description: core
 
 externalDocs:

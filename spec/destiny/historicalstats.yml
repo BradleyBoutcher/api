@@ -1,0 +1,434 @@
+components:
+  schemas:
+    DestinyPostGameCarnageReportData:
+      type: object
+      properties:
+        period:
+          type: string
+          description: Date and time for the activity.
+          format: date-time
+        startingPhaseIndex:
+          type: integer
+          description: If this activity has "phases", this is the phase at which the activity was started.
+          format: int32
+        activityDetails:
+          type: object
+          description: Details about the activity.
+          allOf:
+            - $ref: '#/components/schemas/DestinyHistoricalStatsActivity'
+        entries:
+          type: array
+          description: Collection of players and their data for this activity.
+          items:
+            $ref: '#/components/schemas/DestinyPostGameCarnageReportEntry'
+        teams:
+          type: array
+          description: Collection of stats for the player in this activity.
+          items:
+            $ref: '#/components/schemas/DestinyPostGameCarnageReportTeamEntry'
+
+    DestinyHistoricalStatsActivity:
+      type: object
+      properties:
+        referenceId:
+          type: integer
+          description: The unique hash identifier of the DestinyActivityDefinition that was played. If I had this to do over, it'd be named activityHash. Too late now.
+          format: uint32
+          x-mapped-definition:
+            $ref: 'definitions.yml#/components/schemas/DestinyActivityDefinition'
+        directorActivityHash:
+          type: integer
+          description: The unique hash identifier of the DestinyActivityDefinition that was played.
+          format: uint32
+          x-mapped-definition:
+            $ref: 'definitions.yml#/components/schemas/DestinyActivityDefinition'
+        instanceId:
+          type: integer
+          description: "The unique identifier for this *specific* match that was played.
+            This value can be used to get additional data about this activity such as who else was playing via the GetPostGameCarnageReport endpoint."
+          format: int64
+        mode:
+          type: integer
+          description: Indicates the most specific game mode of the activity that we could find.
+          format: int32
+          x-enum-reference:
+            $ref: 'historicalstats/definitions.yml#/components/schemas/DestinyActivityModeType'
+        modes:
+          type: array
+          description: The list of all Activity Modes to which this activity applies, including aggregates. This will let you see, for example, whether the activity was both Clash and part of the Trials of the Nine event.
+          items:
+            type: integer
+            description: For historical reasons, this list will have both D1 and D2-relevant Activity Modes in it. Please don't take this to mean that some D1-only feature is coming back!
+            format: int32
+            x-enum-reference:
+              $ref: 'historicalstats/definitions.yml#/components/schemas/DestinyActivityModeType'
+        isPrivate:
+          type: boolean
+          description: Whether or not the match was a private match.
+        membershipType:
+          type: integer
+          description: The Membership Type indicating the platform on which this match was played.
+          format: int32
+          x-enum-reference:
+            $ref: '../shared.yml#/components/schemas/BungieMembershipType'
+      description: Summary information about the activity that was played.
+
+    DestinyPostGameCarnageReportEntry:
+      type: object
+      properties:
+        standing:
+          type: integer
+          description: Standing of the player
+          format: int32
+        score:
+          type: object
+          description: Score of the player if available
+          allOf:
+            - $ref: '#/components/schemas/DestinyHistoricalStatsValue'
+        player:
+          type: object
+          description: Identity details of the player
+          allOf:
+            - $ref: '#/components/schemas/DestinyPlayer'
+        characterId:
+          type: integer
+          description: ID of the player's character used in the activity.
+          format: int64
+        values:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/DestinyHistoricalStatsValue'
+          description: Collection of stats for the player in this activity.
+        extended:
+          type: object
+          description: Extended data extracted from the activity blob.
+          allOf:
+            - $ref: '#/components/schemas/DestinyPostGameCarnageReportExtendedData'
+
+    DestinyHistoricalStatsValue:
+      type: object
+      properties:
+        statId:
+          type: string
+          description: Unique ID for this stat
+        basic:
+          type: object
+          description: Basic stat value.
+          allOf:
+            - $ref: '#/components/schemas/DestinyHistoricalStatsValuePair'
+        pga:
+          type: object
+          description: Per game average for the statistic, if applicable
+          allOf:
+            - $ref: '#/components/schemas/DestinyHistoricalStatsValuePair'
+        weighted:
+          type: object
+          description: Weighted value of the stat if a weight greater than 1 has been assigned.
+          allOf:
+            - $ref: '#/components/schemas/DestinyHistoricalStatsValuePair'
+        activityId:
+          type: integer
+          description: When a stat represents the best, most, longest, fastest or some other personal best, the actual activity ID where that personal best was established is available on this property.
+          format: int64
+
+    DestinyHistoricalStatsValuePair:
+      type: object
+      properties:
+        value:
+          type: number
+          description: Raw value of the statistic
+          format: double
+        displayValue:
+          type: string
+          description: Localized formated version of the value.
+
+    DestinyPlayer:
+      type: object
+      properties:
+        destinyUserInfo:
+          type: object
+          description: Details about the player as they are known in game (platform display name, Destiny emblem)
+          allOf:
+            - $ref: '../user.yml#/components/schemas/UserInfoCard'
+        characterClass:
+          type: string
+          description: Class of the character if applicable and available.
+        classHash:
+          type: integer
+          format: uint32
+        raceHash:
+          type: integer
+          format: uint32
+        genderHash:
+          type: integer
+          format: uint32
+        characterLevel:
+          type: integer
+          description: Level of the character if available. Zero if it is not available.
+          format: int32
+        lightLevel:
+          type: integer
+          description: Light Level of the character if available. Zero if it is not available.
+          format: int32
+        bungieNetUserInfo:
+          type: object
+          description: Details about the player as they are known on BungieNet. This will be undefined if the player has marked their credential private, or does not have a BungieNet account.
+          allOf:
+            - $ref: '../user.yml#/components/schemas/UserInfoCard'
+        clanName:
+          type: string
+          description: Current clan name for the player. This value may be null or an empty string if the user does not have a clan.
+        clanTag:
+          type: string
+          description: Current clan tag for the player. This value may be null or an empty string if the user does not have a clan.
+        emblemHash:
+          type: integer
+          description: If we know the emblem's hash, this can be used to look up the player's emblem at the time of a match when receiving PGCR data, or otherwise their currently equipped emblem (if we are able to obtain it).
+          format: uint32
+
+    DestinyPostGameCarnageReportExtendedData:
+      type: object
+      properties:
+        weapons:
+          type: array
+          description: List of weapons and their perspective values.
+          items:
+            $ref: '#/components/schemas/DestinyHistoricalWeaponStats'
+        values:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/DestinyHistoricalStatsValue'
+          description: Collection of stats for the player in this activity.
+
+    DestinyHistoricalWeaponStats:
+      type: object
+      properties:
+        referenceId:
+          type: integer
+          description: The hash ID of the item definition that describes the weapon.
+          format: uint32
+          x-mapped-definition:
+            $ref: 'definitions.yml#/components/schemas/DestinyInventoryItemDefinition'
+        values:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/DestinyHistoricalStatsValue'
+          description: Collection of stats for the period.
+
+    DestinyPostGameCarnageReportTeamEntry:
+      type: object
+      properties:
+        teamId:
+          type: integer
+          description: Integer ID for the team.
+          format: int32
+        standing:
+          type: object
+          description: Team's standing relative to other teams.
+          allOf:
+            - $ref: '#/components/schemas/DestinyHistoricalStatsValue'
+        score:
+          type: object
+          description: Score earned by the team
+          allOf:
+            - $ref: '#/components/schemas/DestinyHistoricalStatsValue'
+        teamName:
+          type: string
+          description: Alpha or Bravo
+
+    DestinyLeaderboard:
+      type: object
+      properties:
+        statId:
+          type: string
+        entries:
+          type: array
+          items:
+            $ref: '#/components/schemas/DestinyLeaderboardEntry'
+
+    DestinyLeaderboardEntry:
+      type: object
+      properties:
+        rank:
+          type: integer
+          description: Where this player ranks on the leaderboard. A value of 1 is the top rank.
+          format: int32
+        player:
+          type: object
+          description: Identity details of the player
+          allOf:
+            - $ref: '#/components/schemas/DestinyPlayer'
+        characterId:
+          type: integer
+          description: ID of the player's best character for the reported stat.
+          format: int64
+        value:
+          type: object
+          description: Value of the stat for this player
+          allOf:
+            - $ref: '#/components/schemas/DestinyHistoricalStatsValue'
+
+    DestinyLeaderboardResults:
+      type: object
+      properties:
+        focusMembershipId:
+          type: integer
+          description: Indicate the membership ID of the account that is the focal point of the provided leaderboards.
+          format: int64
+        focusCharacterId:
+          type: integer
+          description: Indicate the character ID of the character that is the focal point of the provided leaderboards. May be null, in which case any character from the focus membership can appear in the provided leaderboards.
+          format: int64
+      additionalProperties:
+        type: object
+        additionalProperties:
+          $ref: '#/components/schemas/DestinyLeaderboard'
+
+    DestinyClanAggregateStat:
+      type: object
+      properties:
+        mode:
+          type: integer
+          description: The id of the mode of stats (allPvp, allPvE, etc)
+          format: int32
+          x-enum-reference:
+            $ref: 'historicalstats/definitions.yml#/components/schemas/DestinyActivityModeType'
+        statId:
+          type: string
+          description: The id of the stat
+        value:
+          type: object
+          description: Value of the stat for this player
+          allOf:
+            - $ref: '#/components/schemas/DestinyHistoricalStatsValue'
+
+    DestinyHistoricalStatsByPeriod:
+      type: object
+      properties:
+        allTime:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/DestinyHistoricalStatsValue'
+        allTimeTier1:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/DestinyHistoricalStatsValue'
+        allTimeTier2:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/DestinyHistoricalStatsValue'
+        allTimeTier3:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/DestinyHistoricalStatsValue'
+        daily:
+          type: array
+          items:
+            $ref: '#/components/schemas/DestinyHistoricalStatsPeriodGroup'
+        monthly:
+          type: array
+          items:
+            $ref: '#/components/schemas/DestinyHistoricalStatsPeriodGroup'
+
+    DestinyHistoricalStatsPeriodGroup:
+      type: object
+      properties:
+        period:
+          type: string
+          description: Period for the group. If the stat periodType is day, then this will have a specific day. If the type is monthly, then this value will be the first day of the applicable month. This value is not set when the periodType is 'all time'.
+          format: date-time
+        activityDetails:
+          type: object
+          description: If the period group is for a specific activity, this property will be set.
+          allOf:
+            - $ref: '#/components/schemas/DestinyHistoricalStatsActivity'
+        values:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/DestinyHistoricalStatsValue'
+          description: Collection of stats for the period.
+
+    DestinyHistoricalStatsResults:
+      type: object
+      additionalProperties:
+        $ref: '#/components/schemas/DestinyHistoricalStatsByPeriod'
+
+    DestinyHistoricalStatsAccountResult:
+      type: object
+      properties:
+        mergedDeletedCharacters:
+          $ref: '#/components/schemas/DestinyHistoricalStatsWithMerged'
+        mergedAllCharacters:
+          $ref: '#/components/schemas/DestinyHistoricalStatsWithMerged'
+        characters:
+          type: array
+          items:
+            $ref: '#/components/schemas/DestinyHistoricalStatsPerCharacter'
+
+    DestinyHistoricalStatsWithMerged:
+      type: object
+      properties:
+        results:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/DestinyHistoricalStatsByPeriod'
+        merged:
+          $ref: '#/components/schemas/DestinyHistoricalStatsByPeriod'
+
+    DestinyHistoricalStatsPerCharacter:
+      type: object
+      properties:
+        characterId:
+          type: integer
+          format: int64
+        deleted:
+          type: boolean
+        results:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/DestinyHistoricalStatsByPeriod'
+        merged:
+          $ref: '#/components/schemas/DestinyHistoricalStatsByPeriod'
+
+    DestinyActivityHistoryResults:
+      type: object
+      properties:
+        activities:
+          type: array
+          description: List of activities, the most recent activity first.
+          items:
+            $ref: '#/components/schemas/DestinyHistoricalStatsPeriodGroup'
+
+    DestinyHistoricalWeaponStatsData:
+      type: object
+      properties:
+        weapons:
+          type: array
+          description: List of weapons and their perspective values.
+          items:
+            $ref: '#/components/schemas/DestinyHistoricalWeaponStats'
+
+    DestinyAggregateActivityResults:
+      type: object
+      properties:
+        activities:
+          type: array
+          description: List of all activities the player has participated in.
+          items:
+            $ref: '#/components/schemas/DestinyAggregateActivityStats'
+
+    DestinyAggregateActivityStats:
+      type: object
+      properties:
+        activityHash:
+          type: integer
+          description: Hash ID that can be looked up in the DestinyActivityTable.
+          format: uint32
+          x-mapped-definition:
+            $ref: 'definitions.yml#/components/schemas/DestinyActivityDefinition'
+        values:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/DestinyHistoricalStatsValue'
+          description: Collection of stats for the player in this activity.
+

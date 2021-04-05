@@ -1,0 +1,72 @@
+components:
+  schemas:
+    DestinyCharacterCustomization:
+      type: object
+      properties:
+        personality:
+          type: integer
+          format: uint32
+        face:
+          type: integer
+          format: uint32
+        skinColor:
+          type: integer
+          format: uint32
+        lipColor:
+          type: integer
+          format: uint32
+        eyeColor:
+          type: integer
+          format: uint32
+        hairColors:
+          type: array
+          items:
+            type: integer
+            format: uint32
+        featureColors:
+          type: array
+          items:
+            type: integer
+            format: uint32
+        decalColor:
+          type: integer
+          format: uint32
+        wearHelmet:
+          type: boolean
+        hairIndex:
+          type: integer
+          format: int32
+        featureIndex:
+          type: integer
+          format: int32
+        decalIndex:
+          type: integer
+          format: int32
+      description: "
+        Raw data about the customization options chosen for a character's face and appearance.
+        You can look up the relevant class/race/gender combo in DestinyCharacterCustomizationOptionDefinition for the character, and then look up these values within the CustomizationOptions found to pull some data about their choices. Warning: not all of that data is meaningful. Some data has useful icons. Others have nothing, and are only meant for 3D rendering purposes (which we sadly do not expose yet)"
+
+    DestinyCharacterPeerView:
+      type: object
+      properties:
+        equipment:
+          type: array
+          items:
+            $ref: "#/components/schemas/DestinyItemPeerView"
+      description: A minimal view of a character's equipped items, for the purpose of rendering a summary screen or showing the character in 3D.
+
+    DestinyItemPeerView:
+      type: object
+      properties:
+        itemHash:
+          type: integer
+          description: The hash identifier of the item in question. Use it to look up the DestinyInventoryItemDefinition of the item for static rendering data.
+          format: uint32
+          x-mapped-definition:
+            $ref: "definitions.yml#/components/schemas/DestinyInventoryItemDefinition"
+        dyes:
+          type: array
+          description: The list of dyes that have been applied to this item.
+          items:
+            $ref: "../destiny.yml#/components/schemas/DyeReference"
+      description: Bare minimum summary information for an item, for the sake of 3D rendering the item.

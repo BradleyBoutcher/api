@@ -1,0 +1,43 @@
+components:
+  schemas:
+    DestinyVendorReceipt:
+      type: object
+      properties:
+        currencyPaid:
+          type: array
+          description: The amount paid for the item, in terms of items that were consumed in the purchase and their quantity.
+          items:
+            $ref: '../destiny.yml#/components/schemas/DestinyItemQuantity'
+        itemReceived:
+          type: object
+          description: The item that was received, and its quantity.
+          allOf:
+            - $ref: '../destiny.yml#/components/schemas/DestinyItemQuantity'
+        licenseUnlockHash:
+          type: integer
+          description: The unlock flag used to determine whether you still have the purchased item.
+          format: uint32
+        purchasedByCharacterId:
+          type: integer
+          description: The ID of the character who made the purchase.
+          format: int64
+        refundPolicy:
+          type: integer
+          description: Whether you can get a refund, and what happens in order for the refund to be received. See the DestinyVendorItemRefundPolicy enum for details.
+          format: int32
+          x-enum-reference:
+            $ref: '../destiny.yml#/components/schemas/DestinyVendorItemRefundPolicy'
+        sequenceNumber:
+          type: integer
+          description: The identifier of this receipt.
+          format: int32
+        timeToExpiration:
+          type: integer
+          description: The seconds since epoch at which this receipt is rendered invalid.
+          format: int64
+        expiresOn:
+          type: string
+          description: The date at which this receipt is rendered invalid.
+          format: date-time
+      description: If a character purchased an item that is refundable, a Vendor Receipt will be created on the user's Destiny Profile. These expire after a configurable period of time, but until then can be used to get refunds on items. BNet does not provide the ability to refund a purchase *yet*, but you know.
+

@@ -1,0 +1,12 @@
+components:
+  schemas:
+    DestinyAnimationReference:
+      type: object
+      properties:
+        animName:
+          type: string
+        animIdentifier:
+          type: string
+        path:
+          type: string
+

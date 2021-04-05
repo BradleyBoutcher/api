@@ -1,0 +1,114 @@
+components:
+  schemas:
+    DestinyRecordsComponent:
+      type: object
+      properties:
+        records:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/DestinyRecordComponent'
+        recordCategoriesRootNodeHash:
+          type: integer
+          description: The hash for the root presentation node definition of Triumph categories.
+          format: uint32
+          x-mapped-definition:
+            $ref: '../definitions/presentation.yml#/components/schemas/DestinyPresentationNodeDefinition'
+        recordSealsRootNodeHash:
+          type: integer
+          description: The hash for the root presentation node definition of Triumph Seals.
+          format: uint32
+          x-mapped-definition:
+            $ref: '../definitions/presentation.yml#/components/schemas/DestinyPresentationNodeDefinition'
+      x-destiny-component-type-dependency: Records
+
+    DestinyRecordComponent:
+      type: object
+      properties:
+        state:
+          type: integer
+          format: int32
+          x-enum-reference:
+            $ref: '../../destiny.yml#/components/schemas/DestinyRecordState'
+        objectives:
+          type: array
+          items:
+            $ref: '../quests.yml#/components/schemas/DestinyObjectiveProgress'
+        intervalObjectives:
+          type: array
+          items:
+            $ref: '../quests.yml#/components/schemas/DestinyObjectiveProgress'
+        intervalsRedeemedCount:
+          type: integer
+          format: int32
+
+    DestinyProfileRecordsComponent:
+      type: object
+      properties:
+        score:
+          type: integer
+          description: Your 'active' Triumphs score, maintained for backwards compatibility.
+          format: int32
+        activeScore:
+          type: integer
+          description: Your 'active' Triumphs score.
+          format: int32
+        legacyScore:
+          type: integer
+          description: Your 'legacy' Triumphs score.
+          format: int32
+        lifetimeScore:
+          type: integer
+          description: Your 'lifetime' Triumphs score.
+          format: int32
+        trackedRecordHash:
+          type: integer
+          description: If this profile is tracking a record, this is the hash identifier of the record it is tracking.
+          format: uint32
+          x-mapped-definition:
+            $ref: '../definitions/records.yml#/components/schemas/DestinyRecordDefinition'
+        records:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/DestinyRecordComponent'
+        recordCategoriesRootNodeHash:
+          type: integer
+          description: The hash for the root presentation node definition of Triumph categories.
+          format: uint32
+          x-mapped-definition:
+            $ref: '../definitions/presentation.yml#/components/schemas/DestinyPresentationNodeDefinition'
+        recordSealsRootNodeHash:
+          type: integer
+          description: The hash for the root presentation node definition of Triumph Seals.
+          format: uint32
+          x-mapped-definition:
+            $ref: '../definitions/presentation.yml#/components/schemas/DestinyPresentationNodeDefinition'
+      x-destiny-component-type-dependency: Records
+
+    DestinyCharacterRecordsComponent:
+      type: object
+      properties:
+        featuredRecordHashes:
+          type: array
+          items:
+            type: integer
+            format: uint32
+          x-mapped-definition:
+            $ref: '../definitions/records.yml#/components/schemas/DestinyRecordDefinition'
+        records:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/DestinyRecordComponent'
+        recordCategoriesRootNodeHash:
+          type: integer
+          description: The hash for the root presentation node definition of Triumph categories.
+          format: uint32
+          x-mapped-definition:
+            $ref: '../definitions/presentation.yml#/components/schemas/DestinyPresentationNodeDefinition'
+        recordSealsRootNodeHash:
+          type: integer
+          description: The hash for the root presentation node definition of Triumph Seals.
+          format: uint32
+          x-mapped-definition:
+            $ref: '../definitions/presentation.yml#/components/schemas/DestinyPresentationNodeDefinition'
+      x-destiny-component-type-dependency: Records
+

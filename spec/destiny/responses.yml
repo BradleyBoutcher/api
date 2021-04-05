@@ -1,0 +1,701 @@
+components:
+  schemas:
+    DestinyLinkedProfilesResponse:
+      type: object
+      properties:
+        profiles:
+          type: array
+          description: Any Destiny account for whom we could successfully pull characters will be returned here, as the Platform-level summary of user data. (no character data, no Destiny account data other than the Membership ID and Type so you can make further queries)
+          items:
+            $ref: '#/components/schemas/DestinyProfileUserInfoCard'
+        bnetMembership:
+          type: object
+          description: "If the requested membership had a linked Bungie.Net membership ID, this is the basic information about that BNet account.
+            I know, Tetron; I know this is mixing UserServices concerns with DestinyServices concerns. But it's so damn convenient! https://www.youtube.com/watch?v=X5R-bB-gKVI"
+          allOf:
+            - $ref: '../user.yml#/components/schemas/UserInfoCard'
+        profilesWithErrors:
+          type: array
+          description: This is brief summary info for profiles that we believe have valid Destiny info, but who failed to return data for some other reason and thus we know that subsequent calls for their info will also fail.
+          items:
+            $ref: '#/components/schemas/DestinyErrorProfile'
+      description: "I know what you seek. You seek linked accounts. Found them, you have.
+        This contract returns a minimal amount of data about Destiny Accounts that are linked through your Bungie.Net account. We will not return accounts in this response whose"
+
+    DestinyProfileUserInfoCard:
+      type: object
+      properties:
+        dateLastPlayed:
+          type: string
+          format: date-time
+        isOverridden:
+          type: boolean
+          description: 'If this profile is being overridden/obscured by Cross Save, this will be set to true. We will still return the profile for display purposes where users need to know the info: it is up to any given area of the app/site to determine if this profile should still be shown.'
+        isCrossSavePrimary:
+          type: boolean
+          description: If true, this account is hooked up as the "Primary" cross save account for one or more platforms.
+        platformSilver:
+          type: object
+          description: "This is the silver available on this Profile across any platforms on which they have purchased silver.
+            This is only available if you are requesting yourself."
+          allOf:
+            - $ref: 'components/inventory.yml#/components/schemas/DestinyPlatformSilverComponent'
+        unpairedGameVersions:
+          type: integer
+          description: "If this profile is not in a cross save pairing, this will return the game versions that we believe this profile has access to.
+            For the time being, we will not return this information for any membership that is in a cross save pairing. The gist is that, once the pairing occurs, we do not currently have a consistent way to get that information for the profile's original Platform, and thus gameVersions would be too inconsistent (based on the last platform they happened to play on) for the info to be useful.
+            If we ever can get this data, this field will be deprecated and replaced with data on the DestinyLinkedProfileResponse itself, with game versions per linked Platform. But since we can't get that, we have this as a stop-gap measure for getting the data in the only situation that we currently need it."
+          format: int32
+          enum:
+            - 0
+            - 1
+            - 2
+            - 4
+            - 8
+            - 16
+            - 32
+            - 64
+          x-enum-values:
+            - numericValue: "0"
+              identifier: None
+            - numericValue: "1"
+              identifier: Destiny2
+            - numericValue: "2"
+              identifier: DLC1
+            - numericValue: "4"
+              identifier: DLC2
+            - numericValue: "8"
+              identifier: Forsaken
+            - numericValue: "16"
+              identifier: YearTwoAnnualPass
+            - numericValue: "32"
+              identifier: Shadowkeep
+            - numericValue: "64"
+              identifier: BeyondLight
+        supplementalDisplayName:
+          type: string
+          description: 'A platform specific additional display name - ex: psn Real Name, bnet Unique Name, etc.'
+        iconPath:
+          type: string
+          description: URL the Icon if available.
+        crossSaveOverride:
+          type: integer
+          description: If there is a cross save override in effect, this value will tell you the type that is overridding this one.
+          format: int32
+          x-enum-reference:
+            $ref: '../shared.yml#/components/schemas/BungieMembershipType'
+        applicableMembershipTypes:
+          type: array
+          description: "
+            The list of Membership Types indicating the platforms on which this Membership can be used.
+            Not in Cross Save = its original membership type. Cross Save Primary = Any membership types it is overridding, and its original membership type Cross Save Overridden = Empty list"
+          items:
+            type: integer
+            description: The types of membership the Accounts system supports. This is the external facing enum used in place of the internal-only Bungie.SharedDefinitions.MembershipType.
+            format: int32
+            x-enum-reference:
+              $ref: '../shared.yml#/components/schemas/BungieMembershipType'
+        isPublic:
+          type: boolean
+          description: If True, this is a public user membership.
+        membershipType:
+          type: integer
+          description: Type of the membership. Not necessarily the native type.
+          format: int32
+          x-enum-reference:
+            $ref: '../shared.yml#/components/schemas/BungieMembershipType'
+        membershipId:
+          type: integer
+          description: Membership ID as they user is known in the Accounts service
+          format: int64
+        displayName:
+          type: string
+          description: Display Name the player has chosen for themselves. The display name is optional when the data type is used as input to a platform API.
+
+    DestinyErrorProfile:
+      type: object
+      properties:
+        errorCode:
+          type: integer
+          description: The error that we encountered. You should be able to look up localized text to show to the user for these failures.
+          format: int32
+          x-enum-reference:
+            $ref: '../exceptions.yml#/components/schemas/PlatformErrorCodes'
+        infoCard:
+          type: object
+          description: Basic info about the account that failed. Don't expect anything other than membership ID, Membership Type, and displayName to be populated.
+          allOf:
+            - $ref: '../user.yml#/components/schemas/UserInfoCard'
+      description: "If a Destiny Profile can't be returned, but we're pretty certain it's a valid Destiny account, this will contain as much info as we can get about the profile for your use.
+        Assume that the most you'll get is the Error Code, the Membership Type and the Membership ID."
+
+    DestinyProfileResponse:
+      type: object
+      properties:
+        vendorReceipts:
+          type: object
+          description: "Recent, refundable purchases you have made from vendors. When will you use itCouldn't say...
+            COMPONENT TYPE: VendorReceipts"
+          allOf:
+            - $ref: '../shared.yml#/components/schemas/SingleComponentResponseOfDestinyVendorReceiptsComponent'
+          x-destiny-component-type-dependency: VendorReceipts
+        profileInventory:
+          type: object
+          description: "The profile-level inventory of the Destiny Profile.
+            COMPONENT TYPE: ProfileInventories"
+          allOf:
+            - $ref: '../shared.yml#/components/schemas/SingleComponentResponseOfDestinyInventoryComponent'
+          x-destiny-component-type-dependency: ProfileInventories
+        profileCurrencies:
+          type: object
+          description: "The profile-level currencies owned by the Destiny Profile.
+            COMPONENT TYPE: ProfileCurrencies"
+          allOf:
+            - $ref: '../shared.yml#/components/schemas/SingleComponentResponseOfDestinyInventoryComponent'
+          x-destiny-component-type-dependency: ProfileCurrencies
+        profile:
+          type: object
+          description: "The basic information about the Destiny Profile (formerly \"Account\").
+            COMPONENT TYPE: Profiles"
+          allOf:
+            - $ref: '../shared.yml#/components/schemas/SingleComponentResponseOfDestinyProfileComponent'
+          x-destiny-component-type-dependency: Profiles
+        platformSilver:
+          type: object
+          description: "Silver quantities for any platform on which this Profile plays destiny.
+            COMPONENT TYPE: PlatformSilver"
+          allOf:
+            - $ref: '../shared.yml#/components/schemas/SingleComponentResponseOfDestinyPlatformSilverComponent'
+          x-destiny-component-type-dependency: PlatformSilver
+        profileKiosks:
+          type: object
+          description: "Items available from Kiosks that are available Profile-wide (i.e. across all characters)
+            This component returns information about what Kiosk items are available to you on a *Profile* level. It is theoretically possible for Kiosks to have items gated by specific Character as well. If you ever have those, you will find them on the characterKiosks property.
+            COMPONENT TYPE: Kiosks"
+          allOf:
+            - $ref: '../shared.yml#/components/schemas/SingleComponentResponseOfDestinyKiosksComponent'
+          x-destiny-component-type-dependency: Kiosks
+        profilePlugSets:
+          type: object
+          description: "When sockets refer to reusable Plug Sets (see DestinyPlugSetDefinition for more info), this is the set of plugs and their states that are profile-scoped.
+            This comes back with ItemSockets, as it is needed for a complete picture of the sockets on requested items.
+            COMPONENT TYPE: ItemSockets"
+          allOf:
+            - $ref: '../shared.yml#/components/schemas/SingleComponentResponseOfDestinyPlugSetsComponent'
+          x-destiny-component-type-dependency: ItemSockets
+        profileProgression:
+          type: object
+          description: "When we have progression information - such as Checklists - that may apply profile-wide, it will be returned here rather than in the per-character progression data.
+            COMPONENT TYPE: ProfileProgression"
+          allOf:
+            - $ref: '../shared.yml#/components/schemas/SingleComponentResponseOfDestinyProfileProgressionComponent'
+          x-destiny-component-type-dependency: ProfileProgression
+        profilePresentationNodes:
+          type: object
+          description: 'COMPONENT TYPE: PresentationNodes'
+          allOf:
+            - $ref: '../shared.yml#/components/schemas/SingleComponentResponseOfDestinyPresentationNodesComponent'
+          x-destiny-component-type-dependency: PresentationNodes
+        profileRecords:
+          type: object
+          description: 'COMPONENT TYPE: Records'
+          allOf:
+            - $ref: '../shared.yml#/components/schemas/SingleComponentResponseOfDestinyProfileRecordsComponent'
+          x-destiny-component-type-dependency: Records
+        profileCollectibles:
+          type: object
+          description: 'COMPONENT TYPE: Collectibles'
+          allOf:
+            - $ref: '../shared.yml#/components/schemas/SingleComponentResponseOfDestinyProfileCollectiblesComponent'
+          x-destiny-component-type-dependency: Collectibles
+        profileTransitoryData:
+          type: object
+          description: 'COMPONENT TYPE: Transitory'
+          allOf:
+            - $ref: '../shared.yml#/components/schemas/SingleComponentResponseOfDestinyProfileTransitoryComponent'
+          x-destiny-component-type-dependency: Transitory
+        metrics:
+          type: object
+          description: 'COMPONENT TYPE: Metrics'
+          allOf:
+            - $ref: '../shared.yml#/components/schemas/SingleComponentResponseOfDestinyMetricsComponent'
+          x-destiny-component-type-dependency: Metrics
+        characters:
+          type: object
+          description: "Basic information about each character, keyed by the CharacterId.
+            COMPONENT TYPE: Characters"
+          allOf:
+            - $ref: '../shared.yml#/components/schemas/DictionaryComponentResponseOfint64AndDestinyCharacterComponent'
+          x-destiny-component-type-dependency: Characters
+        characterInventories:
+          type: object
+          description: "The character-level non-equipped inventory items, keyed by the Character's Id.
+            COMPONENT TYPE: CharacterInventories"
+          allOf:
+            - $ref: '../shared.yml#/components/schemas/DictionaryComponentResponseOfint64AndDestinyInventoryComponent'
+          x-destiny-component-type-dependency: CharacterInventories
+        characterProgressions:
+          type: object
+          description: "Character-level progression data, keyed by the Character's Id.
+            COMPONENT TYPE: CharacterProgressions"
+          allOf:
+            - $ref: '../shared.yml#/components/schemas/DictionaryComponentResponseOfint64AndDestinyCharacterProgressionComponent'
+          x-destiny-component-type-dependency: CharacterProgressions
+        characterRenderData:
+          type: object
+          description: "Character rendering data - a minimal set of info needed to render a character in 3D - keyed by the Character's Id.
+            COMPONENT TYPE: CharacterRenderData"
+          allOf:
+            - $ref: '../shared.yml#/components/schemas/DictionaryComponentResponseOfint64AndDestinyCharacterRenderComponent'
+          x-destiny-component-type-dependency: CharacterRenderData
+        characterActivities:
+          type: object
+          description: "Character activity data - the activities available to this character and its status, keyed by the Character's Id.
+            COMPONENT TYPE: CharacterActivities"
+          allOf:
+            - $ref: '../shared.yml#/components/schemas/DictionaryComponentResponseOfint64AndDestinyCharacterActivitiesComponent'
+          x-destiny-component-type-dependency: CharacterActivities
+        characterEquipment:
+          type: object
+          description: "The character's equipped items, keyed by the Character's Id.
+            COMPONENT TYPE: CharacterEquipment"
+          allOf:
+            - $ref: '../shared.yml#/components/schemas/DictionaryComponentResponseOfint64AndDestinyInventoryComponent'
+          x-destiny-component-type-dependency: CharacterEquipment
+        characterKiosks:
+          type: object
+          description: "
+            Items available from Kiosks that are available to a specific character as opposed to the account as a whole. It must be combined with data from the profileKiosks property to get a full picture of the character's available items to check out of a kiosk.
+            This component returns information about what Kiosk items are available to you on a *Character* level. Usually, kiosk items will be earned for the entire Profile (all characters) at once. To find those, look in the profileKiosks property.
+            COMPONENT TYPE: Kiosks"
+          allOf:
+            - $ref: '../shared.yml#/components/schemas/DictionaryComponentResponseOfint64AndDestinyKiosksComponent'
+          x-destiny-component-type-dependency: Kiosks
+        characterPlugSets:
+          type: object
+          description: "
+            When sockets refer to reusable Plug Sets (see DestinyPlugSetDefinition for more info), this is the set of plugs and their states, per character, that are character-scoped.
+            This comes back with ItemSockets, as it is needed for a complete picture of the sockets on requested items.
+            COMPONENT TYPE: ItemSockets"
+          allOf:
+            - $ref: '../shared.yml#/components/schemas/DictionaryComponentResponseOfint64AndDestinyPlugSetsComponent'
+          x-destiny-component-type-dependency: ItemSockets
+        characterUninstancedItemComponents:
+          type: object
+          additionalProperties:
+            $ref: '../shared.yml#/components/schemas/DestinyBaseItemComponentSetOfuint32'
+          description: "
+            Do you ever get the feeling that a system was designed *too* flexiblyThat it can be used in so many different ways that you end up being unable to provide an easy to use abstraction for the mess that's happening under the surface?
+            Let's talk about character-specific data that might be related to items without instances. These two statements are totally unrelated, I promise.
+            At some point during D2, it was decided that items - such as Bounties - could be given to characters and *not* have instance data, but that *could* display and even use relevant state information on your account and character.
+            Up to now, any item that had meaningful dependencies on character or account state had to be instanced, and thus \"itemComponents\" was all that you needed: it was keyed by item's instance IDs and provided the stateful information you needed inside.
+            Unfortunately, we don't live in such a magical world anymore. This is information held on a per-character basis about non-instanced items that the characters have in their inventory - or that reference character-specific state information even if it's in Account-level inventory - and the values related to that item's state in relation to the given character.
+            To give a concrete example, look at a Moments of Triumph bounty. They exist in a character's inventory, and show/care about a character's progression toward completing the bounty. But the bounty itself is a non-instanced item, like a mod or a currency. This returns that data for the characters who have the bounty in their inventory.
+            I'm not crying, you're crying Okay we're both crying but it's going to be okay I promise Actually I shouldn't promise that, I don't know if it's going to be okay"
+        characterPresentationNodes:
+          type: object
+          description: 'COMPONENT TYPE: PresentationNodes'
+          allOf:
+            - $ref: '../shared.yml#/components/schemas/DictionaryComponentResponseOfint64AndDestinyPresentationNodesComponent'
+          x-destiny-component-type-dependency: PresentationNodes
+        characterRecords:
+          type: object
+          description: 'COMPONENT TYPE: Records'
+          allOf:
+            - $ref: '../shared.yml#/components/schemas/DictionaryComponentResponseOfint64AndDestinyCharacterRecordsComponent'
+          x-destiny-component-type-dependency: Records
+        characterCollectibles:
+          type: object
+          description: 'COMPONENT TYPE: Collectibles'
+          allOf:
+            - $ref: '../shared.yml#/components/schemas/DictionaryComponentResponseOfint64AndDestinyCollectiblesComponent'
+          x-destiny-component-type-dependency: Collectibles
+        itemComponents:
+          type: object
+          description: "Information about instanced items across all returned characters, keyed by the item's instance ID.
+            COMPONENT TYPE: [See inside the DestinyItemComponentSet contract for component types.]"
+          allOf:
+            - $ref: '../shared.yml#/components/schemas/DestinyItemComponentSetOfint64'
+        characterCurrencyLookups:
+          type: object
+          description: "A \"lookup\" convenience component that can be used to quickly check if the character has access to items that can be used for purchasing.
+            COMPONENT TYPE: CurrencyLookups"
+          allOf:
+            - $ref: '../shared.yml#/components/schemas/DictionaryComponentResponseOfint64AndDestinyCurrenciesComponent'
+          x-destiny-component-type-dependency: CurrencyLookups
+      description: The response for GetDestinyProfile, with components for character and item-level data.
+
+    DestinyCharacterResponse:
+      type: object
+      properties:
+        inventory:
+          type: object
+          description: "The character-level non-equipped inventory items.
+            COMPONENT TYPE: CharacterInventories"
+          allOf:
+            - $ref: '../shared.yml#/components/schemas/SingleComponentResponseOfDestinyInventoryComponent'
+          x-destiny-component-type-dependency: CharacterInventories
+        character:
+          type: object
+          description: "Base information about the character in question.
+            COMPONENT TYPE: Characters"
+          allOf:
+            - $ref: '../shared.yml#/components/schemas/SingleComponentResponseOfDestinyCharacterComponent'
+          x-destiny-component-type-dependency: Characters
+        progressions:
+          type: object
+          description: "Character progression data, including Milestones.
+            COMPONENT TYPE: CharacterProgressions"
+          allOf:
+            - $ref: '../shared.yml#/components/schemas/SingleComponentResponseOfDestinyCharacterProgressionComponent'
+          x-destiny-component-type-dependency: CharacterProgressions
+        renderData:
+          type: object
+          description: "Character rendering data - a minimal set of information about equipment and dyes used for rendering.
+            COMPONENT TYPE: CharacterRenderData"
+          allOf:
+            - $ref: '../shared.yml#/components/schemas/SingleComponentResponseOfDestinyCharacterRenderComponent'
+          x-destiny-component-type-dependency: CharacterRenderData
+        activities:
+          type: object
+          description: "Activity data - info about current activities available to the player.
+            COMPONENT TYPE: CharacterActivities"
+          allOf:
+            - $ref: '../shared.yml#/components/schemas/SingleComponentResponseOfDestinyCharacterActivitiesComponent'
+          x-destiny-component-type-dependency: CharacterActivities
+        equipment:
+          type: object
+          description: "Equipped items on the character.
+            COMPONENT TYPE: CharacterEquipment"
+          allOf:
+            - $ref: '../shared.yml#/components/schemas/SingleComponentResponseOfDestinyInventoryComponent'
+          x-destiny-component-type-dependency: CharacterEquipment
+        kiosks:
+          type: object
+          description: "Items available from Kiosks that are available to this specific character. 
+            COMPONENT TYPE: Kiosks"
+          allOf:
+            - $ref: '../shared.yml#/components/schemas/SingleComponentResponseOfDestinyKiosksComponent'
+          x-destiny-component-type-dependency: Kiosks
+        plugSets:
+          type: object
+          description: "
+            When sockets refer to reusable Plug Sets (see DestinyPlugSetDefinition for more info), this is the set of plugs and their states that are scoped to this character.
+            This comes back with ItemSockets, as it is needed for a complete picture of the sockets on requested items.
+            COMPONENT TYPE: ItemSockets"
+          allOf:
+            - $ref: '../shared.yml#/components/schemas/SingleComponentResponseOfDestinyPlugSetsComponent'
+          x-destiny-component-type-dependency: ItemSockets
+        presentationNodes:
+          type: object
+          description: 'COMPONENT TYPE: PresentationNodes'
+          allOf:
+            - $ref: '../shared.yml#/components/schemas/SingleComponentResponseOfDestinyPresentationNodesComponent'
+          x-destiny-component-type-dependency: PresentationNodes
+        records:
+          type: object
+          description: 'COMPONENT TYPE: Records'
+          allOf:
+            - $ref: '../shared.yml#/components/schemas/SingleComponentResponseOfDestinyCharacterRecordsComponent'
+          x-destiny-component-type-dependency: Records
+        collectibles:
+          type: object
+          description: 'COMPONENT TYPE: Collectibles'
+          allOf:
+            - $ref: '../shared.yml#/components/schemas/SingleComponentResponseOfDestinyCollectiblesComponent'
+          x-destiny-component-type-dependency: Collectibles
+        itemComponents:
+          type: object
+          description: "The set of components belonging to the player's instanced items.
+            COMPONENT TYPE: [See inside the DestinyItemComponentSet contract for component types.]"
+          allOf:
+            - $ref: '../shared.yml#/components/schemas/DestinyItemComponentSetOfint64'
+        uninstancedItemComponents:
+          type: object
+          description: "The set of components belonging to the player's UNinstanced items. Because apparently now those too can have information relevant to the character's state.
+            COMPONENT TYPE: [See inside the DestinyItemComponentSet contract for component types.]"
+          allOf:
+            - $ref: '../shared.yml#/components/schemas/DestinyBaseItemComponentSetOfuint32'
+        currencyLookups:
+          type: object
+          description: "A \"lookup\" convenience component that can be used to quickly check if the character has access to items that can be used for purchasing.
+            COMPONENT TYPE: CurrencyLookups"
+          allOf:
+            - $ref: '../shared.yml#/components/schemas/SingleComponentResponseOfDestinyCurrenciesComponent'
+          x-destiny-component-type-dependency: CurrencyLookups
+      description: The response contract for GetDestinyCharacter, with components that can be returned for character and item-level data.
+
+    DestinyItemResponse:
+      type: object
+      properties:
+        characterId:
+          type: integer
+          description: If the item is on a character, this will return the ID of the character that is holding the item.
+          format: int64
+        item:
+          type: object
+          description: "Common data for the item relevant to its non-instanced properties.
+            COMPONENT TYPE: ItemCommonData"
+          allOf:
+            - $ref: '../shared.yml#/components/schemas/SingleComponentResponseOfDestinyItemComponent'
+          x-destiny-component-type-dependency: ItemCommonData
+        instance:
+          type: object
+          description: "Basic instance data for the item.
+            COMPONENT TYPE: ItemInstances"
+          allOf:
+            - $ref: '../shared.yml#/components/schemas/SingleComponentResponseOfDestinyItemInstanceComponent'
+          x-destiny-component-type-dependency: ItemInstances
+        objectives:
+          type: object
+          description: "Information specifically about the item's objectives.
+            COMPONENT TYPE: ItemObjectives"
+          allOf:
+            - $ref: '../shared.yml#/components/schemas/SingleComponentResponseOfDestinyItemObjectivesComponent'
+          x-destiny-component-type-dependency: ItemObjectives
+        perks:
+          type: object
+          description: "Information specifically about the perks currently active on the item.
+            COMPONENT TYPE: ItemPerks"
+          allOf:
+            - $ref: '../shared.yml#/components/schemas/SingleComponentResponseOfDestinyItemPerksComponent'
+          x-destiny-component-type-dependency: ItemPerks
+        renderData:
+          type: object
+          description: "Information about how to render the item in 3D.
+            COMPONENT TYPE: ItemRenderData"
+          allOf:
+            - $ref: '../shared.yml#/components/schemas/SingleComponentResponseOfDestinyItemRenderComponent'
+          x-destiny-component-type-dependency: ItemRenderData
+        stats:
+          type: object
+          description: "Information about the computed stats of the item: power, defense, etc...
+            COMPONENT TYPE: ItemStats"
+          allOf:
+            - $ref: '../shared.yml#/components/schemas/SingleComponentResponseOfDestinyItemStatsComponent'
+          x-destiny-component-type-dependency: ItemStats
+        talentGrid:
+          type: object
+          description: "Information about the talent grid attached to the item. Talent nodes can provide a variety of benefits and abilities, and in Destiny 2 are used almost exclusively for the character's \"Builds\".
+            COMPONENT TYPE: ItemTalentGrids"
+          allOf:
+            - $ref: '../shared.yml#/components/schemas/SingleComponentResponseOfDestinyItemTalentGridComponent'
+          x-destiny-component-type-dependency: ItemTalentGrids
+        sockets:
+          type: object
+          description: "Information about the sockets of the item: which are currently active, what potential sockets you could have and the stats/abilities/perks you can gain from them.
+            COMPONENT TYPE: ItemSockets"
+          allOf:
+            - $ref: '../shared.yml#/components/schemas/SingleComponentResponseOfDestinyItemSocketsComponent'
+          x-destiny-component-type-dependency: ItemSockets
+        reusablePlugs:
+          type: object
+          description: "
+            Information about the Reusable Plugs for sockets on an item. These are plugs that you can insert into the given socket regardless of if you actually own an instance of that plug: they are logic-driven plugs rather than inventory-driven.
+            These may need to be combined with Plug Set component data to get a full picture of available plugs on a given socket.
+            COMPONENT TYPE: ItemReusablePlugs"
+          allOf:
+            - $ref: '../shared.yml#/components/schemas/SingleComponentResponseOfDestinyItemReusablePlugsComponent'
+          x-destiny-component-type-dependency: ItemReusablePlugs
+        plugObjectives:
+          type: object
+          description: "
+            Information about objectives on Plugs for a given item. See the component's documentation for more info.
+            COMPONENT TYPE: ItemPlugObjectives"
+          allOf:
+            - $ref: '../shared.yml#/components/schemas/SingleComponentResponseOfDestinyItemPlugObjectivesComponent'
+          x-destiny-component-type-dependency: ItemPlugObjectives
+      description: 'The response object for retrieving an individual instanced item. None of these components are relevant for an item that doesn''t have an "itemInstanceId": for those, get your information from the DestinyInventoryDefinition.'
+
+    DestinyVendorsResponse:
+      type: object
+      properties:
+        vendorGroups:
+          type: object
+          description: "For Vendors being returned, this will give you the information you need to group them and order them in the same way that the Bungie Companion app performs grouping. It will automatically be returned if you request the Vendors component.
+            COMPONENT TYPE: Vendors"
+          allOf:
+            - $ref: '../shared.yml#/components/schemas/SingleComponentResponseOfDestinyVendorGroupComponent'
+          x-destiny-component-type-dependency: Vendors
+        vendors:
+          type: object
+          description: "The base properties of the vendor. These are keyed by the Vendor Hash, so you will get one Vendor Component per vendor returned.
+            COMPONENT TYPE: Vendors"
+          allOf:
+            - $ref: '../shared.yml#/components/schemas/DictionaryComponentResponseOfuint32AndDestinyVendorComponent'
+          x-destiny-component-type-dependency: Vendors
+        categories:
+          type: object
+          description: "Categories that the vendor has available, and references to the sales therein. These are keyed by the Vendor Hash, so you will get one Categories Component per vendor returned.
+            COMPONENT TYPE: VendorCategories"
+          allOf:
+            - $ref: '../shared.yml#/components/schemas/DictionaryComponentResponseOfuint32AndDestinyVendorCategoriesComponent'
+          x-destiny-component-type-dependency: VendorCategories
+        sales:
+          type: object
+          description: "
+            Sales, keyed by the vendorItemIndex of the item being sold. These are keyed by the Vendor Hash, so you will get one Sale Item Set Component per vendor returned.
+            Note that within the Sale Item Set component, the sales are themselves keyed by the vendorSaleIndex, so you can relate it to the corrent sale item definition within the Vendor's definition.
+            COMPONENT TYPE: VendorSales"
+          allOf:
+            - $ref: '../shared.yml#/components/schemas/DictionaryComponentResponseOfuint32AndPersonalDestinyVendorSaleItemSetComponent'
+          x-destiny-component-type-dependency: VendorSales
+        itemComponents:
+          type: object
+          additionalProperties:
+            $ref: '../shared.yml#/components/schemas/DestinyItemComponentSetOfint32'
+          description: "The set of item detail components, one set of item components per Vendor. These are keyed by the Vendor Hash, so you will get one Item Component Set per vendor returned.
+            The components contained inside are themselves keyed by the vendorSaleIndex, and will have whatever item-level components you requested (Sockets, Stats, Instance data etc...) per item being sold by the vendor."
+        currencyLookups:
+          type: object
+          description: "A \"lookup\" convenience component that can be used to quickly check if the character has access to items that can be used for purchasing.
+            COMPONENT TYPE: CurrencyLookups"
+          allOf:
+            - $ref: '../shared.yml#/components/schemas/SingleComponentResponseOfDestinyCurrenciesComponent'
+          x-destiny-component-type-dependency: CurrencyLookups
+      description: A response containing all of the components for all requested vendors.
+
+    PersonalDestinyVendorSaleItemSetComponent:
+      type: object
+      properties:
+        saleItems:
+          type: object
+          additionalProperties:
+            $ref: 'entities/vendors.yml#/components/schemas/DestinyVendorSaleItemComponent'
+      x-destiny-component-type-dependency: VendorSales
+
+    DestinyVendorResponse:
+      type: object
+      properties:
+        vendor:
+          type: object
+          description: "The base properties of the vendor.
+            COMPONENT TYPE: Vendors"
+          allOf:
+            - $ref: '../shared.yml#/components/schemas/SingleComponentResponseOfDestinyVendorComponent'
+          x-destiny-component-type-dependency: Vendors
+        categories:
+          type: object
+          description: "Categories that the vendor has available, and references to the sales therein.
+            COMPONENT TYPE: VendorCategories"
+          allOf:
+            - $ref: '../shared.yml#/components/schemas/SingleComponentResponseOfDestinyVendorCategoriesComponent'
+          x-destiny-component-type-dependency: VendorCategories
+        sales:
+          type: object
+          description: "Sales, keyed by the vendorItemIndex of the item being sold.
+            COMPONENT TYPE: VendorSales"
+          allOf:
+            - $ref: '../shared.yml#/components/schemas/DictionaryComponentResponseOfint32AndDestinyVendorSaleItemComponent'
+          x-destiny-component-type-dependency: VendorSales
+        itemComponents:
+          type: object
+          description: "Item components, keyed by the vendorItemIndex of the active sale items.
+            COMPONENT TYPE: [See inside the DestinyItemComponentSet contract for component types.]"
+          allOf:
+            - $ref: '../shared.yml#/components/schemas/DestinyItemComponentSetOfint32'
+        currencyLookups:
+          type: object
+          description: "A \"lookup\" convenience component that can be used to quickly check if the character has access to items that can be used for purchasing.
+            COMPONENT TYPE: CurrencyLookups"
+          allOf:
+            - $ref: '../shared.yml#/components/schemas/SingleComponentResponseOfDestinyCurrenciesComponent'
+          x-destiny-component-type-dependency: CurrencyLookups
+      description: A response containing all of the components for a vendor.
+
+    DestinyPublicVendorsResponse:
+      type: object
+      properties:
+        vendorGroups:
+          type: object
+          description: "For Vendors being returned, this will give you the information you need to group them and order them in the same way that the Bungie Companion app performs grouping. It will automatically be returned if you request the Vendors component.
+            COMPONENT TYPE: Vendors"
+          allOf:
+            - $ref: '../shared.yml#/components/schemas/SingleComponentResponseOfDestinyVendorGroupComponent'
+          x-destiny-component-type-dependency: Vendors
+        vendors:
+          type: object
+          description: "The base properties of the vendor. These are keyed by the Vendor Hash, so you will get one Vendor Component per vendor returned.
+            COMPONENT TYPE: Vendors"
+          allOf:
+            - $ref: '../shared.yml#/components/schemas/DictionaryComponentResponseOfuint32AndDestinyPublicVendorComponent'
+          x-destiny-component-type-dependency: Vendors
+        categories:
+          type: object
+          description: "Categories that the vendor has available, and references to the sales therein. These are keyed by the Vendor Hash, so you will get one Categories Component per vendor returned.
+            COMPONENT TYPE: VendorCategories"
+          allOf:
+            - $ref: '../shared.yml#/components/schemas/DictionaryComponentResponseOfuint32AndDestinyVendorCategoriesComponent'
+          x-destiny-component-type-dependency: VendorCategories
+        sales:
+          type: object
+          description: "Sales, keyed by the vendorItemIndex of the item being sold. These are keyed by the Vendor Hash, so you will get one Sale Item Set Component per vendor returned.
+            Note that within the Sale Item Set component, the sales are themselves keyed by the vendorSaleIndex, so you can relate it to the corrent sale item definition within the Vendor's definition.
+            COMPONENT TYPE: VendorSales"
+          allOf:
+            - $ref: '../shared.yml#/components/schemas/DictionaryComponentResponseOfuint32AndPublicDestinyVendorSaleItemSetComponent'
+          x-destiny-component-type-dependency: VendorSales
+      description: "A response containing all valid components for the public Vendors endpoint.
+       It is a decisively smaller subset of data compared to what we can get when we know the specific user making the request.
+       If you want any of the other data - item details, whether or not you can buy it, etc... you'll have to call in the context of a character. I know, sad but true."
+
+    PublicDestinyVendorSaleItemSetComponent:
+      type: object
+      properties:
+        saleItems:
+          type: object
+          additionalProperties:
+            $ref: 'components/vendors.yml#/components/schemas/DestinyPublicVendorSaleItemComponent'
+      x-destiny-component-type-dependency: VendorSales
+
+    DestinyCollectibleNodeDetailResponse:
+      type: object
+      properties:
+        collectibles:
+          type: object
+          description: 'COMPONENT TYPE: Collectibles'
+          allOf:
+            - $ref: '../shared.yml#/components/schemas/SingleComponentResponseOfDestinyCollectiblesComponent'
+          x-destiny-component-type-dependency: Collectibles
+        collectibleItemComponents:
+          type: object
+          description: "
+            Item components, keyed by the item hash of the items pointed at collectibles found under the requested Presentation Node.
+            NOTE: I had a lot of hemming and hawing about whether these should be keyed by collectible hash or item hash... but ultimately having it be keyed by item hash meant that UI that already uses DestinyItemComponentSet data wouldn't have to have a special override to do the collectible -> item lookup once you delve into an item's details, and it also meant that you didn't have to remember that the Hash being used as the key for plugSets was different from the Hash being used for the other Dictionaries. As a result, using the Item Hash felt like the least crappy solution.
+            We may all come to regret this decision. We will see.
+            COMPONENT TYPE: [See inside the DestinyItemComponentSet contract for component types.]"
+          allOf:
+            - $ref: '../shared.yml#/components/schemas/DestinyItemComponentSetOfuint32'
+      description: Returns the detailed information about a Collectible Presentation Node and any Collectibles that are direct descendants.
+
+    InventoryChangedResponse:
+      type: object
+      properties:
+        addedInventoryItems:
+          type: array
+          description: Items that appeared in the inventory possibly as a result of an action.
+          items:
+            $ref: 'entities/items.yml#/components/schemas/DestinyItemComponent'
+        removedInventoryItems:
+          type: array
+          description: Items that disappeared from the inventory possibly as a result of an action.
+          items:
+            $ref: 'entities/items.yml#/components/schemas/DestinyItemComponent'
+      description: A response containing all of the components for all requested vendors.
+
+    DestinyItemChangeResponse:
+      type: object
+      properties:
+        item:
+          $ref: '#/components/schemas/DestinyItemResponse'
+        addedInventoryItems:
+          type: array
+          description: Items that appeared in the inventory possibly as a result of an action.
+          items:
+            $ref: 'entities/items.yml#/components/schemas/DestinyItemComponent'
+        removedInventoryItems:
+          type: array
+          description: Items that disappeared from the inventory possibly as a result of an action.
+          items:
+            $ref: 'entities/items.yml#/components/schemas/DestinyItemComponent'
+

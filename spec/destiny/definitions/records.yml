@@ -1,0 +1,187 @@
+components:
+  schemas:
+    DestinyRecordDefinition:
+      type: object
+      properties:
+        displayProperties:
+          $ref: "common.yml#/components/schemas/DestinyDisplayPropertiesDefinition"
+        scope:
+          type: integer
+          description: Indicates whether this Record's state is determined on a per-character or on an account-wide basis.
+          format: int32
+          x-enum-reference:
+            $ref: "../../destiny.yml#/components/schemas/DestinyScope"
+        presentationInfo:
+          $ref: "presentation.yml#/components/schemas/DestinyPresentationChildBlock"
+        loreHash:
+          type: integer
+          format: uint32
+          x-mapped-definition:
+            $ref: "lore.yml#/components/schemas/DestinyLoreDefinition"
+        objectiveHashes:
+          type: array
+          items:
+            type: integer
+            format: uint32
+          x-mapped-definition:
+            $ref: "../definitions.yml#/components/schemas/DestinyObjectiveDefinition"
+        recordValueStyle:
+          type: integer
+          format: int32
+          x-enum-reference:
+            $ref: "../../destiny.yml#/components/schemas/DestinyRecordValueStyle"
+        forTitleGilding:
+          type: boolean
+        titleInfo:
+          $ref: "#/components/schemas/DestinyRecordTitleBlock"
+        completionInfo:
+          $ref: "#/components/schemas/DestinyRecordCompletionBlock"
+        stateInfo:
+          $ref: "#/components/schemas/SchemaRecordStateBlock"
+        requirements:
+          $ref: "presentation.yml#/components/schemas/DestinyPresentationNodeRequirementsBlock"
+        expirationInfo:
+          $ref: "#/components/schemas/DestinyRecordExpirationBlock"
+        intervalInfo:
+          type: object
+          description: Some records have multiple 'interval' objectives, and the record may be claimed at each completed interval
+          allOf:
+            - $ref: "#/components/schemas/DestinyRecordIntervalBlock"
+        rewardItems:
+          type: array
+          description: '
+            If there is any publicly available information about rewards earned for achieving this record, this is the list of those items.
+            However, note that some records intentionally have "hidden" rewards. These will not be returned in this list.'
+          items:
+            $ref: "../../destiny.yml#/components/schemas/DestinyItemQuantity"
+        presentationNodeType:
+          type: integer
+          format: int32
+          x-enum-reference:
+            $ref: "../../destiny.yml#/components/schemas/DestinyPresentationNodeType"
+        traitIds:
+          type: array
+          items:
+            type: string
+        traitHashes:
+          type: array
+          items:
+            type: integer
+            format: uint32
+          x-mapped-definition:
+            $ref: "traits.yml#/components/schemas/DestinyTraitDefinition"
+        parentNodeHashes:
+          type: array
+          description: A quick reference to presentation nodes that have this node as a child. Presentation nodes can be parented under multiple parents.
+          items:
+            type: integer
+            format: uint32
+          x-mapped-definition:
+            $ref: "presentation.yml#/components/schemas/DestinyPresentationNodeDefinition"
+        hash:
+          type: integer
+          description:
+            "The unique identifier for this entity. Guaranteed to be unique for the type of entity, but not globally.
+            When entities refer to each other in Destiny content, it is this hash that they are referring to."
+          format: uint32
+        index:
+          type: integer
+          description: The index of the entity as it was found in the investment tables.
+          format: int32
+        redacted:
+          type: boolean
+          description: If this is true, then there is an entity with this identifier/type combination, but BNet is not yet allowed to show it. Sorry!
+      x-mobile-manifest-name: Records
+
+    DestinyRecordTitleBlock:
+      type: object
+      properties:
+        hasTitle:
+          type: boolean
+        titlesByGender:
+          type: object
+          additionalProperties:
+            type: string
+        titlesByGenderHash:
+          type: object
+          additionalProperties:
+            type: string
+          description: For those who prefer to use the definitions.
+          x-mapped-definition:
+            $ref: "../definitions.yml#/components/schemas/DestinyGenderDefinition"
+        gildingTrackingRecordHash:
+          type: integer
+          format: uint32
+          x-mapped-definition:
+            $ref: "#/components/schemas/DestinyRecordDefinition"
+
+    DestinyRecordCompletionBlock:
+      type: object
+      properties:
+        partialCompletionObjectiveCountThreshold:
+          type: integer
+          description: The number of objectives that must be completed before the objective is considered "complete"
+          format: int32
+        ScoreValue:
+          type: integer
+          format: int32
+        shouldFireToast:
+          type: boolean
+        toastStyle:
+          type: integer
+          format: int32
+          x-enum-reference:
+            $ref: "../../destiny.yml#/components/schemas/DestinyRecordToastStyle"
+
+    SchemaRecordStateBlock:
+      type: object
+      properties:
+        featuredPriority:
+          type: integer
+          format: int32
+        obscuredString:
+          type: string
+
+    DestinyRecordExpirationBlock:
+      type: object
+      properties:
+        hasExpiration:
+          type: boolean
+        description:
+          type: string
+        icon:
+          type: string
+      description: If this record has an expiration after which it cannot be earned, this is some information about that expiration.
+
+    DestinyRecordIntervalBlock:
+      type: object
+      properties:
+        intervalObjectives:
+          type: array
+          items:
+            $ref: "#/components/schemas/DestinyRecordIntervalObjective"
+        intervalRewards:
+          type: array
+          items:
+            $ref: "#/components/schemas/DestinyRecordIntervalRewards"
+        originalObjectiveArrayInsertionIndex:
+          type: integer
+          format: int32
+
+    DestinyRecordIntervalObjective:
+      type: object
+      properties:
+        intervalObjectiveHash:
+          type: integer
+          format: uint32
+        intervalScoreValue:
+          type: integer
+          format: int32
+
+    DestinyRecordIntervalRewards:
+      type: object
+      properties:
+        intervalRewardItems:
+          type: array
+          items:
+            $ref: "../../destiny.yml#/components/schemas/DestinyItemQuantity"

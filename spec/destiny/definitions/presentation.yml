@@ -1,0 +1,280 @@
+components:
+  schemas:
+    DestinyPresentationNodeBaseDefinition:
+      type: object
+      properties:
+        presentationNodeType:
+          type: integer
+          format: int32
+          x-enum-reference:
+            $ref: "../../destiny.yml#/components/schemas/DestinyPresentationNodeType"
+        traitIds:
+          type: array
+          items:
+            type: string
+        traitHashes:
+          type: array
+          items:
+            type: integer
+            format: uint32
+          x-mapped-definition:
+            $ref: "traits.yml#/components/schemas/DestinyTraitDefinition"
+        parentNodeHashes:
+          type: array
+          description: A quick reference to presentation nodes that have this node as a child. Presentation nodes can be parented under multiple parents.
+          items:
+            type: integer
+            format: uint32
+          x-mapped-definition:
+            $ref: "#/components/schemas/DestinyPresentationNodeDefinition"
+        hash:
+          type: integer
+          description:
+            "The unique identifier for this entity. Guaranteed to be unique for the type of entity, but not globally.
+            When entities refer to each other in Destiny content, it is this hash that they are referring to."
+          format: uint32
+        index:
+          type: integer
+          description: The index of the entity as it was found in the investment tables.
+          format: int32
+        redacted:
+          type: boolean
+          description: If this is true, then there is an entity with this identifier/type combination, but BNet is not yet allowed to show it. Sorry!
+      description: This is the base class for all presentation system children. Presentation Nodes, Records, Collectibles, and Metrics.
+
+    DestinyScoredPresentationNodeBaseDefinition:
+      type: object
+      properties:
+        maxCategoryRecordScore:
+          type: integer
+          format: int32
+        presentationNodeType:
+          type: integer
+          format: int32
+          x-enum-reference:
+            $ref: "../../destiny.yml#/components/schemas/DestinyPresentationNodeType"
+        traitIds:
+          type: array
+          items:
+            type: string
+        traitHashes:
+          type: array
+          items:
+            type: integer
+            format: uint32
+          x-mapped-definition:
+            $ref: "traits.yml#/components/schemas/DestinyTraitDefinition"
+        parentNodeHashes:
+          type: array
+          description: A quick reference to presentation nodes that have this node as a child. Presentation nodes can be parented under multiple parents.
+          items:
+            type: integer
+            format: uint32
+          x-mapped-definition:
+            $ref: "#/components/schemas/DestinyPresentationNodeDefinition"
+        hash:
+          type: integer
+          description:
+            "The unique identifier for this entity. Guaranteed to be unique for the type of entity, but not globally.
+            When entities refer to each other in Destiny content, it is this hash that they are referring to."
+          format: uint32
+        index:
+          type: integer
+          description: The index of the entity as it was found in the investment tables.
+          format: int32
+        redacted:
+          type: boolean
+          description: If this is true, then there is an entity with this identifier/type combination, but BNet is not yet allowed to show it. Sorry!
+
+    DestinyPresentationNodeDefinition:
+      type: object
+      properties:
+        displayProperties:
+          $ref: "common.yml#/components/schemas/DestinyDisplayPropertiesDefinition"
+        originalIcon:
+          type: string
+          description: The original icon for this presentation node, before we futzed with it.
+        rootViewIcon:
+          type: string
+          description: Some presentation nodes are meant to be explicitly shown on the "root" or "entry" screens for the feature to which they are related. You should use this icon when showing them on such a view, if you have a similar "entry point" view in your UI. If you don't have a UI, then I guess it doesn't matter either way does it?
+        nodeType:
+          type: integer
+          format: int32
+          x-enum-reference:
+            $ref: "../../destiny.yml#/components/schemas/DestinyPresentationNodeType"
+        scope:
+          type: integer
+          description: Indicates whether this presentation node's state is determined on a per-character or on an account-wide basis.
+          format: int32
+          x-enum-reference:
+            $ref: "../../destiny.yml#/components/schemas/DestinyScope"
+        objectiveHash:
+          type: integer
+          description: If this presentation node shows a related objective (for instance, if it tracks the progress of its children), the objective being tracked is indicated here.
+          format: uint32
+          x-mapped-definition:
+            $ref: "../definitions.yml#/components/schemas/DestinyObjectiveDefinition"
+        completionRecordHash:
+          type: integer
+          description: If this presentation node has an associated "Record" that you can accomplish for completing its children, this is the identifier of that Record.
+          format: uint32
+          x-mapped-definition:
+            $ref: "records.yml#/components/schemas/DestinyRecordDefinition"
+        children:
+          type: object
+          description: The child entities contained by this presentation node.
+          allOf:
+            - $ref: "#/components/schemas/DestinyPresentationNodeChildrenBlock"
+        displayStyle:
+          type: integer
+          description: A hint for how to display this presentation node when it's shown in a list.
+          format: int32
+          x-enum-reference:
+            $ref: "../../destiny.yml#/components/schemas/DestinyPresentationDisplayStyle"
+        screenStyle:
+          type: integer
+          description: A hint for how to display this presentation node when it's shown in its own detail screen.
+          format: int32
+          x-enum-reference:
+            $ref: "../../destiny.yml#/components/schemas/DestinyPresentationScreenStyle"
+        requirements:
+          type: object
+          description: The requirements for being able to interact with this presentation node and its children.
+          allOf:
+            - $ref: "#/components/schemas/DestinyPresentationNodeRequirementsBlock"
+        disableChildSubscreenNavigation:
+          type: boolean
+          description: If this presentation node has children, but the game doesn't let you inspect the details of those children, that is indicated here.
+        maxCategoryRecordScore:
+          type: integer
+          format: int32
+        presentationNodeType:
+          type: integer
+          format: int32
+          x-enum-reference:
+            $ref: "../../destiny.yml#/components/schemas/DestinyPresentationNodeType"
+        traitIds:
+          type: array
+          items:
+            type: string
+        traitHashes:
+          type: array
+          items:
+            type: integer
+            format: uint32
+          x-mapped-definition:
+            $ref: "traits.yml#/components/schemas/DestinyTraitDefinition"
+        parentNodeHashes:
+          type: array
+          description: A quick reference to presentation nodes that have this node as a child. Presentation nodes can be parented under multiple parents.
+          items:
+            type: integer
+            format: uint32
+          x-mapped-definition:
+            $ref: "#/components/schemas/DestinyPresentationNodeDefinition"
+        hash:
+          type: integer
+          description:
+            "The unique identifier for this entity. Guaranteed to be unique for the type of entity, but not globally.
+            When entities refer to each other in Destiny content, it is this hash that they are referring to."
+          format: uint32
+        index:
+          type: integer
+          description: The index of the entity as it was found in the investment tables.
+          format: int32
+        redacted:
+          type: boolean
+          description: If this is true, then there is an entity with this identifier/type combination, but BNet is not yet allowed to show it. Sorry!
+      description: '
+        A PresentationNode is an entity that represents a logical grouping of other entities visually/organizationally.
+        For now, Presentation Nodes may contain the following... but it may be used for more in the future:
+        - Collectibles - Records (Or, as the public will call them, "Triumphs." Don''t ask me why we''re overloading the term "Triumph", it still hurts me to think about it) - Metrics (aka Stat Trackers) - Other Presentation Nodes, allowing a tree of Presentation Nodes to be created
+        Part of me wants to break these into conceptual definitions per entity being collected, but the possibility of these different types being mixed in the same UI and the possibility that it could actually be more useful to return the "bare metal" presentation node concept has resulted in me deciding against that for the time being.
+        We''ll see if I come to regret this as well.'
+      x-mobile-manifest-name: PresentationNodes
+
+    DestinyPresentationNodeChildrenBlock:
+      type: object
+      properties:
+        presentationNodes:
+          type: array
+          items:
+            $ref: "#/components/schemas/DestinyPresentationNodeChildEntry"
+        collectibles:
+          type: array
+          items:
+            $ref: "#/components/schemas/DestinyPresentationNodeCollectibleChildEntry"
+        records:
+          type: array
+          items:
+            $ref: "#/components/schemas/DestinyPresentationNodeRecordChildEntry"
+        metrics:
+          type: array
+          items:
+            $ref: "#/components/schemas/DestinyPresentationNodeMetricChildEntry"
+      description: As/if presentation nodes begin to host more entities as children, these lists will be added to. One list property exists per type of entity that can be treated as a child of this presentation node, and each holds the identifier of the entity and any associated information needed to display the UI for that entity (if anything)
+
+    DestinyPresentationNodeChildEntry:
+      type: object
+      properties:
+        presentationNodeHash:
+          type: integer
+          format: uint32
+          x-mapped-definition:
+            $ref: "#/components/schemas/DestinyPresentationNodeDefinition"
+
+    DestinyPresentationNodeCollectibleChildEntry:
+      type: object
+      properties:
+        collectibleHash:
+          type: integer
+          format: uint32
+          x-mapped-definition:
+            $ref: "collectibles.yml#/components/schemas/DestinyCollectibleDefinition"
+
+    DestinyPresentationNodeRequirementsBlock:
+      type: object
+      properties:
+        entitlementUnavailableMessage:
+          type: string
+          description: If this node is not accessible due to Entitlements (for instance, you don't own the required game expansion), this is the message to show.
+      description: Presentation nodes can be restricted by various requirements. This defines the rules of those requirements, and the message(s) to be shown if these requirements aren't met.
+
+    DestinyPresentationChildBlock:
+      type: object
+      properties:
+        presentationNodeType:
+          type: integer
+          format: int32
+          x-enum-reference:
+            $ref: "../../destiny.yml#/components/schemas/DestinyPresentationNodeType"
+        parentPresentationNodeHashes:
+          type: array
+          items:
+            type: integer
+            format: uint32
+          x-mapped-definition:
+            $ref: "#/components/schemas/DestinyPresentationNodeDefinition"
+        displayStyle:
+          type: integer
+          format: int32
+          x-enum-reference:
+            $ref: "../../destiny.yml#/components/schemas/DestinyPresentationDisplayStyle"
+
+    DestinyPresentationNodeRecordChildEntry:
+      type: object
+      properties:
+        recordHash:
+          type: integer
+          format: uint32
+          x-mapped-definition:
+            $ref: "records.yml#/components/schemas/DestinyRecordDefinition"
+
+    DestinyPresentationNodeMetricChildEntry:
+      type: object
+      properties:
+        metricHash:
+          type: integer
+          format: uint32
+          x-mapped-definition:
+            $ref: "metrics.yml#/components/schemas/DestinyMetricDefinition"

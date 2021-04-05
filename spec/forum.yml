@@ -1,0 +1,348 @@
+components:
+  schemas:
+    ForumTopicsCategoryFiltersEnum:
+      type: integer
+      format: int32
+      enum:
+        - 0
+        - 1
+        - 2
+        - 4
+        - 8
+        - 16
+        - 32
+        - 64
+        - 128
+      x-enum-values:
+        - numericValue: "0"
+          identifier: None
+        - numericValue: "1"
+          identifier: Links
+        - numericValue: "2"
+          identifier: Questions
+        - numericValue: "4"
+          identifier: AnsweredQuestions
+        - numericValue: "8"
+          identifier: Media
+        - numericValue: "16"
+          identifier: TextOnly
+        - numericValue: "32"
+          identifier: Announcement
+        - numericValue: "64"
+          identifier: BungieOfficial
+        - numericValue: "128"
+          identifier: Polls
+
+    ForumTopicsQuickDateEnum:
+      type: integer
+      format: int32
+      enum:
+        - 0
+        - 1
+        - 2
+        - 3
+        - 4
+      x-enum-values:
+        - numericValue: "0"
+          identifier: All
+        - numericValue: "1"
+          identifier: LastYear
+        - numericValue: "2"
+          identifier: LastMonth
+        - numericValue: "3"
+          identifier: LastWeek
+        - numericValue: "4"
+          identifier: LastDay
+
+    ForumTopicsSortEnum:
+      type: integer
+      format: byte
+      enum:
+        - 0
+        - 1
+        - 2
+        - 3
+        - 4
+        - 5
+        - 6
+        - 7
+      x-enum-values:
+        - numericValue: "0"
+          identifier: Default
+        - numericValue: "1"
+          identifier: LastReplied
+        - numericValue: "2"
+          identifier: MostReplied
+        - numericValue: "3"
+          identifier: Popularity
+        - numericValue: "4"
+          identifier: Controversiality
+        - numericValue: "5"
+          identifier: Liked
+        - numericValue: "6"
+          identifier: HighestRated
+        - numericValue: "7"
+          identifier: MostUpvoted
+
+    PostResponse:
+      type: object
+      properties:
+        lastReplyTimestamp:
+          type: string
+          format: date-time
+        IsPinned:
+          type: boolean
+        urlMediaType:
+          type: integer
+          format: int32
+          x-enum-reference:
+            $ref: '#/components/schemas/ForumMediaType'
+        thumbnail:
+          type: string
+        popularity:
+          type: integer
+          format: int32
+          x-enum-reference:
+            $ref: '#/components/schemas/ForumPostPopularity'
+        isActive:
+          type: boolean
+        isAnnouncement:
+          type: boolean
+        userRating:
+          type: integer
+          format: int32
+        userHasRated:
+          type: boolean
+        userHasMutedPost:
+          type: boolean
+        latestReplyPostId:
+          type: integer
+          format: int64
+        latestReplyAuthorId:
+          type: integer
+          format: int64
+        ignoreStatus:
+          $ref: 'ignores.yml#/components/schemas/IgnoreResponse'
+        locale:
+          type: string
+
+    ForumMediaType:
+      type: integer
+      format: int32
+      enum:
+        - 0
+        - 1
+        - 2
+        - 3
+      x-enum-values:
+        - numericValue: "0"
+          identifier: None
+        - numericValue: "1"
+          identifier: Image
+        - numericValue: "2"
+          identifier: Video
+        - numericValue: "3"
+          identifier: Youtube
+
+    ForumPostPopularity:
+      type: integer
+      format: int32
+      enum:
+        - 0
+        - 1
+        - 2
+        - 3
+        - 4
+        - 5
+      x-enum-values:
+        - numericValue: "0"
+          identifier: Empty
+        - numericValue: "1"
+          identifier: Default
+        - numericValue: "2"
+          identifier: Discussed
+        - numericValue: "3"
+          identifier: CoolStory
+        - numericValue: "4"
+          identifier: HeatingUp
+        - numericValue: "5"
+          identifier: Hot
+
+    PostSearchResponse:
+      type: object
+      properties:
+        relatedPosts:
+          type: array
+          items:
+            $ref: '#/components/schemas/PostResponse'
+        authors:
+          type: array
+          items:
+            $ref: 'user.yml#/components/schemas/GeneralUser'
+        groups:
+          type: array
+          items:
+            $ref: 'groupsv2.yml#/components/schemas/GroupResponse'
+        searchedTags:
+          type: array
+          items:
+            $ref: 'tags/models/contracts.yml#/components/schemas/TagResponse'
+        polls:
+          type: array
+          items:
+            $ref: '#/components/schemas/PollResponse'
+        recruitmentDetails:
+          type: array
+          items:
+            $ref: '#/components/schemas/ForumRecruitmentDetail'
+        availablePages:
+          type: integer
+          format: int32
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/PostResponse'
+        totalResults:
+          type: integer
+          format: int32
+        hasMore:
+          type: boolean
+        query:
+          $ref: 'queries.yml#/components/schemas/PagedQuery'
+        replacementContinuationToken:
+          type: string
+        useTotalResults:
+          type: boolean
+          description: "
+            If useTotalResults is true, then totalResults represents an accurate count.
+            If False, it does not, and may be estimated/only the size of the current page.
+            Either way, you should probably always only trust hasMore.
+            This is a long-held historical throwback to when we used to do paging with known total results. Those queries toasted our database, and we were left to hastily alter our endpoints and create backward- compatible shims, of which useTotalResults is one."
+
+    PollResponse:
+      type: object
+      properties:
+        topicId:
+          type: integer
+          format: int64
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/PollResult'
+        totalVotes:
+          type: integer
+          format: int32
+
+    PollResult:
+      type: object
+      properties:
+        answerText:
+          type: string
+        answerSlot:
+          type: integer
+          format: int32
+        lastVoteDate:
+          type: string
+          format: date-time
+        votes:
+          type: integer
+          format: int32
+        requestingUserVoted:
+          type: boolean
+
+    ForumRecruitmentDetail:
+      type: object
+      properties:
+        topicId:
+          type: integer
+          format: int64
+        microphoneRequired:
+          type: boolean
+        intensity:
+          type: integer
+          format: byte
+          x-enum-reference:
+            $ref: '#/components/schemas/ForumRecruitmentIntensityLabel'
+        tone:
+          type: integer
+          format: byte
+          x-enum-reference:
+            $ref: '#/components/schemas/ForumRecruitmentToneLabel'
+        approved:
+          type: boolean
+        conversationId:
+          type: integer
+          format: int64
+        playerSlotsTotal:
+          type: integer
+          format: int32
+        playerSlotsRemaining:
+          type: integer
+          format: int32
+        Fireteam:
+          type: array
+          items:
+            $ref: 'user.yml#/components/schemas/GeneralUser'
+        kickedPlayerIds:
+          type: array
+          items:
+            type: integer
+            format: int64
+
+    ForumRecruitmentIntensityLabel:
+      type: integer
+      format: byte
+      enum:
+        - 0
+        - 1
+        - 2
+      x-enum-values:
+        - numericValue: "0"
+          identifier: None
+        - numericValue: "1"
+          identifier: Casual
+        - numericValue: "2"
+          identifier: Professional
+
+    ForumRecruitmentToneLabel:
+      type: integer
+      format: byte
+      enum:
+        - 0
+        - 1
+        - 2
+      x-enum-values:
+        - numericValue: "0"
+          identifier: None
+        - numericValue: "1"
+          identifier: FamilyFriendly
+        - numericValue: "2"
+          identifier: Rowdy
+
+    ForumPostSortEnum:
+      type: integer
+      format: int32
+      enum:
+        - 0
+        - 1
+      x-enum-values:
+        - numericValue: "0"
+          identifier: Default
+        - numericValue: "1"
+          identifier: OldestFirst
+
+    CommunityContentSortMode:
+      type: integer
+      format: byte
+      enum:
+        - 0
+        - 1
+        - 2
+      x-enum-values:
+        - numericValue: "0"
+          identifier: Trending
+        - numericValue: "1"
+          identifier: Latest
+        - numericValue: "2"
+          identifier: HighestRated
+

@@ -1,0 +1,25 @@
+components:
+  schemas:
+    DestinyItemTransferRequest:
+      type: object
+      properties:
+        itemReferenceHash:
+          type: integer
+          format: uint32
+        stackSize:
+          type: integer
+          format: int32
+        transferToVault:
+          type: boolean
+        itemId:
+          type: integer
+          format: int64
+        characterId:
+          type: integer
+          format: int64
+        membershipType:
+          type: integer
+          format: int32
+          x-enum-reference:
+            $ref: '../shared.yml#/components/schemas/BungieMembershipType'
+

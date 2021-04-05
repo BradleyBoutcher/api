@@ -1,0 +1,45 @@
+components:
+  schemas:
+    DestinyEnergyTypeDefinition:
+      type: object
+      properties:
+        displayProperties:
+          type: object
+          description: The description of the energy type, icon etc...
+          allOf:
+            - $ref: "common.yml#/components/schemas/DestinyDisplayPropertiesDefinition"
+        transparentIconPath:
+          type: string
+          description: A variant of the icon that is transparent and colorless.
+        showIcon:
+          type: boolean
+          description: If TRUE, the game shows this Energy type's icon. Otherwise, it doesn't. Whether you show it or not is up to you.
+        enumValue:
+          type: integer
+          description: We have an enumeration for Energy types for quick reference. This is the current definition's Energy type enum value.
+          format: int32
+          x-enum-reference:
+            $ref: "../../destiny.yml#/components/schemas/DestinyEnergyType"
+        capacityStatHash:
+          type: integer
+          description: If this Energy Type can be used for determining the Type of Energy that an item can consume, this is the hash for the DestinyInvestmentStatDefinition that represents the stat which holds the Capacity for that energy type. (Note that this is optional because "Any" is a valid cost, but not valid for Capacity - an Armor must have a specific Energy Type for determining the energy type that the Armor is restricted to use)
+          format: uint32
+        costStatHash:
+          type: integer
+          description: If this Energy Type can be used as a cost to pay for socketing Armor 2.0 items, this is the hash for the DestinyInvestmentStatDefinition that stores the plug's raw cost.
+          format: uint32
+        hash:
+          type: integer
+          description:
+            "The unique identifier for this entity. Guaranteed to be unique for the type of entity, but not globally.
+            When entities refer to each other in Destiny content, it is this hash that they are referring to."
+          format: uint32
+        index:
+          type: integer
+          description: The index of the entity as it was found in the investment tables.
+          format: int32
+        redacted:
+          type: boolean
+          description: If this is true, then there is an entity with this identifier/type combination, but BNet is not yet allowed to show it. Sorry!
+      description: Represents types of Energy that can be used for costs and payments related to Armor 2.0 mods.
+      x-mobile-manifest-name: EnergyTypes

@@ -1,0 +1,10 @@
+components:
+  schemas:
+    TagResponse:
+      type: object
+      properties:
+        tagText:
+          type: string
+        ignoreStatus:
+          $ref: '../../ignores.yml#/components/schemas/IgnoreResponse'
+

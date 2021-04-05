@@ -1,0 +1,1716 @@
+components:
+  schemas:
+    BungieMembershipType:
+      type: integer
+      description: The types of membership the Accounts system supports. This is the external facing enum used in place of the internal-only Bungie.SharedDefinitions.MembershipType.
+      format: int32
+      enum:
+        - 0
+        - 1
+        - 2
+        - 3
+        - 4
+        - 5
+        - 10
+        - 254
+        - -1
+      x-enum-values:
+        - numericValue: "0"
+          identifier: None
+        - numericValue: "1"
+          identifier: TigerXbox
+        - numericValue: "2"
+          identifier: TigerPsn
+        - numericValue: "3"
+          identifier: TigerSteam
+        - numericValue: "4"
+          identifier: TigerBlizzard
+        - numericValue: "5"
+          identifier: TigerStadia
+        - numericValue: "10"
+          identifier: TigerDemon
+        - numericValue: "254"
+          identifier: BungieNext
+        - numericValue: -1
+          identifier: All
+          description: '"All" is only valid for searching capabilities: you need to pass the actual matching BungieMembershipType for any query where you pass a known membershipId.'
+
+    BungieCredentialType:
+      type: integer
+      description: The types of credentials the Accounts system supports. This is the external facing enum used in place of the internal-only Bungie.SharedDefinitions.CredentialType.
+      format: byte
+      enum:
+        - 0
+        - 1
+        - 2
+        - 3
+        - 4
+        - 5
+        - 8
+        - 9
+        - 10
+        - 12
+        - 14
+        - 16
+        - 18
+      x-enum-values:
+        - numericValue: "0"
+          identifier: None
+        - numericValue: "1"
+          identifier: Xuid
+        - numericValue: "2"
+          identifier: Psnid
+        - numericValue: "3"
+          identifier: Wlid
+        - numericValue: "4"
+          identifier: Fake
+        - numericValue: "5"
+          identifier: Facebook
+        - numericValue: "8"
+          identifier: Google
+        - numericValue: "9"
+          identifier: Windows
+        - numericValue: "10"
+          identifier: DemonId
+        - numericValue: "12"
+          identifier: SteamId
+        - numericValue: "14"
+          identifier: BattleNetId
+        - numericValue: "16"
+          identifier: StadiaId
+        - numericValue: "18"
+          identifier: TwitchId
+
+    SearchResultOfContentItemPublicContract:
+      type: object
+      properties:
+        results:
+          type: array
+          items:
+            $ref: "content.yml#/components/schemas/ContentItemPublicContract"
+        totalResults:
+          type: integer
+          format: int32
+        hasMore:
+          type: boolean
+        query:
+          $ref: "queries.yml#/components/schemas/PagedQuery"
+        replacementContinuationToken:
+          type: string
+        useTotalResults:
+          type: boolean
+          description: "
+            If useTotalResults is true, then totalResults represents an accurate count.
+            If False, it does not, and may be estimated/only the size of the current page.
+            Either way, you should probably always only trust hasMore.
+            This is a long-held historical throwback to when we used to do paging with known total results. Those queries toasted our database, and we were left to hastily alter our endpoints and create backward- compatible shims, of which useTotalResults is one."
+
+    SearchResultOfPostResponse:
+      type: object
+      properties:
+        results:
+          type: array
+          items:
+            $ref: "forum.yml#/components/schemas/PostResponse"
+        totalResults:
+          type: integer
+          format: int32
+        hasMore:
+          type: boolean
+        query:
+          $ref: "queries.yml#/components/schemas/PagedQuery"
+        replacementContinuationToken:
+          type: string
+        useTotalResults:
+          type: boolean
+          description: "
+            If useTotalResults is true, then totalResults represents an accurate count.
+            If False, it does not, and may be estimated/only the size of the current page.
+            Either way, you should probably always only trust hasMore.
+            This is a long-held historical throwback to when we used to do paging with known total results. Those queries toasted our database, and we were left to hastily alter our endpoints and create backward- compatible shims, of which useTotalResults is one."
+
+    BungieMembershipType[]:
+      type: array
+      items:
+        type: integer
+        description: The types of membership the Accounts system supports. This is the external facing enum used in place of the internal-only Bungie.SharedDefinitions.MembershipType.
+        format: int32
+        x-enum-reference:
+          $ref: "#/components/schemas/BungieMembershipType"
+
+    SearchResultOfGroupV2Card:
+      type: object
+      properties:
+        results:
+          type: array
+          items:
+            $ref: "groupsv2.yml#/components/schemas/GroupV2Card"
+        totalResults:
+          type: integer
+          format: int32
+        hasMore:
+          type: boolean
+        query:
+          $ref: "queries.yml#/components/schemas/PagedQuery"
+        replacementContinuationToken:
+          type: string
+        useTotalResults:
+          type: boolean
+          description: "
+            If useTotalResults is true, then totalResults represents an accurate count.
+            If False, it does not, and may be estimated/only the size of the current page.
+            Either way, you should probably always only trust hasMore.
+            This is a long-held historical throwback to when we used to do paging with known total results. Those queries toasted our database, and we were left to hastily alter our endpoints and create backward- compatible shims, of which useTotalResults is one."
+
+    SearchResultOfGroupMember:
+      type: object
+      properties:
+        results:
+          type: array
+          items:
+            $ref: "groupsv2.yml#/components/schemas/GroupMember"
+        totalResults:
+          type: integer
+          format: int32
+        hasMore:
+          type: boolean
+        query:
+          $ref: "queries.yml#/components/schemas/PagedQuery"
+        replacementContinuationToken:
+          type: string
+        useTotalResults:
+          type: boolean
+          description: "
+            If useTotalResults is true, then totalResults represents an accurate count.
+            If False, it does not, and may be estimated/only the size of the current page.
+            Either way, you should probably always only trust hasMore.
+            This is a long-held historical throwback to when we used to do paging with known total results. Those queries toasted our database, and we were left to hastily alter our endpoints and create backward- compatible shims, of which useTotalResults is one."
+
+    SearchResultOfGroupBan:
+      type: object
+      properties:
+        results:
+          type: array
+          items:
+            $ref: "groupsv2.yml#/components/schemas/GroupBan"
+        totalResults:
+          type: integer
+          format: int32
+        hasMore:
+          type: boolean
+        query:
+          $ref: "queries.yml#/components/schemas/PagedQuery"
+        replacementContinuationToken:
+          type: string
+        useTotalResults:
+          type: boolean
+          description: "
+            If useTotalResults is true, then totalResults represents an accurate count.
+            If False, it does not, and may be estimated/only the size of the current page.
+            Either way, you should probably always only trust hasMore.
+            This is a long-held historical throwback to when we used to do paging with known total results. Those queries toasted our database, and we were left to hastily alter our endpoints and create backward- compatible shims, of which useTotalResults is one."
+
+    SearchResultOfGroupMemberApplication:
+      type: object
+      properties:
+        results:
+          type: array
+          items:
+            $ref: "groupsv2.yml#/components/schemas/GroupMemberApplication"
+        totalResults:
+          type: integer
+          format: int32
+        hasMore:
+          type: boolean
+        query:
+          $ref: "queries.yml#/components/schemas/PagedQuery"
+        replacementContinuationToken:
+          type: string
+        useTotalResults:
+          type: boolean
+          description: "
+            If useTotalResults is true, then totalResults represents an accurate count.
+            If False, it does not, and may be estimated/only the size of the current page.
+            Either way, you should probably always only trust hasMore.
+            This is a long-held historical throwback to when we used to do paging with known total results. Those queries toasted our database, and we were left to hastily alter our endpoints and create backward- compatible shims, of which useTotalResults is one."
+
+    SearchResultOfGroupMembership:
+      type: object
+      properties:
+        results:
+          type: array
+          items:
+            $ref: "groupsv2.yml#/components/schemas/GroupMembership"
+        totalResults:
+          type: integer
+          format: int32
+        hasMore:
+          type: boolean
+        query:
+          $ref: "queries.yml#/components/schemas/PagedQuery"
+        replacementContinuationToken:
+          type: string
+        useTotalResults:
+          type: boolean
+          description: "
+            If useTotalResults is true, then totalResults represents an accurate count.
+            If False, it does not, and may be estimated/only the size of the current page.
+            Either way, you should probably always only trust hasMore.
+            This is a long-held historical throwback to when we used to do paging with known total results. Those queries toasted our database, and we were left to hastily alter our endpoints and create backward- compatible shims, of which useTotalResults is one."
+
+    SearchResultOfGroupPotentialMembership:
+      type: object
+      properties:
+        results:
+          type: array
+          items:
+            $ref: "groupsv2.yml#/components/schemas/GroupPotentialMembership"
+        totalResults:
+          type: integer
+          format: int32
+        hasMore:
+          type: boolean
+        query:
+          $ref: "queries.yml#/components/schemas/PagedQuery"
+        replacementContinuationToken:
+          type: string
+        useTotalResults:
+          type: boolean
+          description: "
+            If useTotalResults is true, then totalResults represents an accurate count.
+            If False, it does not, and may be estimated/only the size of the current page.
+            Either way, you should probably always only trust hasMore.
+            This is a long-held historical throwback to when we used to do paging with known total results. Those queries toasted our database, and we were left to hastily alter our endpoints and create backward- compatible shims, of which useTotalResults is one."
+
+    SingleComponentResponseOfDestinyVendorReceiptsComponent:
+      type: object
+      properties:
+        data:
+          $ref: "destiny/entities/profiles.yml#/components/schemas/DestinyVendorReceiptsComponent"
+        privacy:
+          type: integer
+          format: int32
+          x-enum-reference:
+            $ref: "components.yml#/components/schemas/ComponentPrivacySetting"
+        disabled:
+          type: boolean
+          description: If true, this component is disabled.
+
+    SingleComponentResponseOfDestinyInventoryComponent:
+      type: object
+      properties:
+        data:
+          $ref: "destiny/entities/inventory.yml#/components/schemas/DestinyInventoryComponent"
+        privacy:
+          type: integer
+          format: int32
+          x-enum-reference:
+            $ref: "components.yml#/components/schemas/ComponentPrivacySetting"
+        disabled:
+          type: boolean
+          description: If true, this component is disabled.
+
+    SingleComponentResponseOfDestinyProfileComponent:
+      type: object
+      properties:
+        data:
+          $ref: "destiny/entities/profiles.yml#/components/schemas/DestinyProfileComponent"
+        privacy:
+          type: integer
+          format: int32
+          x-enum-reference:
+            $ref: "components.yml#/components/schemas/ComponentPrivacySetting"
+        disabled:
+          type: boolean
+          description: If true, this component is disabled.
+
+    SingleComponentResponseOfDestinyPlatformSilverComponent:
+      type: object
+      properties:
+        data:
+          $ref: "destiny/components/inventory.yml#/components/schemas/DestinyPlatformSilverComponent"
+        privacy:
+          type: integer
+          format: int32
+          x-enum-reference:
+            $ref: "components.yml#/components/schemas/ComponentPrivacySetting"
+        disabled:
+          type: boolean
+          description: If true, this component is disabled.
+
+    SingleComponentResponseOfDestinyKiosksComponent:
+      type: object
+      properties:
+        data:
+          $ref: "destiny/components/kiosks.yml#/components/schemas/DestinyKiosksComponent"
+        privacy:
+          type: integer
+          format: int32
+          x-enum-reference:
+            $ref: "components.yml#/components/schemas/ComponentPrivacySetting"
+        disabled:
+          type: boolean
+          description: If true, this component is disabled.
+
+    SingleComponentResponseOfDestinyPlugSetsComponent:
+      type: object
+      properties:
+        data:
+          $ref: "destiny/components/plugsets.yml#/components/schemas/DestinyPlugSetsComponent"
+        privacy:
+          type: integer
+          format: int32
+          x-enum-reference:
+            $ref: "components.yml#/components/schemas/ComponentPrivacySetting"
+        disabled:
+          type: boolean
+          description: If true, this component is disabled.
+
+    SingleComponentResponseOfDestinyProfileProgressionComponent:
+      type: object
+      properties:
+        data:
+          $ref: "destiny/components/profiles.yml#/components/schemas/DestinyProfileProgressionComponent"
+        privacy:
+          type: integer
+          format: int32
+          x-enum-reference:
+            $ref: "components.yml#/components/schemas/ComponentPrivacySetting"
+        disabled:
+          type: boolean
+          description: If true, this component is disabled.
+
+    SingleComponentResponseOfDestinyPresentationNodesComponent:
+      type: object
+      properties:
+        data:
+          $ref: "destiny/components/presentation.yml#/components/schemas/DestinyPresentationNodesComponent"
+        privacy:
+          type: integer
+          format: int32
+          x-enum-reference:
+            $ref: "components.yml#/components/schemas/ComponentPrivacySetting"
+        disabled:
+          type: boolean
+          description: If true, this component is disabled.
+
+    SingleComponentResponseOfDestinyProfileRecordsComponent:
+      type: object
+      properties:
+        data:
+          $ref: "destiny/components/records.yml#/components/schemas/DestinyProfileRecordsComponent"
+        privacy:
+          type: integer
+          format: int32
+          x-enum-reference:
+            $ref: "components.yml#/components/schemas/ComponentPrivacySetting"
+        disabled:
+          type: boolean
+          description: If true, this component is disabled.
+
+    SingleComponentResponseOfDestinyProfileCollectiblesComponent:
+      type: object
+      properties:
+        data:
+          $ref: "destiny/components/collectibles.yml#/components/schemas/DestinyProfileCollectiblesComponent"
+        privacy:
+          type: integer
+          format: int32
+          x-enum-reference:
+            $ref: "components.yml#/components/schemas/ComponentPrivacySetting"
+        disabled:
+          type: boolean
+          description: If true, this component is disabled.
+
+    SingleComponentResponseOfDestinyProfileTransitoryComponent:
+      type: object
+      properties:
+        data:
+          $ref: "destiny/components/profiles.yml#/components/schemas/DestinyProfileTransitoryComponent"
+        privacy:
+          type: integer
+          format: int32
+          x-enum-reference:
+            $ref: "components.yml#/components/schemas/ComponentPrivacySetting"
+        disabled:
+          type: boolean
+          description: If true, this component is disabled.
+
+    SingleComponentResponseOfDestinyMetricsComponent:
+      type: object
+      properties:
+        data:
+          $ref: "destiny/components/metrics.yml#/components/schemas/DestinyMetricsComponent"
+        privacy:
+          type: integer
+          format: int32
+          x-enum-reference:
+            $ref: "components.yml#/components/schemas/ComponentPrivacySetting"
+        disabled:
+          type: boolean
+          description: If true, this component is disabled.
+
+    DictionaryComponentResponseOfint64AndDestinyCharacterComponent:
+      type: object
+      properties:
+        data:
+          type: object
+          additionalProperties:
+            $ref: "destiny/entities/characters.yml#/components/schemas/DestinyCharacterComponent"
+        privacy:
+          type: integer
+          format: int32
+          x-enum-reference:
+            $ref: "components.yml#/components/schemas/ComponentPrivacySetting"
+        disabled:
+          type: boolean
+          description: If true, this component is disabled.
+
+    DictionaryComponentResponseOfint64AndDestinyInventoryComponent:
+      type: object
+      properties:
+        data:
+          type: object
+          additionalProperties:
+            $ref: "destiny/entities/inventory.yml#/components/schemas/DestinyInventoryComponent"
+        privacy:
+          type: integer
+          format: int32
+          x-enum-reference:
+            $ref: "components.yml#/components/schemas/ComponentPrivacySetting"
+        disabled:
+          type: boolean
+          description: If true, this component is disabled.
+
+    DictionaryComponentResponseOfint64AndDestinyCharacterProgressionComponent:
+      type: object
+      properties:
+        data:
+          type: object
+          additionalProperties:
+            $ref: "destiny/entities/characters.yml#/components/schemas/DestinyCharacterProgressionComponent"
+        privacy:
+          type: integer
+          format: int32
+          x-enum-reference:
+            $ref: "components.yml#/components/schemas/ComponentPrivacySetting"
+        disabled:
+          type: boolean
+          description: If true, this component is disabled.
+
+    DictionaryComponentResponseOfint64AndDestinyCharacterRenderComponent:
+      type: object
+      properties:
+        data:
+          type: object
+          additionalProperties:
+            $ref: "destiny/entities/characters.yml#/components/schemas/DestinyCharacterRenderComponent"
+        privacy:
+          type: integer
+          format: int32
+          x-enum-reference:
+            $ref: "components.yml#/components/schemas/ComponentPrivacySetting"
+        disabled:
+          type: boolean
+          description: If true, this component is disabled.
+
+    DictionaryComponentResponseOfint64AndDestinyCharacterActivitiesComponent:
+      type: object
+      properties:
+        data:
+          type: object
+          additionalProperties:
+            $ref: "destiny/entities/characters.yml#/components/schemas/DestinyCharacterActivitiesComponent"
+        privacy:
+          type: integer
+          format: int32
+          x-enum-reference:
+            $ref: "components.yml#/components/schemas/ComponentPrivacySetting"
+        disabled:
+          type: boolean
+          description: If true, this component is disabled.
+
+    DictionaryComponentResponseOfint64AndDestinyKiosksComponent:
+      type: object
+      properties:
+        data:
+          type: object
+          additionalProperties:
+            $ref: "destiny/components/kiosks.yml#/components/schemas/DestinyKiosksComponent"
+        privacy:
+          type: integer
+          format: int32
+          x-enum-reference:
+            $ref: "components.yml#/components/schemas/ComponentPrivacySetting"
+        disabled:
+          type: boolean
+          description: If true, this component is disabled.
+
+    DictionaryComponentResponseOfint64AndDestinyPlugSetsComponent:
+      type: object
+      properties:
+        data:
+          type: object
+          additionalProperties:
+            $ref: "destiny/components/plugsets.yml#/components/schemas/DestinyPlugSetsComponent"
+        privacy:
+          type: integer
+          format: int32
+          x-enum-reference:
+            $ref: "components.yml#/components/schemas/ComponentPrivacySetting"
+        disabled:
+          type: boolean
+          description: If true, this component is disabled.
+
+    DestinyBaseItemComponentSetOfuint32:
+      type: object
+      properties:
+        objectives:
+          $ref: "#/components/schemas/DictionaryComponentResponseOfuint32AndDestinyItemObjectivesComponent"
+
+    DictionaryComponentResponseOfuint32AndDestinyItemObjectivesComponent:
+      type: object
+      properties:
+        data:
+          type: object
+          additionalProperties:
+            $ref: "destiny/entities/items.yml#/components/schemas/DestinyItemObjectivesComponent"
+        privacy:
+          type: integer
+          format: int32
+          x-enum-reference:
+            $ref: "components.yml#/components/schemas/ComponentPrivacySetting"
+        disabled:
+          type: boolean
+          description: If true, this component is disabled.
+
+    DictionaryComponentResponseOfint64AndDestinyPresentationNodesComponent:
+      type: object
+      properties:
+        data:
+          type: object
+          additionalProperties:
+            $ref: "destiny/components/presentation.yml#/components/schemas/DestinyPresentationNodesComponent"
+        privacy:
+          type: integer
+          format: int32
+          x-enum-reference:
+            $ref: "components.yml#/components/schemas/ComponentPrivacySetting"
+        disabled:
+          type: boolean
+          description: If true, this component is disabled.
+
+    DictionaryComponentResponseOfint64AndDestinyCharacterRecordsComponent:
+      type: object
+      properties:
+        data:
+          type: object
+          additionalProperties:
+            $ref: "destiny/components/records.yml#/components/schemas/DestinyCharacterRecordsComponent"
+        privacy:
+          type: integer
+          format: int32
+          x-enum-reference:
+            $ref: "components.yml#/components/schemas/ComponentPrivacySetting"
+        disabled:
+          type: boolean
+          description: If true, this component is disabled.
+
+    DictionaryComponentResponseOfint64AndDestinyCollectiblesComponent:
+      type: object
+      properties:
+        data:
+          type: object
+          additionalProperties:
+            $ref: "destiny/components/collectibles.yml#/components/schemas/DestinyCollectiblesComponent"
+        privacy:
+          type: integer
+          format: int32
+          x-enum-reference:
+            $ref: "components.yml#/components/schemas/ComponentPrivacySetting"
+        disabled:
+          type: boolean
+          description: If true, this component is disabled.
+
+    DestinyBaseItemComponentSetOfint64:
+      type: object
+      properties:
+        objectives:
+          $ref: "#/components/schemas/DictionaryComponentResponseOfint64AndDestinyItemObjectivesComponent"
+
+    DictionaryComponentResponseOfint64AndDestinyItemObjectivesComponent:
+      type: object
+      properties:
+        data:
+          type: object
+          additionalProperties:
+            $ref: "destiny/entities/items.yml#/components/schemas/DestinyItemObjectivesComponent"
+        privacy:
+          type: integer
+          format: int32
+          x-enum-reference:
+            $ref: "components.yml#/components/schemas/ComponentPrivacySetting"
+        disabled:
+          type: boolean
+          description: If true, this component is disabled.
+
+    DestinyItemComponentSetOfint64:
+      type: object
+      properties:
+        instances:
+          $ref: "#/components/schemas/DictionaryComponentResponseOfint64AndDestinyItemInstanceComponent"
+        perks:
+          $ref: "#/components/schemas/DictionaryComponentResponseOfint64AndDestinyItemPerksComponent"
+        renderData:
+          $ref: "#/components/schemas/DictionaryComponentResponseOfint64AndDestinyItemRenderComponent"
+        stats:
+          $ref: "#/components/schemas/DictionaryComponentResponseOfint64AndDestinyItemStatsComponent"
+        sockets:
+          $ref: "#/components/schemas/DictionaryComponentResponseOfint64AndDestinyItemSocketsComponent"
+        reusablePlugs:
+          $ref: "#/components/schemas/DictionaryComponentResponseOfint64AndDestinyItemReusablePlugsComponent"
+        plugObjectives:
+          $ref: "#/components/schemas/DictionaryComponentResponseOfint64AndDestinyItemPlugObjectivesComponent"
+        talentGrids:
+          $ref: "#/components/schemas/DictionaryComponentResponseOfint64AndDestinyItemTalentGridComponent"
+        plugStates:
+          $ref: "#/components/schemas/DictionaryComponentResponseOfuint32AndDestinyItemPlugComponent"
+        objectives:
+          $ref: "#/components/schemas/DictionaryComponentResponseOfint64AndDestinyItemObjectivesComponent"
+
+    DictionaryComponentResponseOfint64AndDestinyItemInstanceComponent:
+      type: object
+      properties:
+        data:
+          type: object
+          additionalProperties:
+            $ref: "destiny/entities/items.yml#/components/schemas/DestinyItemInstanceComponent"
+        privacy:
+          type: integer
+          format: int32
+          x-enum-reference:
+            $ref: "components.yml#/components/schemas/ComponentPrivacySetting"
+        disabled:
+          type: boolean
+          description: If true, this component is disabled.
+
+    DictionaryComponentResponseOfint64AndDestinyItemPerksComponent:
+      type: object
+      properties:
+        data:
+          type: object
+          additionalProperties:
+            $ref: "destiny/entities/items.yml#/components/schemas/DestinyItemPerksComponent"
+        privacy:
+          type: integer
+          format: int32
+          x-enum-reference:
+            $ref: "components.yml#/components/schemas/ComponentPrivacySetting"
+        disabled:
+          type: boolean
+          description: If true, this component is disabled.
+
+    DictionaryComponentResponseOfint64AndDestinyItemRenderComponent:
+      type: object
+      properties:
+        data:
+          type: object
+          additionalProperties:
+            $ref: "destiny/entities/items.yml#/components/schemas/DestinyItemRenderComponent"
+        privacy:
+          type: integer
+          format: int32
+          x-enum-reference:
+            $ref: "components.yml#/components/schemas/ComponentPrivacySetting"
+        disabled:
+          type: boolean
+          description: If true, this component is disabled.
+
+    DictionaryComponentResponseOfint64AndDestinyItemStatsComponent:
+      type: object
+      properties:
+        data:
+          type: object
+          additionalProperties:
+            $ref: "destiny/entities/items.yml#/components/schemas/DestinyItemStatsComponent"
+        privacy:
+          type: integer
+          format: int32
+          x-enum-reference:
+            $ref: "components.yml#/components/schemas/ComponentPrivacySetting"
+        disabled:
+          type: boolean
+          description: If true, this component is disabled.
+
+    DictionaryComponentResponseOfint64AndDestinyItemSocketsComponent:
+      type: object
+      properties:
+        data:
+          type: object
+          additionalProperties:
+            $ref: "destiny/entities/items.yml#/components/schemas/DestinyItemSocketsComponent"
+        privacy:
+          type: integer
+          format: int32
+          x-enum-reference:
+            $ref: "components.yml#/components/schemas/ComponentPrivacySetting"
+        disabled:
+          type: boolean
+          description: If true, this component is disabled.
+
+    DictionaryComponentResponseOfint64AndDestinyItemReusablePlugsComponent:
+      type: object
+      properties:
+        data:
+          type: object
+          additionalProperties:
+            $ref: "destiny/components/items.yml#/components/schemas/DestinyItemReusablePlugsComponent"
+        privacy:
+          type: integer
+          format: int32
+          x-enum-reference:
+            $ref: "components.yml#/components/schemas/ComponentPrivacySetting"
+        disabled:
+          type: boolean
+          description: If true, this component is disabled.
+
+    DictionaryComponentResponseOfint64AndDestinyItemPlugObjectivesComponent:
+      type: object
+      properties:
+        data:
+          type: object
+          additionalProperties:
+            $ref: "destiny/components/items.yml#/components/schemas/DestinyItemPlugObjectivesComponent"
+        privacy:
+          type: integer
+          format: int32
+          x-enum-reference:
+            $ref: "components.yml#/components/schemas/ComponentPrivacySetting"
+        disabled:
+          type: boolean
+          description: If true, this component is disabled.
+
+    DictionaryComponentResponseOfint64AndDestinyItemTalentGridComponent:
+      type: object
+      properties:
+        data:
+          type: object
+          additionalProperties:
+            $ref: "destiny/entities/items.yml#/components/schemas/DestinyItemTalentGridComponent"
+        privacy:
+          type: integer
+          format: int32
+          x-enum-reference:
+            $ref: "components.yml#/components/schemas/ComponentPrivacySetting"
+        disabled:
+          type: boolean
+          description: If true, this component is disabled.
+
+    DictionaryComponentResponseOfuint32AndDestinyItemPlugComponent:
+      type: object
+      properties:
+        data:
+          type: object
+          additionalProperties:
+            $ref: "destiny/components/items.yml#/components/schemas/DestinyItemPlugComponent"
+        privacy:
+          type: integer
+          format: int32
+          x-enum-reference:
+            $ref: "components.yml#/components/schemas/ComponentPrivacySetting"
+        disabled:
+          type: boolean
+          description: If true, this component is disabled.
+
+    DictionaryComponentResponseOfint64AndDestinyCurrenciesComponent:
+      type: object
+      properties:
+        data:
+          type: object
+          additionalProperties:
+            $ref: "destiny/components/inventory.yml#/components/schemas/DestinyCurrenciesComponent"
+        privacy:
+          type: integer
+          format: int32
+          x-enum-reference:
+            $ref: "components.yml#/components/schemas/ComponentPrivacySetting"
+        disabled:
+          type: boolean
+          description: If true, this component is disabled.
+
+    SingleComponentResponseOfDestinyCharacterComponent:
+      type: object
+      properties:
+        data:
+          $ref: "destiny/entities/characters.yml#/components/schemas/DestinyCharacterComponent"
+        privacy:
+          type: integer
+          format: int32
+          x-enum-reference:
+            $ref: "components.yml#/components/schemas/ComponentPrivacySetting"
+        disabled:
+          type: boolean
+          description: If true, this component is disabled.
+
+    SingleComponentResponseOfDestinyCharacterProgressionComponent:
+      type: object
+      properties:
+        data:
+          $ref: "destiny/entities/characters.yml#/components/schemas/DestinyCharacterProgressionComponent"
+        privacy:
+          type: integer
+          format: int32
+          x-enum-reference:
+            $ref: "components.yml#/components/schemas/ComponentPrivacySetting"
+        disabled:
+          type: boolean
+          description: If true, this component is disabled.
+
+    SingleComponentResponseOfDestinyCharacterRenderComponent:
+      type: object
+      properties:
+        data:
+          $ref: "destiny/entities/characters.yml#/components/schemas/DestinyCharacterRenderComponent"
+        privacy:
+          type: integer
+          format: int32
+          x-enum-reference:
+            $ref: "components.yml#/components/schemas/ComponentPrivacySetting"
+        disabled:
+          type: boolean
+          description: If true, this component is disabled.
+
+    SingleComponentResponseOfDestinyCharacterActivitiesComponent:
+      type: object
+      properties:
+        data:
+          $ref: "destiny/entities/characters.yml#/components/schemas/DestinyCharacterActivitiesComponent"
+        privacy:
+          type: integer
+          format: int32
+          x-enum-reference:
+            $ref: "components.yml#/components/schemas/ComponentPrivacySetting"
+        disabled:
+          type: boolean
+          description: If true, this component is disabled.
+
+    SingleComponentResponseOfDestinyCharacterRecordsComponent:
+      type: object
+      properties:
+        data:
+          $ref: "destiny/components/records.yml#/components/schemas/DestinyCharacterRecordsComponent"
+        privacy:
+          type: integer
+          format: int32
+          x-enum-reference:
+            $ref: "components.yml#/components/schemas/ComponentPrivacySetting"
+        disabled:
+          type: boolean
+          description: If true, this component is disabled.
+
+    SingleComponentResponseOfDestinyCollectiblesComponent:
+      type: object
+      properties:
+        data:
+          $ref: "destiny/components/collectibles.yml#/components/schemas/DestinyCollectiblesComponent"
+        privacy:
+          type: integer
+          format: int32
+          x-enum-reference:
+            $ref: "components.yml#/components/schemas/ComponentPrivacySetting"
+        disabled:
+          type: boolean
+          description: If true, this component is disabled.
+
+    SingleComponentResponseOfDestinyCurrenciesComponent:
+      type: object
+      properties:
+        data:
+          $ref: "destiny/components/inventory.yml#/components/schemas/DestinyCurrenciesComponent"
+        privacy:
+          type: integer
+          format: int32
+          x-enum-reference:
+            $ref: "components.yml#/components/schemas/ComponentPrivacySetting"
+        disabled:
+          type: boolean
+          description: If true, this component is disabled.
+
+    SingleComponentResponseOfDestinyItemComponent:
+      type: object
+      properties:
+        data:
+          $ref: "destiny/entities/items.yml#/components/schemas/DestinyItemComponent"
+        privacy:
+          type: integer
+          format: int32
+          x-enum-reference:
+            $ref: "components.yml#/components/schemas/ComponentPrivacySetting"
+        disabled:
+          type: boolean
+          description: If true, this component is disabled.
+
+    SingleComponentResponseOfDestinyItemInstanceComponent:
+      type: object
+      properties:
+        data:
+          $ref: "destiny/entities/items.yml#/components/schemas/DestinyItemInstanceComponent"
+        privacy:
+          type: integer
+          format: int32
+          x-enum-reference:
+            $ref: "components.yml#/components/schemas/ComponentPrivacySetting"
+        disabled:
+          type: boolean
+          description: If true, this component is disabled.
+
+    SingleComponentResponseOfDestinyItemObjectivesComponent:
+      type: object
+      properties:
+        data:
+          $ref: "destiny/entities/items.yml#/components/schemas/DestinyItemObjectivesComponent"
+        privacy:
+          type: integer
+          format: int32
+          x-enum-reference:
+            $ref: "components.yml#/components/schemas/ComponentPrivacySetting"
+        disabled:
+          type: boolean
+          description: If true, this component is disabled.
+
+    SingleComponentResponseOfDestinyItemPerksComponent:
+      type: object
+      properties:
+        data:
+          $ref: "destiny/entities/items.yml#/components/schemas/DestinyItemPerksComponent"
+        privacy:
+          type: integer
+          format: int32
+          x-enum-reference:
+            $ref: "components.yml#/components/schemas/ComponentPrivacySetting"
+        disabled:
+          type: boolean
+          description: If true, this component is disabled.
+
+    SingleComponentResponseOfDestinyItemRenderComponent:
+      type: object
+      properties:
+        data:
+          $ref: "destiny/entities/items.yml#/components/schemas/DestinyItemRenderComponent"
+        privacy:
+          type: integer
+          format: int32
+          x-enum-reference:
+            $ref: "components.yml#/components/schemas/ComponentPrivacySetting"
+        disabled:
+          type: boolean
+          description: If true, this component is disabled.
+
+    SingleComponentResponseOfDestinyItemStatsComponent:
+      type: object
+      properties:
+        data:
+          $ref: "destiny/entities/items.yml#/components/schemas/DestinyItemStatsComponent"
+        privacy:
+          type: integer
+          format: int32
+          x-enum-reference:
+            $ref: "components.yml#/components/schemas/ComponentPrivacySetting"
+        disabled:
+          type: boolean
+          description: If true, this component is disabled.
+
+    SingleComponentResponseOfDestinyItemTalentGridComponent:
+      type: object
+      properties:
+        data:
+          $ref: "destiny/entities/items.yml#/components/schemas/DestinyItemTalentGridComponent"
+        privacy:
+          type: integer
+          format: int32
+          x-enum-reference:
+            $ref: "components.yml#/components/schemas/ComponentPrivacySetting"
+        disabled:
+          type: boolean
+          description: If true, this component is disabled.
+
+    SingleComponentResponseOfDestinyItemSocketsComponent:
+      type: object
+      properties:
+        data:
+          $ref: "destiny/entities/items.yml#/components/schemas/DestinyItemSocketsComponent"
+        privacy:
+          type: integer
+          format: int32
+          x-enum-reference:
+            $ref: "components.yml#/components/schemas/ComponentPrivacySetting"
+        disabled:
+          type: boolean
+          description: If true, this component is disabled.
+
+    SingleComponentResponseOfDestinyItemReusablePlugsComponent:
+      type: object
+      properties:
+        data:
+          $ref: "destiny/components/items.yml#/components/schemas/DestinyItemReusablePlugsComponent"
+        privacy:
+          type: integer
+          format: int32
+          x-enum-reference:
+            $ref: "components.yml#/components/schemas/ComponentPrivacySetting"
+        disabled:
+          type: boolean
+          description: If true, this component is disabled.
+
+    SingleComponentResponseOfDestinyItemPlugObjectivesComponent:
+      type: object
+      properties:
+        data:
+          $ref: "destiny/components/items.yml#/components/schemas/DestinyItemPlugObjectivesComponent"
+        privacy:
+          type: integer
+          format: int32
+          x-enum-reference:
+            $ref: "components.yml#/components/schemas/ComponentPrivacySetting"
+        disabled:
+          type: boolean
+          description: If true, this component is disabled.
+
+    SingleComponentResponseOfDestinyVendorGroupComponent:
+      type: object
+      properties:
+        data:
+          $ref: "destiny/components/vendors.yml#/components/schemas/DestinyVendorGroupComponent"
+        privacy:
+          type: integer
+          format: int32
+          x-enum-reference:
+            $ref: "components.yml#/components/schemas/ComponentPrivacySetting"
+        disabled:
+          type: boolean
+          description: If true, this component is disabled.
+
+    DictionaryComponentResponseOfuint32AndDestinyVendorComponent:
+      type: object
+      properties:
+        data:
+          type: object
+          additionalProperties:
+            $ref: "destiny/entities/vendors.yml#/components/schemas/DestinyVendorComponent"
+        privacy:
+          type: integer
+          format: int32
+          x-enum-reference:
+            $ref: "components.yml#/components/schemas/ComponentPrivacySetting"
+        disabled:
+          type: boolean
+          description: If true, this component is disabled.
+
+    DictionaryComponentResponseOfuint32AndDestinyVendorCategoriesComponent:
+      type: object
+      properties:
+        data:
+          type: object
+          additionalProperties:
+            $ref: "destiny/entities/vendors.yml#/components/schemas/DestinyVendorCategoriesComponent"
+        privacy:
+          type: integer
+          format: int32
+          x-enum-reference:
+            $ref: "components.yml#/components/schemas/ComponentPrivacySetting"
+        disabled:
+          type: boolean
+          description: If true, this component is disabled.
+
+    DestinyVendorSaleItemSetComponentOfDestinyVendorSaleItemComponent:
+      type: object
+      properties:
+        saleItems:
+          type: object
+          additionalProperties:
+            $ref: "destiny/entities/vendors.yml#/components/schemas/DestinyVendorSaleItemComponent"
+      x-destiny-component-type-dependency: VendorSales
+
+    ? DictionaryComponentResponseOfuint32AndPersonalDestinyVendorSaleItemSetComponent
+    : type: object
+      properties:
+        data:
+          type: object
+          additionalProperties:
+            $ref: "destiny/responses.yml#/components/schemas/PersonalDestinyVendorSaleItemSetComponent"
+        privacy:
+          type: integer
+          format: int32
+          x-enum-reference:
+            $ref: "components.yml#/components/schemas/ComponentPrivacySetting"
+        disabled:
+          type: boolean
+          description: If true, this component is disabled.
+
+    DestinyBaseItemComponentSetOfint32:
+      type: object
+      properties:
+        objectives:
+          $ref: "#/components/schemas/DictionaryComponentResponseOfint32AndDestinyItemObjectivesComponent"
+
+    DictionaryComponentResponseOfint32AndDestinyItemObjectivesComponent:
+      type: object
+      properties:
+        data:
+          type: object
+          additionalProperties:
+            $ref: "destiny/entities/items.yml#/components/schemas/DestinyItemObjectivesComponent"
+        privacy:
+          type: integer
+          format: int32
+          x-enum-reference:
+            $ref: "components.yml#/components/schemas/ComponentPrivacySetting"
+        disabled:
+          type: boolean
+          description: If true, this component is disabled.
+
+    DestinyItemComponentSetOfint32:
+      type: object
+      properties:
+        instances:
+          $ref: "#/components/schemas/DictionaryComponentResponseOfint32AndDestinyItemInstanceComponent"
+        perks:
+          $ref: "#/components/schemas/DictionaryComponentResponseOfint32AndDestinyItemPerksComponent"
+        renderData:
+          $ref: "#/components/schemas/DictionaryComponentResponseOfint32AndDestinyItemRenderComponent"
+        stats:
+          $ref: "#/components/schemas/DictionaryComponentResponseOfint32AndDestinyItemStatsComponent"
+        sockets:
+          $ref: "#/components/schemas/DictionaryComponentResponseOfint32AndDestinyItemSocketsComponent"
+        reusablePlugs:
+          $ref: "#/components/schemas/DictionaryComponentResponseOfint32AndDestinyItemReusablePlugsComponent"
+        plugObjectives:
+          $ref: "#/components/schemas/DictionaryComponentResponseOfint32AndDestinyItemPlugObjectivesComponent"
+        talentGrids:
+          $ref: "#/components/schemas/DictionaryComponentResponseOfint32AndDestinyItemTalentGridComponent"
+        plugStates:
+          $ref: "#/components/schemas/DictionaryComponentResponseOfuint32AndDestinyItemPlugComponent"
+        objectives:
+          $ref: "#/components/schemas/DictionaryComponentResponseOfint32AndDestinyItemObjectivesComponent"
+
+    DictionaryComponentResponseOfint32AndDestinyItemInstanceComponent:
+      type: object
+      properties:
+        data:
+          type: object
+          additionalProperties:
+            $ref: "destiny/entities/items.yml#/components/schemas/DestinyItemInstanceComponent"
+        privacy:
+          type: integer
+          format: int32
+          x-enum-reference:
+            $ref: "components.yml#/components/schemas/ComponentPrivacySetting"
+        disabled:
+          type: boolean
+          description: If true, this component is disabled.
+
+    DictionaryComponentResponseOfint32AndDestinyItemPerksComponent:
+      type: object
+      properties:
+        data:
+          type: object
+          additionalProperties:
+            $ref: "destiny/entities/items.yml#/components/schemas/DestinyItemPerksComponent"
+        privacy:
+          type: integer
+          format: int32
+          x-enum-reference:
+            $ref: "components.yml#/components/schemas/ComponentPrivacySetting"
+        disabled:
+          type: boolean
+          description: If true, this component is disabled.
+
+    DictionaryComponentResponseOfint32AndDestinyItemRenderComponent:
+      type: object
+      properties:
+        data:
+          type: object
+          additionalProperties:
+            $ref: "destiny/entities/items.yml#/components/schemas/DestinyItemRenderComponent"
+        privacy:
+          type: integer
+          format: int32
+          x-enum-reference:
+            $ref: "components.yml#/components/schemas/ComponentPrivacySetting"
+        disabled:
+          type: boolean
+          description: If true, this component is disabled.
+
+    DictionaryComponentResponseOfint32AndDestinyItemStatsComponent:
+      type: object
+      properties:
+        data:
+          type: object
+          additionalProperties:
+            $ref: "destiny/entities/items.yml#/components/schemas/DestinyItemStatsComponent"
+        privacy:
+          type: integer
+          format: int32
+          x-enum-reference:
+            $ref: "components.yml#/components/schemas/ComponentPrivacySetting"
+        disabled:
+          type: boolean
+          description: If true, this component is disabled.
+
+    DictionaryComponentResponseOfint32AndDestinyItemSocketsComponent:
+      type: object
+      properties:
+        data:
+          type: object
+          additionalProperties:
+            $ref: "destiny/entities/items.yml#/components/schemas/DestinyItemSocketsComponent"
+        privacy:
+          type: integer
+          format: int32
+          x-enum-reference:
+            $ref: "components.yml#/components/schemas/ComponentPrivacySetting"
+        disabled:
+          type: boolean
+          description: If true, this component is disabled.
+
+    DictionaryComponentResponseOfint32AndDestinyItemReusablePlugsComponent:
+      type: object
+      properties:
+        data:
+          type: object
+          additionalProperties:
+            $ref: "destiny/components/items.yml#/components/schemas/DestinyItemReusablePlugsComponent"
+        privacy:
+          type: integer
+          format: int32
+          x-enum-reference:
+            $ref: "components.yml#/components/schemas/ComponentPrivacySetting"
+        disabled:
+          type: boolean
+          description: If true, this component is disabled.
+
+    DictionaryComponentResponseOfint32AndDestinyItemPlugObjectivesComponent:
+      type: object
+      properties:
+        data:
+          type: object
+          additionalProperties:
+            $ref: "destiny/components/items.yml#/components/schemas/DestinyItemPlugObjectivesComponent"
+        privacy:
+          type: integer
+          format: int32
+          x-enum-reference:
+            $ref: "components.yml#/components/schemas/ComponentPrivacySetting"
+        disabled:
+          type: boolean
+          description: If true, this component is disabled.
+
+    DictionaryComponentResponseOfint32AndDestinyItemTalentGridComponent:
+      type: object
+      properties:
+        data:
+          type: object
+          additionalProperties:
+            $ref: "destiny/entities/items.yml#/components/schemas/DestinyItemTalentGridComponent"
+        privacy:
+          type: integer
+          format: int32
+          x-enum-reference:
+            $ref: "components.yml#/components/schemas/ComponentPrivacySetting"
+        disabled:
+          type: boolean
+          description: If true, this component is disabled.
+
+    SingleComponentResponseOfDestinyVendorComponent:
+      type: object
+      properties:
+        data:
+          $ref: "destiny/entities/vendors.yml#/components/schemas/DestinyVendorComponent"
+        privacy:
+          type: integer
+          format: int32
+          x-enum-reference:
+            $ref: "components.yml#/components/schemas/ComponentPrivacySetting"
+        disabled:
+          type: boolean
+          description: If true, this component is disabled.
+
+    SingleComponentResponseOfDestinyVendorCategoriesComponent:
+      type: object
+      properties:
+        data:
+          $ref: "destiny/entities/vendors.yml#/components/schemas/DestinyVendorCategoriesComponent"
+        privacy:
+          type: integer
+          format: int32
+          x-enum-reference:
+            $ref: "components.yml#/components/schemas/ComponentPrivacySetting"
+        disabled:
+          type: boolean
+          description: If true, this component is disabled.
+
+    DictionaryComponentResponseOfint32AndDestinyVendorSaleItemComponent:
+      type: object
+      properties:
+        data:
+          type: object
+          additionalProperties:
+            $ref: "destiny/entities/vendors.yml#/components/schemas/DestinyVendorSaleItemComponent"
+        privacy:
+          type: integer
+          format: int32
+          x-enum-reference:
+            $ref: "components.yml#/components/schemas/ComponentPrivacySetting"
+        disabled:
+          type: boolean
+          description: If true, this component is disabled.
+
+    DictionaryComponentResponseOfuint32AndDestinyPublicVendorComponent:
+      type: object
+      properties:
+        data:
+          type: object
+          additionalProperties:
+            $ref: "destiny/components/vendors.yml#/components/schemas/DestinyPublicVendorComponent"
+        privacy:
+          type: integer
+          format: int32
+          x-enum-reference:
+            $ref: "components.yml#/components/schemas/ComponentPrivacySetting"
+        disabled:
+          type: boolean
+          description: If true, this component is disabled.
+
+    DestinyVendorSaleItemSetComponentOfDestinyPublicVendorSaleItemComponent:
+      type: object
+      properties:
+        saleItems:
+          type: object
+          additionalProperties:
+            $ref: "destiny/components/vendors.yml#/components/schemas/DestinyPublicVendorSaleItemComponent"
+      x-destiny-component-type-dependency: VendorSales
+
+    ? DictionaryComponentResponseOfuint32AndPublicDestinyVendorSaleItemSetComponent
+    : type: object
+      properties:
+        data:
+          type: object
+          additionalProperties:
+            $ref: "destiny/responses.yml#/components/schemas/PublicDestinyVendorSaleItemSetComponent"
+        privacy:
+          type: integer
+          format: int32
+          x-enum-reference:
+            $ref: "components.yml#/components/schemas/ComponentPrivacySetting"
+        disabled:
+          type: boolean
+          description: If true, this component is disabled.
+
+    DestinyItemComponentSetOfuint32:
+      type: object
+      properties:
+        instances:
+          $ref: "#/components/schemas/DictionaryComponentResponseOfuint32AndDestinyItemInstanceComponent"
+        perks:
+          $ref: "#/components/schemas/DictionaryComponentResponseOfuint32AndDestinyItemPerksComponent"
+        renderData:
+          $ref: "#/components/schemas/DictionaryComponentResponseOfuint32AndDestinyItemRenderComponent"
+        stats:
+          $ref: "#/components/schemas/DictionaryComponentResponseOfuint32AndDestinyItemStatsComponent"
+        sockets:
+          $ref: "#/components/schemas/DictionaryComponentResponseOfuint32AndDestinyItemSocketsComponent"
+        reusablePlugs:
+          $ref: "#/components/schemas/DictionaryComponentResponseOfuint32AndDestinyItemReusablePlugsComponent"
+        plugObjectives:
+          $ref: "#/components/schemas/DictionaryComponentResponseOfuint32AndDestinyItemPlugObjectivesComponent"
+        talentGrids:
+          $ref: "#/components/schemas/DictionaryComponentResponseOfuint32AndDestinyItemTalentGridComponent"
+        plugStates:
+          $ref: "#/components/schemas/DictionaryComponentResponseOfuint32AndDestinyItemPlugComponent"
+        objectives:
+          $ref: "#/components/schemas/DictionaryComponentResponseOfuint32AndDestinyItemObjectivesComponent"
+
+    DictionaryComponentResponseOfuint32AndDestinyItemInstanceComponent:
+      type: object
+      properties:
+        data:
+          type: object
+          additionalProperties:
+            $ref: "destiny/entities/items.yml#/components/schemas/DestinyItemInstanceComponent"
+        privacy:
+          type: integer
+          format: int32
+          x-enum-reference:
+            $ref: "components.yml#/components/schemas/ComponentPrivacySetting"
+        disabled:
+          type: boolean
+          description: If true, this component is disabled.
+
+    DictionaryComponentResponseOfuint32AndDestinyItemPerksComponent:
+      type: object
+      properties:
+        data:
+          type: object
+          additionalProperties:
+            $ref: "destiny/entities/items.yml#/components/schemas/DestinyItemPerksComponent"
+        privacy:
+          type: integer
+          format: int32
+          x-enum-reference:
+            $ref: "components.yml#/components/schemas/ComponentPrivacySetting"
+        disabled:
+          type: boolean
+          description: If true, this component is disabled.
+
+    DictionaryComponentResponseOfuint32AndDestinyItemRenderComponent:
+      type: object
+      properties:
+        data:
+          type: object
+          additionalProperties:
+            $ref: "destiny/entities/items.yml#/components/schemas/DestinyItemRenderComponent"
+        privacy:
+          type: integer
+          format: int32
+          x-enum-reference:
+            $ref: "components.yml#/components/schemas/ComponentPrivacySetting"
+        disabled:
+          type: boolean
+          description: If true, this component is disabled.
+
+    DictionaryComponentResponseOfuint32AndDestinyItemStatsComponent:
+      type: object
+      properties:
+        data:
+          type: object
+          additionalProperties:
+            $ref: "destiny/entities/items.yml#/components/schemas/DestinyItemStatsComponent"
+        privacy:
+          type: integer
+          format: int32
+          x-enum-reference:
+            $ref: "components.yml#/components/schemas/ComponentPrivacySetting"
+        disabled:
+          type: boolean
+          description: If true, this component is disabled.
+
+    DictionaryComponentResponseOfuint32AndDestinyItemSocketsComponent:
+      type: object
+      properties:
+        data:
+          type: object
+          additionalProperties:
+            $ref: "destiny/entities/items.yml#/components/schemas/DestinyItemSocketsComponent"
+        privacy:
+          type: integer
+          format: int32
+          x-enum-reference:
+            $ref: "components.yml#/components/schemas/ComponentPrivacySetting"
+        disabled:
+          type: boolean
+          description: If true, this component is disabled.
+
+    DictionaryComponentResponseOfuint32AndDestinyItemReusablePlugsComponent:
+      type: object
+      properties:
+        data:
+          type: object
+          additionalProperties:
+            $ref: "destiny/components/items.yml#/components/schemas/DestinyItemReusablePlugsComponent"
+        privacy:
+          type: integer
+          format: int32
+          x-enum-reference:
+            $ref: "components.yml#/components/schemas/ComponentPrivacySetting"
+        disabled:
+          type: boolean
+          description: If true, this component is disabled.
+
+    DictionaryComponentResponseOfuint32AndDestinyItemPlugObjectivesComponent:
+      type: object
+      properties:
+        data:
+          type: object
+          additionalProperties:
+            $ref: "destiny/components/items.yml#/components/schemas/DestinyItemPlugObjectivesComponent"
+        privacy:
+          type: integer
+          format: int32
+          x-enum-reference:
+            $ref: "components.yml#/components/schemas/ComponentPrivacySetting"
+        disabled:
+          type: boolean
+          description: If true, this component is disabled.
+
+    DictionaryComponentResponseOfuint32AndDestinyItemTalentGridComponent:
+      type: object
+      properties:
+        data:
+          type: object
+          additionalProperties:
+            $ref: "destiny/entities/items.yml#/components/schemas/DestinyItemTalentGridComponent"
+        privacy:
+          type: integer
+          format: int32
+          x-enum-reference:
+            $ref: "components.yml#/components/schemas/ComponentPrivacySetting"
+        disabled:
+          type: boolean
+          description: If true, this component is disabled.
+
+    SearchResultOfDestinyEntitySearchResultItem:
+      type: object
+      properties:
+        results:
+          type: array
+          items:
+            $ref: "destiny/definitions.yml#/components/schemas/DestinyEntitySearchResultItem"
+        totalResults:
+          type: integer
+          format: int32
+        hasMore:
+          type: boolean
+        query:
+          $ref: "queries.yml#/components/schemas/PagedQuery"
+        replacementContinuationToken:
+          type: string
+        useTotalResults:
+          type: boolean
+          description: "
+            If useTotalResults is true, then totalResults represents an accurate count.
+            If False, it does not, and may be estimated/only the size of the current page.
+            Either way, you should probably always only trust hasMore.
+            This is a long-held historical throwback to when we used to do paging with known total results. Those queries toasted our database, and we were left to hastily alter our endpoints and create backward- compatible shims, of which useTotalResults is one."
+
+    SearchResultOfTrendingEntry:
+      type: object
+      properties:
+        results:
+          type: array
+          items:
+            $ref: "trending.yml#/components/schemas/TrendingEntry"
+        totalResults:
+          type: integer
+          format: int32
+        hasMore:
+          type: boolean
+        query:
+          $ref: "queries.yml#/components/schemas/PagedQuery"
+        replacementContinuationToken:
+          type: string
+        useTotalResults:
+          type: boolean
+          description: "
+            If useTotalResults is true, then totalResults represents an accurate count.
+            If False, it does not, and may be estimated/only the size of the current page.
+            Either way, you should probably always only trust hasMore.
+            This is a long-held historical throwback to when we used to do paging with known total results. Those queries toasted our database, and we were left to hastily alter our endpoints and create backward- compatible shims, of which useTotalResults is one."
+
+    SearchResultOfFireteamSummary:
+      type: object
+      properties:
+        results:
+          type: array
+          items:
+            $ref: "fireteam.yml#/components/schemas/FireteamSummary"
+        totalResults:
+          type: integer
+          format: int32
+        hasMore:
+          type: boolean
+        query:
+          $ref: "queries.yml#/components/schemas/PagedQuery"
+        replacementContinuationToken:
+          type: string
+        useTotalResults:
+          type: boolean
+          description: "
+            If useTotalResults is true, then totalResults represents an accurate count.
+            If False, it does not, and may be estimated/only the size of the current page.
+            Either way, you should probably always only trust hasMore.
+            This is a long-held historical throwback to when we used to do paging with known total results. Those queries toasted our database, and we were left to hastily alter our endpoints and create backward- compatible shims, of which useTotalResults is one."
+
+    SearchResultOfFireteamResponse:
+      type: object
+      properties:
+        results:
+          type: array
+          items:
+            $ref: "fireteam.yml#/components/schemas/FireteamResponse"
+        totalResults:
+          type: integer
+          format: int32
+        hasMore:
+          type: boolean
+        query:
+          $ref: "queries.yml#/components/schemas/PagedQuery"
+        replacementContinuationToken:
+          type: string
+        useTotalResults:
+          type: boolean
+          description: "
+            If useTotalResults is true, then totalResults represents an accurate count.
+            If False, it does not, and may be estimated/only the size of the current page.
+            Either way, you should probably always only trust hasMore.
+            This is a long-held historical throwback to when we used to do paging with known total results. Those queries toasted our database, and we were left to hastily alter our endpoints and create backward- compatible shims, of which useTotalResults is one."
+
+    GlobalAlert:
+      type: object
+      properties:
+        AlertKey:
+          type: string
+        AlertHtml:
+          type: string
+        AlertTimestamp:
+          type: string
+          format: date-time
+        AlertLink:
+          type: string
+        AlertLevel:
+          type: integer
+          format: int32
+          x-enum-reference:
+            $ref: "#/components/schemas/GlobalAlertLevel"
+        AlertType:
+          type: integer
+          format: int32
+          x-enum-reference:
+            $ref: "#/components/schemas/GlobalAlertType"
+        StreamInfo:
+          $ref: "#/components/schemas/StreamInfo"
+
+    GlobalAlertLevel:
+      type: integer
+      format: int32
+      enum:
+        - 0
+        - 1
+        - 2
+        - 3
+      x-enum-values:
+        - numericValue: "0"
+          identifier: Unknown
+        - numericValue: "1"
+          identifier: Blue
+        - numericValue: "2"
+          identifier: Yellow
+        - numericValue: "3"
+          identifier: Red
+
+    GlobalAlertType:
+      type: integer
+      format: int32
+      enum:
+        - 0
+        - 1
+      x-enum-values:
+        - numericValue: "0"
+          identifier: GlobalAlert
+        - numericValue: "1"
+          identifier: StreamingAlert
+
+    StreamInfo:
+      type: object
+      properties:
+        ChannelName:
+          type: string

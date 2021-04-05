@@ -1,0 +1,82 @@
+components:
+  schemas:
+    IgnoreResponse:
+      type: object
+      properties:
+        isIgnored:
+          type: boolean
+        ignoreFlags:
+          type: integer
+          format: int32
+          x-enum-reference:
+            $ref: '#/components/schemas/IgnoreStatus'
+
+    IgnoreStatus:
+      type: integer
+      format: int32
+      enum:
+        - 0
+        - 1
+        - 2
+        - 4
+        - 8
+        - 16
+        - 32
+      x-enum-values:
+        - numericValue: "0"
+          identifier: NotIgnored
+        - numericValue: "1"
+          identifier: IgnoredUser
+        - numericValue: "2"
+          identifier: IgnoredGroup
+        - numericValue: "4"
+          identifier: IgnoredByGroup
+        - numericValue: "8"
+          identifier: IgnoredPost
+        - numericValue: "16"
+          identifier: IgnoredTag
+        - numericValue: "32"
+          identifier: IgnoredGlobal
+
+    IgnoreLength:
+      type: integer
+      format: int32
+      enum:
+        - 0
+        - 1
+        - 2
+        - 3
+        - 4
+        - 5
+        - 6
+        - 7
+        - 8
+        - 9
+        - 10
+        - 11
+      x-enum-values:
+        - numericValue: "0"
+          identifier: None
+        - numericValue: "1"
+          identifier: Week
+        - numericValue: "2"
+          identifier: TwoWeeks
+        - numericValue: "3"
+          identifier: ThreeWeeks
+        - numericValue: "4"
+          identifier: Month
+        - numericValue: "5"
+          identifier: ThreeMonths
+        - numericValue: "6"
+          identifier: SixMonths
+        - numericValue: "7"
+          identifier: Year
+        - numericValue: "8"
+          identifier: Forever
+        - numericValue: "9"
+          identifier: ThreeMinutes
+        - numericValue: "10"
+          identifier: Hour
+        - numericValue: "11"
+          identifier: ThirtyDays
+

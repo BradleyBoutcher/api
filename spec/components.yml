@@ -1,0 +1,31 @@
+components:
+  schemas:
+    ComponentResponse:
+      type: object
+      properties:
+        privacy:
+          type: integer
+          format: int32
+          x-enum-reference:
+            $ref: '#/components/schemas/ComponentPrivacySetting'
+        disabled:
+          type: boolean
+          description: If true, this component is disabled.
+      description: The base class for any component-returning object that may need to indicate information about the state of the component being returned.
+
+    ComponentPrivacySetting:
+      type: integer
+      description: A set of flags for reason(s) why the component populated in the way that it did. Inspect the individual flags for the reasons.
+      format: int32
+      enum:
+        - 0
+        - 1
+        - 2
+      x-enum-values:
+        - numericValue: "0"
+          identifier: None
+        - numericValue: "1"
+          identifier: Public
+        - numericValue: "2"
+          identifier: Private
+

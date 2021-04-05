@@ -1,0 +1,22 @@
+components:
+  schemas:
+    InterpolationPoint:
+      type: object
+      properties:
+        value:
+          type: integer
+          format: int32
+        weight:
+          type: integer
+          format: int32
+
+    InterpolationPointFloat:
+      type: object
+      properties:
+        value:
+          type: number
+          format: float
+        weight:
+          type: number
+          format: float
+

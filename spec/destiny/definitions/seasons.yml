@@ -1,0 +1,126 @@
+components:
+  schemas:
+    DestinySeasonDefinition:
+      type: object
+      properties:
+        displayProperties:
+          $ref: 'common.yml#/components/schemas/DestinyDisplayPropertiesDefinition'
+        backgroundImagePath:
+          type: string
+        seasonNumber:
+          type: integer
+          format: int32
+        startDate:
+          type: string
+          format: date-time
+        endDate:
+          type: string
+          format: date-time
+        seasonPassHash:
+          type: integer
+          format: uint32
+          x-mapped-definition:
+            $ref: '#/components/schemas/DestinySeasonPassDefinition'
+        seasonPassProgressionHash:
+          type: integer
+          format: uint32
+          x-mapped-definition:
+            $ref: '../definitions.yml#/components/schemas/DestinyProgressionDefinition'
+        artifactItemHash:
+          type: integer
+          format: uint32
+          x-mapped-definition:
+            $ref: '../definitions.yml#/components/schemas/DestinyInventoryItemDefinition'
+        sealPresentationNodeHash:
+          type: integer
+          format: uint32
+          x-mapped-definition:
+            $ref: 'presentation.yml#/components/schemas/DestinyPresentationNodeDefinition'
+        seasonalChallengesPresentationNodeHash:
+          type: integer
+          format: uint32
+          x-mapped-definition:
+            $ref: 'presentation.yml#/components/schemas/DestinyPresentationNodeDefinition'
+        preview:
+          type: object
+          description: Optional - Defines the promotional text, images, and links to preview this season.
+          allOf:
+            - $ref: '#/components/schemas/DestinySeasonPreviewDefinition'
+        hash:
+          type: integer
+          description: 'The unique identifier for this entity. Guaranteed to be unique for the type of entity, but not globally.
+            When entities refer to each other in Destiny content, it is this hash that they are referring to.'
+          format: uint32
+        index:
+          type: integer
+          description: The index of the entity as it was found in the investment tables.
+          format: int32
+        redacted:
+          type: boolean
+          description: If this is true, then there is an entity with this identifier/type combination, but BNet is not yet allowed to show it. Sorry!
+      description: 'Defines a canonical "Season" of Destiny: a range of a few months where the game highlights certain challenges, provides new loot, has new Clan-related rewards and celebrates various seasonal events.'
+      x-mobile-manifest-name: Seasons
+
+    DestinySeasonPreviewDefinition:
+      type: object
+      properties:
+        description:
+          type: string
+          description: A localized description of the season.
+        linkPath:
+          type: string
+          description: 'A relative path to learn more about the season. Web browsers should be automatically redirected to the user''s Bungie.net locale. For example: "/SeasonOfTheChosen" will redirect to "/7/en/Seasons/SeasonOfTheChosen" for English users.'
+        videoLink:
+          type: string
+          description: An optional link to a localized video, probably YouTube.
+        images:
+          type: array
+          description: A list of images to preview the seasonal content. Should have at least three to show.
+          items:
+            $ref: '#/components/schemas/DestinySeasonPreviewImageDefinition'
+      description: Defines the promotional text, images, and links to preview this season.
+
+    DestinySeasonPreviewImageDefinition:
+      type: object
+      properties:
+        thumbnailImage:
+          type: string
+          description: A thumbnail icon path to preview seasonal content, probably 480x270.
+        highResImage:
+          type: string
+          description: An optional path to a high-resolution image, probably 1920x1080.
+      description: Defines the thumbnail icon, high-res image, and video link for promotional images
+
+    DestinySeasonPassDefinition:
+      type: object
+      properties:
+        displayProperties:
+          $ref: 'common.yml#/components/schemas/DestinyDisplayPropertiesDefinition'
+        rewardProgressionHash:
+          type: integer
+          description: This is the progression definition related to the progression for the initial levels 1-100 that provide item rewards for the Season pass. Further experience after you reach the limit is provided in the "Prestige" progression referred to by prestigeProgressionHash.
+          format: uint32
+          x-mapped-definition:
+            $ref: '../definitions.yml#/components/schemas/DestinyProgressionDefinition'
+        prestigeProgressionHash:
+          type: integer
+          description: "
+            I know what you're thinking, but I promise we're not going to duplicate and drown you. Instead, we're giving you sweet, sweet power bonuses.
+            Prestige progression is further progression that you can make on the Season pass after you gain max ranks, that will ultimately increase your power/light level over the theoretical limit."
+          format: uint32
+          x-mapped-definition:
+            $ref: '../definitions.yml#/components/schemas/DestinyProgressionDefinition'
+        hash:
+          type: integer
+          description: 'The unique identifier for this entity. Guaranteed to be unique for the type of entity, but not globally.
+            When entities refer to each other in Destiny content, it is this hash that they are referring to.'
+          format: uint32
+        index:
+          type: integer
+          description: The index of the entity as it was found in the investment tables.
+          format: int32
+        redacted:
+          type: boolean
+          description: If this is true, then there is an entity with this identifier/type combination, but BNet is not yet allowed to show it. Sorry!
+      x-mobile-manifest-name: SeasonPasses
+

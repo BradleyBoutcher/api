@@ -1,0 +1,75 @@
+components:
+  schemas:
+    DestinyCollectiblesComponent:
+      type: object
+      properties:
+        collectibles:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/DestinyCollectibleComponent'
+          x-mapped-definition:
+            $ref: '../definitions/collectibles.yml#/components/schemas/DestinyCollectibleDefinition'
+        collectionCategoriesRootNodeHash:
+          type: integer
+          description: The hash for the root presentation node definition of Collection categories.
+          format: uint32
+          x-mapped-definition:
+            $ref: '../definitions/presentation.yml#/components/schemas/DestinyPresentationNodeDefinition'
+        collectionBadgesRootNodeHash:
+          type: integer
+          description: The hash for the root presentation node definition of Collection Badges.
+          format: uint32
+          x-mapped-definition:
+            $ref: '../definitions/presentation.yml#/components/schemas/DestinyPresentationNodeDefinition'
+      x-destiny-component-type-dependency: Collectibles
+
+    DestinyCollectibleComponent:
+      type: object
+      properties:
+        state:
+          type: integer
+          format: int32
+          x-enum-reference:
+            $ref: '../../destiny.yml#/components/schemas/DestinyCollectibleState'
+
+    DestinyProfileCollectiblesComponent:
+      type: object
+      properties:
+        recentCollectibleHashes:
+          type: array
+          description: The list of collectibles determined by the game as having been "recently" acquired.
+          items:
+            type: integer
+            format: uint32
+          x-mapped-definition:
+            $ref: '../definitions/collectibles.yml#/components/schemas/DestinyCollectibleDefinition'
+        newnessFlaggedCollectibleHashes:
+          type: array
+          description: "
+            The list of collectibles determined by the game as having been \"recently\" acquired.
+            The game client itself actually controls this data, so I personally question whether anyone will get much use out of this: because we can't edit this value through the API. But in case anyone finds it useful, here it is."
+          items:
+            type: integer
+            format: uint32
+          x-mapped-definition:
+            $ref: '../definitions/collectibles.yml#/components/schemas/DestinyCollectibleDefinition'
+        collectibles:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/DestinyCollectibleComponent'
+          x-mapped-definition:
+            $ref: '../definitions/collectibles.yml#/components/schemas/DestinyCollectibleDefinition'
+        collectionCategoriesRootNodeHash:
+          type: integer
+          description: The hash for the root presentation node definition of Collection categories.
+          format: uint32
+          x-mapped-definition:
+            $ref: '../definitions/presentation.yml#/components/schemas/DestinyPresentationNodeDefinition'
+        collectionBadgesRootNodeHash:
+          type: integer
+          description: The hash for the root presentation node definition of Collection Badges.
+          format: uint32
+          x-mapped-definition:
+            $ref: '../definitions/presentation.yml#/components/schemas/DestinyPresentationNodeDefinition'
+      x-destiny-component-type-dependency: Collectibles
+

@@ -1,0 +1,13 @@
+components:
+  schemas:
+    DestinyChallengeStatus:
+      type: object
+      properties:
+        objective:
+          type: object
+          description: The progress - including completion status - of the active challenge.
+          allOf:
+            - $ref: "quests.yml#/components/schemas/DestinyObjectiveProgress"
+      description: "
+        Represents the status and other related information for a challenge that is - or was - available to a player.
+        A challenge is a bonus objective, generally tacked onto Quests or Activities, that provide additional variations on play."

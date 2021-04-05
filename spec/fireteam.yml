@@ -1,0 +1,247 @@
+components:
+  schemas:
+    FireteamDateRange:
+      type: integer
+      format: byte
+      enum:
+        - 0
+        - 1
+        - 2
+        - 3
+        - 4
+      x-enum-values:
+        - numericValue: "0"
+          identifier: All
+        - numericValue: "1"
+          identifier: Now
+        - numericValue: "2"
+          identifier: TwentyFourHours
+        - numericValue: "3"
+          identifier: FortyEightHours
+        - numericValue: "4"
+          identifier: ThisWeek
+
+    FireteamPlatform:
+      type: integer
+      format: byte
+      enum:
+        - 0
+        - 1
+        - 2
+        - 3
+        - 4
+        - 5
+      x-enum-values:
+        - numericValue: "0"
+          identifier: Unknown
+        - numericValue: "1"
+          identifier: Playstation4
+        - numericValue: "2"
+          identifier: XboxOne
+        - numericValue: "3"
+          identifier: Blizzard
+        - numericValue: "4"
+          identifier: Steam
+        - numericValue: "5"
+          identifier: Stadia
+
+    FireteamPublicSearchOption:
+      type: integer
+      format: byte
+      enum:
+        - 0
+        - 1
+        - 2
+      x-enum-values:
+        - numericValue: "0"
+          identifier: PublicAndPrivate
+        - numericValue: "1"
+          identifier: PublicOnly
+        - numericValue: "2"
+          identifier: PrivateOnly
+
+    FireteamSlotSearch:
+      type: integer
+      format: byte
+      enum:
+        - 0
+        - 1
+        - 2
+      x-enum-values:
+        - numericValue: "0"
+          identifier: NoSlotRestriction
+        - numericValue: "1"
+          identifier: HasOpenPlayerSlots
+        - numericValue: "2"
+          identifier: HasOpenPlayerOrAltSlots
+
+    FireteamSummary:
+      type: object
+      properties:
+        fireteamId:
+          type: integer
+          format: int64
+        groupId:
+          type: integer
+          format: int64
+        platform:
+          type: integer
+          format: byte
+          x-enum-reference:
+            $ref: '#/components/schemas/FireteamPlatform'
+        activityType:
+          type: integer
+          format: int32
+        isImmediate:
+          type: boolean
+        scheduledTime:
+          type: string
+          format: date-time
+        ownerMembershipId:
+          type: integer
+          format: int64
+        playerSlotCount:
+          type: integer
+          format: int32
+        alternateSlotCount:
+          type: integer
+          format: int32
+        availablePlayerSlotCount:
+          type: integer
+          format: int32
+        availableAlternateSlotCount:
+          type: integer
+          format: int32
+        title:
+          type: string
+        dateCreated:
+          type: string
+          format: date-time
+        dateModified:
+          type: string
+          format: date-time
+        isPublic:
+          type: boolean
+        locale:
+          type: string
+        isValid:
+          type: boolean
+        datePlayerModified:
+          type: string
+          format: date-time
+        titleBeforeModeration:
+          type: string
+
+    FireteamResponse:
+      type: object
+      properties:
+        Summary:
+          $ref: '#/components/schemas/FireteamSummary'
+        Members:
+          type: array
+          items:
+            $ref: '#/components/schemas/FireteamMember'
+        Alternates:
+          type: array
+          items:
+            $ref: '#/components/schemas/FireteamMember'
+
+    FireteamMember:
+      type: object
+      properties:
+        destinyUserInfo:
+          $ref: '#/components/schemas/FireteamUserInfoCard'
+        bungieNetUserInfo:
+          $ref: 'user.yml#/components/schemas/UserInfoCard'
+        characterId:
+          type: integer
+          format: int64
+        dateJoined:
+          type: string
+          format: date-time
+        hasMicrophone:
+          type: boolean
+        lastPlatformInviteAttemptDate:
+          type: string
+          format: date-time
+        lastPlatformInviteAttemptResult:
+          type: integer
+          format: byte
+          x-enum-reference:
+            $ref: '#/components/schemas/FireteamPlatformInviteResult'
+
+    FireteamUserInfoCard:
+      type: object
+      properties:
+        FireteamDisplayName:
+          type: string
+        FireteamMembershipType:
+          type: integer
+          format: int32
+          x-enum-reference:
+            $ref: 'shared.yml#/components/schemas/BungieMembershipType'
+        FireteamPlatformProfileUrl:
+          type: string
+        FireteamPlatformUniqueIdentifier:
+          type: string
+        supplementalDisplayName:
+          type: string
+          description: 'A platform specific additional display name - ex: psn Real Name, bnet Unique Name, etc.'
+        iconPath:
+          type: string
+          description: URL the Icon if available.
+        crossSaveOverride:
+          type: integer
+          description: If there is a cross save override in effect, this value will tell you the type that is overridding this one.
+          format: int32
+          x-enum-reference:
+            $ref: 'shared.yml#/components/schemas/BungieMembershipType'
+        applicableMembershipTypes:
+          type: array
+          description: "
+            The list of Membership Types indicating the platforms on which this Membership can be used.
+            Not in Cross Save = its original membership type. Cross Save Primary = Any membership types it is overridding, and its original membership type Cross Save Overridden = Empty list"
+          items:
+            type: integer
+            description: The types of membership the Accounts system supports. This is the external facing enum used in place of the internal-only Bungie.SharedDefinitions.MembershipType.
+            format: int32
+            x-enum-reference:
+              $ref: 'shared.yml#/components/schemas/BungieMembershipType'
+        isPublic:
+          type: boolean
+          description: If True, this is a public user membership.
+        membershipType:
+          type: integer
+          description: Type of the membership. Not necessarily the native type.
+          format: int32
+          x-enum-reference:
+            $ref: 'shared.yml#/components/schemas/BungieMembershipType'
+        membershipId:
+          type: integer
+          description: Membership ID as they user is known in the Accounts service
+          format: int64
+        displayName:
+          type: string
+          description: Display Name the player has chosen for themselves. The display name is optional when the data type is used as input to a platform API.
+
+    FireteamPlatformInviteResult:
+      type: integer
+      format: byte
+      enum:
+        - 0
+        - 1
+        - 2
+        - 3
+        - 4
+      x-enum-values:
+        - numericValue: "0"
+          identifier: None
+        - numericValue: "1"
+          identifier: Success
+        - numericValue: "2"
+          identifier: AlreadyInFireteam
+        - numericValue: "3"
+          identifier: Throttled
+        - numericValue: "4"
+          identifier: ServiceError
+

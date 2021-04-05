@@ -1,0 +1,14 @@
+components:
+  schemas:
+    EntityActionResult:
+      type: object
+      properties:
+        entityId:
+          type: integer
+          format: int64
+        result:
+          type: integer
+          format: int32
+          x-enum-reference:
+            $ref: 'exceptions.yml#/components/schemas/PlatformErrorCodes'
+

@@ -1,0 +1,217 @@
+components:
+  schemas:
+    TrendingCategories:
+      type: object
+      properties:
+        categories:
+          type: array
+          items:
+            $ref: '#/components/schemas/TrendingCategory'
+
+    TrendingCategory:
+      type: object
+      properties:
+        categoryName:
+          type: string
+        entries:
+          $ref: 'shared.yml#/components/schemas/SearchResultOfTrendingEntry'
+        categoryId:
+          type: string
+
+    TrendingEntry:
+      type: object
+      properties:
+        weight:
+          type: number
+          description: The weighted score of this trending item.
+          format: double
+        isFeatured:
+          type: boolean
+        identifier:
+          type: string
+          description: We don't know whether the identifier will be a string, a uint, or a long... so we're going to cast it all to a string. But either way, we need any trending item created to have a single unique identifier for its type.
+        entityType:
+          type: integer
+          description: An enum - unfortunately - dictating all of the possible kinds of trending items that you might get in your result set, in case you want to do custom rendering or call to get the details of the item.
+          format: int32
+          x-enum-reference:
+            $ref: '#/components/schemas/TrendingEntryType'
+        displayName:
+          type: string
+          description: The localized "display name/article title/'primary localized identifier'" of the entity.
+        tagline:
+          type: string
+          description: If the entity has a localized tagline/subtitle/motto/whatever, that is found here.
+        image:
+          type: string
+        startDate:
+          type: string
+          format: date-time
+        endDate:
+          type: string
+          format: date-time
+        link:
+          type: string
+        webmVideo:
+          type: string
+          description: If this is populated, the entry has a related WebM video to show. I am 100% certain I am going to regret putting this directly on TrendingEntry, but it will work so yolo
+        mp4Video:
+          type: string
+          description: If this is populated, the entry has a related MP4 video to show. I am 100% certain I am going to regret putting this directly on TrendingEntry, but it will work so yolo
+        featureImage:
+          type: string
+          description: If isFeatured, this image will be populated with whatever the featured image is. Note that this will likely be a very large image, so don't use it all the time.
+        items:
+          type: array
+          description: If the item is of entityType TrendingEntryType.Container, it may have items - also Trending Entries - contained within it. This is the ordered list of those to display under the Container's header.
+          items:
+            $ref: '#/components/schemas/TrendingEntry'
+        creationDate:
+          type: string
+          description: If the entry has a date at which it was created, this is that date.
+          format: date-time
+      description: The list entry view for trending items. Returns just enough to show the item on the trending page.
+
+    TrendingEntryType:
+      type: integer
+      description: The known entity types that you can have returned from Trending.
+      format: int32
+      enum:
+        - 0
+        - 1
+        - 2
+        - 3
+        - 4
+        - 5
+        - 6
+        - 7
+        - 8
+        - 9
+        - 10
+        - 11
+      x-enum-values:
+        - numericValue: "0"
+          identifier: News
+        - numericValue: "1"
+          identifier: DestinyItem
+        - numericValue: "2"
+          identifier: DestinyActivity
+        - numericValue: "3"
+          identifier: DestinyRitual
+        - numericValue: "4"
+          identifier: SupportArticle
+        - numericValue: "5"
+          identifier: Creation
+        - numericValue: "6"
+          identifier: Stream
+        - numericValue: "7"
+          identifier: Update
+        - numericValue: "8"
+          identifier: Link
+        - numericValue: "9"
+          identifier: ForumTag
+        - numericValue: "10"
+          identifier: Container
+        - numericValue: "11"
+          identifier: Release
+
+    TrendingDetail:
+      type: object
+      properties:
+        identifier:
+          type: string
+        entityType:
+          type: integer
+          format: int32
+          x-enum-reference:
+            $ref: '#/components/schemas/TrendingEntryType'
+        news:
+          $ref: '#/components/schemas/TrendingEntryNews'
+        support:
+          $ref: '#/components/schemas/TrendingEntrySupportArticle'
+        destinyItem:
+          $ref: '#/components/schemas/TrendingEntryDestinyItem'
+        destinyActivity:
+          $ref: '#/components/schemas/TrendingEntryDestinyActivity'
+        destinyRitual:
+          $ref: '#/components/schemas/TrendingEntryDestinyRitual'
+        creation:
+          $ref: '#/components/schemas/TrendingEntryCommunityCreation'
+
+    TrendingEntryNews:
+      type: object
+      properties:
+        article:
+          $ref: 'content.yml#/components/schemas/ContentItemPublicContract'
+
+    TrendingEntrySupportArticle:
+      type: object
+      properties:
+        article:
+          $ref: 'content.yml#/components/schemas/ContentItemPublicContract'
+
+    TrendingEntryDestinyItem:
+      type: object
+      properties:
+        itemHash:
+          type: integer
+          format: uint32
+
+    TrendingEntryDestinyActivity:
+      type: object
+      properties:
+        activityHash:
+          type: integer
+          format: uint32
+        status:
+          $ref: 'destiny/activities.yml#/components/schemas/DestinyPublicActivityStatus'
+
+    TrendingEntryDestinyRitual:
+      type: object
+      properties:
+        image:
+          type: string
+        icon:
+          type: string
+        title:
+          type: string
+        subtitle:
+          type: string
+        dateStart:
+          type: string
+          format: date-time
+        dateEnd:
+          type: string
+          format: date-time
+        milestoneDetails:
+          type: object
+          description: A destiny event does not necessarily have a related Milestone, but if it does the details will be returned here.
+          allOf:
+            - $ref: 'destiny/milestones.yml#/components/schemas/DestinyPublicMilestone'
+        eventContent:
+          type: object
+          description: A destiny event will not necessarily have milestone "custom content", but if it does the details will be here.
+          allOf:
+            - $ref: 'destiny/milestones.yml#/components/schemas/DestinyMilestoneContent'
+
+    TrendingEntryCommunityCreation:
+      type: object
+      properties:
+        media:
+          type: string
+        title:
+          type: string
+        author:
+          type: string
+        authorMembershipId:
+          type: integer
+          format: int64
+        postId:
+          type: integer
+          format: int64
+        body:
+          type: string
+        upvotes:
+          type: integer
+          format: int32
+

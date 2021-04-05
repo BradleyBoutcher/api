@@ -1,0 +1,16 @@
+components:
+  schemas:
+    GetCredentialTypesForAccountResponse:
+      type: object
+      properties:
+        credentialType:
+          type: string
+          format: byte
+          x-enum-reference:
+            $ref: "../shared.yml#/components/schemas/BungieCredentialType"
+        credentialDisplayName:
+          type: string
+        isPublic:
+          type: boolean
+        credentialAsString:
+          type: string

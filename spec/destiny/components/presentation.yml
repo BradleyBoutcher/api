@@ -1,0 +1,39 @@
+components:
+  schemas:
+    DestinyPresentationNodesComponent:
+      type: object
+      properties:
+        nodes:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/DestinyPresentationNodeComponent'
+          x-mapped-definition:
+            $ref: '../definitions/presentation.yml#/components/schemas/DestinyPresentationNodeDefinition'
+      x-destiny-component-type-dependency: PresentationNodes
+
+    DestinyPresentationNodeComponent:
+      type: object
+      properties:
+        state:
+          type: integer
+          format: int32
+          x-enum-reference:
+            $ref: '../../destiny.yml#/components/schemas/DestinyPresentationNodeState'
+        objective:
+          type: object
+          description: 'An optional property: presentation nodes MAY have objectives, which can be used to infer more human readable data about the progress. However, progressValue and completionValue ought to be considered the canonical values for progress on Progression Nodes.'
+          allOf:
+            - $ref: '../quests.yml#/components/schemas/DestinyObjectiveProgress'
+        progressValue:
+          type: integer
+          description: How much of the presentation node is considered to be completed so far by the given character/profile.
+          format: int32
+        completionValue:
+          type: integer
+          description: The value at which the presentation node is considered to be completed.
+          format: int32
+        recordCategoryScore:
+          type: integer
+          description: If available, this is the current score for the record category that this node represents.
+          format: int32
+

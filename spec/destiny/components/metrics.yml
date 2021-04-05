@@ -1,0 +1,24 @@
+components:
+  schemas:
+    DestinyMetricsComponent:
+      type: object
+      properties:
+        metrics:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/DestinyMetricComponent'
+        metricsRootNodeHash:
+          type: integer
+          format: uint32
+          x-mapped-definition:
+            $ref: '../definitions/presentation.yml#/components/schemas/DestinyPresentationNodeDefinition'
+      x-destiny-component-type-dependency: Metrics
+
+    DestinyMetricComponent:
+      type: object
+      properties:
+        invisible:
+          type: boolean
+        objectiveProgress:
+          $ref: '../quests.yml#/components/schemas/DestinyObjectiveProgress'
+

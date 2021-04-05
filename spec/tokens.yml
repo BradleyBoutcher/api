@@ -1,0 +1,88 @@
+components:
+  schemas:
+    PartnerOfferClaimRequest:
+      type: object
+      properties:
+        PartnerOfferId:
+          type: string
+        BungieNetMembershipId:
+          type: integer
+          format: int64
+        TransactionId:
+          type: string
+
+    PartnerOfferSkuHistoryResponse:
+      type: object
+      properties:
+        SkuIdentifier:
+          type: string
+        LocalizedName:
+          type: string
+        LocalizedDescription:
+          type: string
+        ClaimDate:
+          type: string
+          format: date-time
+        AllOffersApplied:
+          type: boolean
+        TransactionId:
+          type: string
+        SkuOffers:
+          type: array
+          items:
+            $ref: '#/components/schemas/PartnerOfferHistoryResponse'
+
+    PartnerOfferHistoryResponse:
+      type: object
+      properties:
+        PartnerOfferKey:
+          type: string
+        MembershipId:
+          type: integer
+          format: int64
+        MembershipType:
+          type: integer
+          format: int32
+          enum:
+            - 0
+            - 1
+            - 2
+            - 3
+            - 4
+            - 5
+            - 10
+            - 254
+            - -1
+          x-enum-values:
+            - numericValue: "0"
+              identifier: None
+            - numericValue: "1"
+              identifier: TigerXbox
+            - numericValue: "2"
+              identifier: TigerPsn
+            - numericValue: "3"
+              identifier: TigerSteam
+            - numericValue: "4"
+              identifier: TigerBlizzard
+            - numericValue: "5"
+              identifier: TigerStadia
+            - numericValue: "10"
+              identifier: TigerDemon
+            - numericValue: "254"
+              identifier: BungieNext
+            - numericValue: -1
+              identifier: All
+              description: '"All" is only valid for searching capabilities: you need to pass the actual matching BungieMembershipType for any query where you pass a known membershipId.'
+        LocalizedName:
+          type: string
+        LocalizedDescription:
+          type: string
+        IsConsumable:
+          type: boolean
+        QuantityApplied:
+          type: integer
+          format: int32
+        ApplyDate:
+          type: string
+          format: date-time
+

@@ -1,0 +1,393 @@
+components:
+  schemas:
+    UserMembership:
+      type: object
+      properties:
+        membershipType:
+          type: integer
+          description: Type of the membership. Not necessarily the native type.
+          format: int32
+          x-enum-reference:
+            $ref: 'shared.yml#/components/schemas/BungieMembershipType'
+        membershipId:
+          type: integer
+          description: Membership ID as they user is known in the Accounts service
+          format: int64
+        displayName:
+          type: string
+          description: Display Name the player has chosen for themselves. The display name is optional when the data type is used as input to a platform API.
+      description: Very basic info about a user as returned by the Account server.
+
+    CrossSaveUserMembership:
+      type: object
+      properties:
+        crossSaveOverride:
+          type: integer
+          description: If there is a cross save override in effect, this value will tell you the type that is overridding this one.
+          format: int32
+          x-enum-reference:
+            $ref: 'shared.yml#/components/schemas/BungieMembershipType'
+        applicableMembershipTypes:
+          type: array
+          description: "
+            The list of Membership Types indicating the platforms on which this Membership can be used.
+            Not in Cross Save = its original membership type. Cross Save Primary = Any membership types it is overridding, and its original membership type Cross Save Overridden = Empty list"
+          items:
+            type: integer
+            description: The types of membership the Accounts system supports. This is the external facing enum used in place of the internal-only Bungie.SharedDefinitions.MembershipType.
+            format: int32
+            x-enum-reference:
+              $ref: 'shared.yml#/components/schemas/BungieMembershipType'
+        isPublic:
+          type: boolean
+          description: If True, this is a public user membership.
+        membershipType:
+          type: integer
+          description: Type of the membership. Not necessarily the native type.
+          format: int32
+          x-enum-reference:
+            $ref: 'shared.yml#/components/schemas/BungieMembershipType'
+        membershipId:
+          type: integer
+          description: Membership ID as they user is known in the Accounts service
+          format: int64
+        displayName:
+          type: string
+          description: Display Name the player has chosen for themselves. The display name is optional when the data type is used as input to a platform API.
+      description: Very basic info about a user as returned by the Account server, but including CrossSave information. Do NOT use as a request contract.
+
+    UserInfoCard:
+      type: object
+      properties:
+        supplementalDisplayName:
+          type: string
+          description: 'A platform specific additional display name - ex: psn Real Name, bnet Unique Name, etc.'
+        iconPath:
+          type: string
+          description: URL the Icon if available.
+        crossSaveOverride:
+          type: integer
+          description: If there is a cross save override in effect, this value will tell you the type that is overridding this one.
+          format: int32
+          x-enum-reference:
+            $ref: 'shared.yml#/components/schemas/BungieMembershipType'
+        applicableMembershipTypes:
+          type: array
+          description: "
+            The list of Membership Types indicating the platforms on which this Membership can be used.
+            Not in Cross Save = its original membership type. Cross Save Primary = Any membership types it is overridding, and its original membership type Cross Save Overridden = Empty list"
+          items:
+            type: integer
+            description: The types of membership the Accounts system supports. This is the external facing enum used in place of the internal-only Bungie.SharedDefinitions.MembershipType.
+            format: int32
+            x-enum-reference:
+              $ref: 'shared.yml#/components/schemas/BungieMembershipType'
+        isPublic:
+          type: boolean
+          description: If True, this is a public user membership.
+        membershipType:
+          type: integer
+          description: Type of the membership. Not necessarily the native type.
+          format: int32
+          x-enum-reference:
+            $ref: 'shared.yml#/components/schemas/BungieMembershipType'
+        membershipId:
+          type: integer
+          description: Membership ID as they user is known in the Accounts service
+          format: int64
+        displayName:
+          type: string
+          description: Display Name the player has chosen for themselves. The display name is optional when the data type is used as input to a platform API.
+      description: This contract supplies basic information commonly used to display a minimal amount of information about a user. Take care to not add more properties here unless the property applies in all (or at least the majority) of the situations where UserInfoCard is used. Avoid adding game specific or platform specific details here. In cases where UserInfoCard is a subset of the data needed in a contract, use UserInfoCard as a property of other contracts.
+
+    GeneralUser:
+      type: object
+      properties:
+        membershipId:
+          type: integer
+          format: int64
+        uniqueName:
+          type: string
+        normalizedName:
+          type: string
+        displayName:
+          type: string
+        profilePicture:
+          type: integer
+          format: int32
+        profileTheme:
+          type: integer
+          format: int32
+        userTitle:
+          type: integer
+          format: int32
+        successMessageFlags:
+          type: integer
+          format: int64
+        isDeleted:
+          type: boolean
+        about:
+          type: string
+        firstAccess:
+          type: string
+          format: date-time
+        lastUpdate:
+          type: string
+          format: date-time
+        legacyPortalUID:
+          type: integer
+          format: int64
+        context:
+          $ref: '#/components/schemas/UserToUserContext'
+        psnDisplayName:
+          type: string
+        xboxDisplayName:
+          type: string
+        fbDisplayName:
+          type: string
+        showActivity:
+          type: boolean
+        locale:
+          type: string
+        localeInheritDefault:
+          type: boolean
+        lastBanReportId:
+          type: integer
+          format: int64
+        showGroupMessaging:
+          type: boolean
+        profilePicturePath:
+          type: string
+        profilePictureWidePath:
+          type: string
+        profileThemeName:
+          type: string
+        userTitleDisplay:
+          type: string
+        statusText:
+          type: string
+        statusDate:
+          type: string
+          format: date-time
+        profileBanExpire:
+          type: string
+          format: date-time
+        blizzardDisplayName:
+          type: string
+        steamDisplayName:
+          type: string
+        stadiaDisplayName:
+          type: string
+        twitchDisplayName:
+          type: string
+
+    UserToUserContext:
+      type: object
+      properties:
+        isFollowing:
+          type: boolean
+        ignoreStatus:
+          $ref: 'ignores.yml#/components/schemas/IgnoreResponse'
+        globalIgnoreEndDate:
+          type: string
+          format: date-time
+
+    UserMembershipData:
+      type: object
+      properties:
+        destinyMemberships:
+          type: array
+          description: this allows you to see destiny memberships that are visible and linked to this account (regardless of whether or not they have characters on the world server)
+          items:
+            $ref: 'groupsv2.yml#/components/schemas/GroupUserInfoCard'
+        primaryMembershipId:
+          type: integer
+          description: "
+            If this property is populated, it will have the membership ID of the account considered to be \"primary\" in this user's cross save relationship.
+            If null, this user has no cross save relationship, nor primary account."
+          format: int64
+        bungieNetUser:
+          $ref: '#/components/schemas/GeneralUser'
+
+    HardLinkedUserMembership:
+      type: object
+      properties:
+        membershipType:
+          type: integer
+          format: int32
+          x-enum-reference:
+            $ref: 'shared.yml#/components/schemas/BungieMembershipType'
+        membershipId:
+          type: integer
+          format: int64
+        CrossSaveOverriddenType:
+          type: integer
+          format: int32
+          x-enum-reference:
+            $ref: 'shared.yml#/components/schemas/BungieMembershipType'
+        CrossSaveOverriddenMembershipId:
+          type: integer
+          format: int64
+
+    EmailSettings:
+      type: object
+      properties:
+        optInDefinitions:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/EmailOptInDefinition'
+          description: Keyed by the name identifier of the opt-in definition.
+        subscriptionDefinitions:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/EmailSubscriptionDefinition'
+          description: Keyed by the name identifier of the Subscription definition.
+        views:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/EmailViewDefinition'
+          description: Keyed by the name identifier of the View definition.
+      description: The set of all email subscription/opt-in settings and definitions.
+
+    EmailOptInDefinition:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The unique identifier for this opt-in category.
+        value:
+          type: integer
+          description: The flag value for this opt-in category. For historical reasons, this is defined as a flags enum.
+          format: int64
+          x-enum-reference:
+            $ref: '#/components/schemas/OptInFlags'
+        setByDefault:
+          type: boolean
+          description: If true, this opt-in setting should be set by default in situations where accounts are created without explicit choices about what they're opting into.
+        dependentSubscriptions:
+          type: array
+          description: Information about the dependent subscriptions for this opt-in.
+          items:
+            $ref: '#/components/schemas/EmailSubscriptionDefinition'
+      description: 'Defines a single opt-in category: a wide-scoped permission to send emails for the subject related to the opt-in.'
+
+    OptInFlags:
+      type: integer
+      format: int64
+      enum:
+        - 0
+        - 1
+        - 2
+        - 4
+        - 8
+        - 16
+        - 32
+        - 64
+        - 128
+        - 256
+      x-enum-values:
+        - numericValue: "0"
+          identifier: None
+        - numericValue: "1"
+          identifier: Newsletter
+        - numericValue: "2"
+          identifier: System
+        - numericValue: "4"
+          identifier: Marketing
+        - numericValue: "8"
+          identifier: UserResearch
+        - numericValue: "16"
+          identifier: CustomerService
+        - numericValue: "32"
+          identifier: Social
+        - numericValue: "64"
+          identifier: PlayTests
+        - numericValue: "128"
+          identifier: PlayTestsLocal
+        - numericValue: "256"
+          identifier: Careers
+
+    EmailSubscriptionDefinition:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The unique identifier for this subscription.
+        localization:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/EMailSettingSubscriptionLocalization'
+          description: A dictionary of localized text for the EMail Opt-in setting, keyed by the locale.
+        value:
+          type: integer
+          description: The bitflag value for this subscription. Should be a unique power of two value.
+          format: int64
+      description: 'Defines a single subscription: permission to send emails for a specific, focused subject (generally timeboxed, such as for a specific release of a product or feature).'
+
+    EMailSettingLocalization:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+      description: Localized text relevant to a given EMail setting in a given localization.
+
+    EMailSettingSubscriptionLocalization:
+      type: object
+      properties:
+        unknownUserDescription:
+          type: string
+        registeredUserDescription:
+          type: string
+        unregisteredUserDescription:
+          type: string
+        unknownUserActionText:
+          type: string
+        knownUserActionText:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+      description: Localized text relevant to a given EMail setting in a given localization. Extra settings specifically for subscriptions.
+
+    EmailViewDefinition:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The identifier for this view.
+        viewSettings:
+          type: array
+          description: The ordered list of settings to show in this view.
+          items:
+            $ref: '#/components/schemas/EmailViewDefinitionSetting'
+      description: Represents a data-driven view for Email settings. Web/Mobile UI can use this data to show new EMail settings consistently without further manual work.
+
+    EmailViewDefinitionSetting:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The identifier for this UI Setting, which can be used to relate it to custom strings or other data as desired.
+        localization:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/EMailSettingLocalization'
+          description: A dictionary of localized text for the EMail setting, keyed by the locale.
+        setByDefault:
+          type: boolean
+          description: If true, this setting should be set by default if the user hasn't chosen whether it's set or cleared yet.
+        optInAggregateValue:
+          type: integer
+          description: The OptInFlags value to set or clear if this setting is set or cleared in the UI. It is the aggregate of all underlying opt-in flags related to this setting.
+          format: int64
+          x-enum-reference:
+            $ref: '#/components/schemas/OptInFlags'
+        subscriptions:
+          type: array
+          description: The subscriptions to show as children of this setting, if any.
+          items:
+            $ref: '#/components/schemas/EmailSubscriptionDefinition'
+
