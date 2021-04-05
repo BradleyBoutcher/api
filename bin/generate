@@ -1,5 +1,13 @@
 #!/bin/bash -e
 
+# Run from top-level dir
+cd "$(dirname "$0")"
+
+if [ ! -z "$(pwd)/destiny.yml" ]; then 
+    echo "Please run `bin/bundle` before attempting to use this utility."
+    exit 1
+fi
+
 # Target output language
 LANGUAGE="${1}"
 
@@ -15,7 +23,7 @@ else
     -v $(pwd):/work \
     openapitools/openapi-generator-cli generate \
         --skip-validate-spec \
-        -i /work/openapi-2.json \
+        -i /work/destiny.yml \
         -g "$LANGUAGE" \
         -o "/work/out/$LANGUAGE"
 fi

@@ -1,6 +1,14 @@
 #!/bin/bash -e 
 
+# Run from top-level dir
+cd "$(dirname "$0")"
+
+if [ ! -z "$(pwd)/destiny.yml" ]; then 
+    echo "Please run `bin/bundle` before attempting to use this utility."
+    exit 1
+fi
+
 docker run --rm \
-    -v $(pwd):/spec \
+    -v $(pwd):/work \
     redocly/openapi-cli \
-        stats "openapi-2.json"
+        stats "/work/destiny.yml"

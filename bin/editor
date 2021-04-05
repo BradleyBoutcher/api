@@ -1,10 +1,18 @@
 #!/bin/bash -e
 
+# Run from top-level dir
+cd "$(dirname "$0")"
+
+if [ ! -z "$(pwd)/destiny.yml" ]; then 
+    echo "Please run `bin/bundle` before attempting to use this utility."
+    exit 1
+fi
+
 echo "Starting Swagger editor on port 9090..."
 docker run -d --rm \
     -v $(pwd):/work \
      -p 9090:8080  \
-     -e SWAGGER_FILE=/work/openapi-2.json \
+     -e SWAGGER_FILE=/work/destiny.yml \
      --name destiny-editor \
      swaggerapi/swagger-editor
 
@@ -15,4 +23,4 @@ until [ "$(docker inspect -f {{.State.Running}} destiny-editor)"=="true" ]; do
 done
 
 echo
-echo "Visit localhost:9090 in your browser to use the Swagger Editor"
+echo "Visit http://localhost:9090 in your browser to use the Swagger Editor"

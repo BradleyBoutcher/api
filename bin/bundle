@@ -1,15 +1,10 @@
 #!/bin/bash -e 
 
-OUTPUT=${1}
+# Run from top-level dir
+cd "$(dirname "$0")"
 
-if [[ -z $OUTPUT ]]; then 
-    echo "Error: Please specify an output file."
-    echo 
-    echo "Example: ./bin/bundle swagger.yaml"
-else 
-    docker run --rm \
-        -v $(pwd):/spec \
-        redocly/openapi-cli \
-            bundle "openapi-2.json" \
-            -o "out/$OUTPUT"
-fi
+docker run --rm \
+    -v $(pwd):/spec \
+    redocly/openapi-cli \
+        bundle "spec/openapi.yml" \
+        -o "/spec/destiny.yml"
