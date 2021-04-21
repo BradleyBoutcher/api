@@ -1,0 +1,14 @@
+#!/bin/bash -e 
+
+# Run from top-level dir
+cd "$(dirname "$0")/.."
+
+docker run --rm \
+    -v ${PWD}:/work \
+    -w "/work" \
+    -p 5000:5000 \
+    --name "speccy-serve" \
+    spec-util:latest \
+    /bin/bash -c "
+    speccy serve /work/spec/openapi.yml
+    "

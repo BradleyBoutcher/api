@@ -306,7 +306,7 @@ components:
 
     ForumRecruitmentToneLabel:
       type: integer
-      format: byte
+      format: int32
       enum:
         - 0
         - 1
